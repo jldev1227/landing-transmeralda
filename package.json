@@ -51,6 +51,9 @@
 		"vite-plugin-devtools-json": "^1.0.0"
 	},
 	"dependencies": {
+		"embla-carousel": "^8.6.0",
+		"embla-carousel-autoplay": "^8.6.0",
+		"svelte-embla": "^0.0.7",
 		"svelte-motion": "^0.12.2",
 		"svelte-parallax": "^0.6.0"
 	}

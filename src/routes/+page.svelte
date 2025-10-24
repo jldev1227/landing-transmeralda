@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	import { fly, fade } from 'svelte/transition';
 	import { elasticOut, cubicOut } from 'svelte/easing';
+	import Galeria from '../lib/components/Galeria.svelte';
 
 	// Estado reactivo
 	let show: boolean = false;
@@ -209,13 +210,13 @@
 	<!-- 📜 CONTENIDO PRINCIPAL -->
 	<main class="main-content">
 		<!-- ========================================
-		     SECCIÓN 1 - INICIO (FULLSCREEN)
-		     ======================================== -->
+		SECCIÓN 1 - INICIO (FULLSCREEN)
+		======================================== -->
 		<section
 			id="inicio"
-			class="section relative flex h-screen shrink-0 snap-start flex-col items-center justify-start overflow-hidden p-20 2xl:p-48"
+			class="section relative flex shrink-0 snap-start flex-col items-center justify-start overflow-hidden p-20 2xl:p-48"
 		>
-			<!-- 🎥 Video de fondo -->
+			<!-- ✨ Contenido principal -->
 			<video
 				autoplay
 				muted
@@ -229,7 +230,6 @@
 			<!-- 🟢 Capa de color -->
 			<div class="absolute inset-0 bg-emerald-900/40 backdrop-blur-sm"></div>
 
-			<!-- ✨ Contenido principal -->
 			<div
 				class="relative z-10 px-6 text-center"
 				in:fly={{ y: 200, duration: 1000, easing: elasticOut }}
@@ -246,11 +246,23 @@
 					Innovación en transporte y gestión inteligente de flotas.
 				</p>
 			</div>
-			<img
-				src="/assets/codi_vehiculo_front.png"
-				alt="Vehículo Transmeralda"
-				class="animate-float-vertical absolute bottom-0 mx-auto h-64 w-[16rem] object-contain sm:h-64 sm:w-[16rem] md:h-[20rem] md:w-[20rem] lg:h-[24rem] lg:w-[24rem] xl:h-[26rem] xl:w-[26rem] 2xl:h-96 2xl:w-96"
-			/>
+
+			<button class="">Contactanos</button>
+
+			<!-- <img
+			src="/assets/codi_vehiculo_front.png"
+			alt="Vehículo Transmeralda"
+			class="animate-float-vertical absolute bottom-0 mx-auto h-64 w-[16rem] object-contain sm:h-64 sm:w-[16rem] md:h-[20rem] md:w-[20rem] lg:h-[24rem] lg:w-[24rem] xl:h-[26rem] xl:w-[26rem] 2xl:h-96 2xl:w-96"
+			/> -->
+		</section>
+		<!-- ========================================
+		     SECCIÓN 1.5 - CARRUSEL DE IMÁGENES
+		     ======================================== -->
+
+		<!-- 💫 Galería de vehículos -->
+
+		<section class="section-light">
+			<Galeria />
 		</section>
 
 		<!-- ========================================
@@ -441,7 +453,7 @@
 		height: 48px;
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
+		justify-content: center;
 	}
 
 	.navbar-logo {
@@ -711,26 +723,6 @@
 	/* ========================================
 	   SECTIONS (AUTO HEIGHT)
 	   ======================================== */
-
-	.section-normal {
-		padding: 5rem 1rem;
-		background: white;
-	}
-
-	.section-colored {
-		padding: 5rem 1rem;
-		background: linear-gradient(135deg, #059669 0%, #047857 100%);
-	}
-
-	.section-light {
-		padding: 5rem 1rem;
-		background: linear-gradient(135deg, #f0fdf4 0%, #d1fae5 100%);
-	}
-
-	.section-dark {
-		padding: 5rem 1rem;
-		background: linear-gradient(135deg, #064e3b 0%, #1e293b 100%);
-	}
 
 	.container {
 		max-width: 1280px;
