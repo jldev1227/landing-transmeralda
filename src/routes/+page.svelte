@@ -13,6 +13,7 @@
 		'inicio',
 		'capacidades',
 		'nosotros',
+		'servicios',
 		'beneficios',
 		'galeria',
 		'contacto'
@@ -295,6 +296,66 @@
 				src="/assets/codi.png"
 				alt="Logo Transmeralda"
 			/>
+		</section>
+
+		<!-- ========================================
+		     SECCIÓN - SERVICIOS
+		     ======================================== -->
+		<section id="servicios" class="section-servicios">
+			<div class="container">
+				<div class="section-header">
+					<h2 class="section-title">Nuestros Servicios</h2>
+					<p class="section-subtitle">
+						Desde los llanos orientales, en tierras casanareñas, prestamos el Servicio Público de Transporte Terrestre Automotor Especial, no solo a nivel local, sino en todo el territorio nacional.
+					</p>
+				</div>
+
+				<!-- Banner con imagen de flota -->
+				<div class="servicios-banner">
+					<div class="servicios-banner-img">
+						<img src="/images/flota/slide-1.jpg" alt="Flota Transmeralda" loading="lazy" />
+					</div>
+					<div class="servicios-banner-content">
+						<h3 class="servicios-banner-title">Flota moderna y segura</h3>
+						<p class="servicios-banner-desc">
+							Vehículos equipados con GPS, aire acondicionado y todas las medidas de seguridad para garantizar el bienestar de tu equipo.
+						</p>
+					</div>
+				</div>
+
+				<!-- Cards de servicios -->
+				<div class="servicios-grid">
+					<article class="servicio-card">
+						<div class="servicio-icon">
+							<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.747L15.33 3.79a3.375 3.375 0 0 0-2.808-1.54H6.75A2.25 2.25 0 0 0 4.5 4.5v9.75" />
+							</svg>
+						</div>
+						<h3 class="servicio-title">Transporte de Personal</h3>
+						<p class="servicio-desc">Rutas empresariales, turnos rotativos y traslados desde punto de origen hasta la operación. Puntualidad garantizada.</p>
+					</article>
+
+					<article class="servicio-card">
+						<div class="servicio-icon">
+							<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
+							</svg>
+						</div>
+						<h3 class="servicio-title">Logística y Rutas Especiales</h3>
+						<p class="servicio-desc">Diseñamos rutas optimizadas según la ubicación de tus colaboradores, reduciendo tiempos y costos de desplazamiento.</p>
+					</article>
+
+					<article class="servicio-card">
+						<div class="servicio-icon">
+							<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+							</svg>
+						</div>
+						<h3 class="servicio-title">Seguridad y Cumplimiento</h3>
+						<p class="servicio-desc">Conductores certificados, documentación al día, protocolos de bioseguridad y monitoreo GPS en tiempo real 24/7.</p>
+					</article>
+				</div>
+			</div>
 		</section>
 
 		<!-- ========================================
@@ -1196,6 +1257,166 @@
 		background: #059669;
 		transform: translateY(-2px);
 		box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+	}
+
+	/* ========================================
+	   SECCIÓN SERVICIOS
+	   ======================================== */
+	.section-servicios {
+		background-color: #ffffff;
+		background-image: radial-gradient(circle, rgba(16, 185, 129, 0.09) 1px, transparent 1px);
+		background-size: 24px 24px;
+		padding: 4rem 0;
+		position: relative;
+	}
+
+	@media (min-width: 768px) {
+		.section-servicios {
+			padding: 6rem 0;
+		}
+	}
+
+	/* Banner de flota */
+	.servicios-banner {
+		display: flex;
+		flex-direction: column;
+		border-radius: 1.25rem;
+		overflow: hidden;
+		background: #064e3b;
+		margin-bottom: 3rem;
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+	}
+
+	@media (min-width: 768px) {
+		.servicios-banner {
+			flex-direction: row;
+			min-height: 320px;
+		}
+	}
+
+	.servicios-banner-img {
+		flex: 1;
+		min-height: 220px;
+		overflow: hidden;
+	}
+
+	@media (min-width: 768px) {
+		.servicios-banner-img {
+			flex: 1.2;
+			min-height: auto;
+		}
+	}
+
+	.servicios-banner-img img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+
+	.servicios-banner-content {
+		flex: 1;
+		padding: 2rem 1.5rem;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		color: #ffffff;
+	}
+
+	@media (min-width: 768px) {
+		.servicios-banner-content {
+			padding: 2.5rem 3rem;
+		}
+	}
+
+	.servicios-banner-title {
+		font-size: 1.5rem;
+		font-weight: 700;
+		margin-bottom: 0.75rem;
+		letter-spacing: -0.02em;
+	}
+
+	@media (min-width: 768px) {
+		.servicios-banner-title {
+			font-size: 2rem;
+		}
+	}
+
+	.servicios-banner-desc {
+		font-size: 0.95rem;
+		line-height: 1.6;
+		color: #d1fae5;
+	}
+
+	@media (min-width: 768px) {
+		.servicios-banner-desc {
+			font-size: 1.05rem;
+		}
+	}
+
+	/* Grid de servicios */
+	.servicios-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1.25rem;
+	}
+
+	@media (min-width: 640px) {
+		.servicios-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.servicios-grid {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+
+	/* Card de servicio */
+	.servicio-card {
+		background: #f0fdf4;
+		border-radius: 1rem;
+		padding: 2rem 1.5rem;
+		text-align: center;
+		transition: transform 0.3s ease, box-shadow 0.3s ease;
+		border: 1px solid #d1fae5;
+	}
+
+	.servicio-card:hover {
+		transform: translateY(-4px);
+		box-shadow: 0 12px 32px rgba(5, 150, 105, 0.12);
+	}
+
+	.servicio-icon {
+		width: 56px;
+		height: 56px;
+		margin: 0 auto 1.25rem;
+		background: #064e3b;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: #ffffff;
+	}
+
+	.servicio-icon svg {
+		width: 28px;
+		height: 28px;
+	}
+
+	.servicio-title {
+		font-size: 1.1rem;
+		font-weight: 700;
+		color: #064e3b;
+		margin-bottom: 0.5rem;
+		letter-spacing: -0.01em;
+	}
+
+	.servicio-desc {
+		font-size: 0.9rem;
+		line-height: 1.55;
+		color: #374151;
 	}
 
 	/* ========================================
