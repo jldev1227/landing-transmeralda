@@ -173,38 +173,69 @@
 				</div>
 			</button>
 		</div>
-
-		<!-- Mobile Menu Overlay -->
-		{#if mobileMenuOpen}
-			<div
-				class="mobile-menu-overlay"
-				transition:fade={{ duration: 300 }}
-				on:click={() => (mobileMenuOpen = false)}
-				on:keydown={(e) => e.key === 'Escape' && (mobileMenuOpen = false)}
-				role="button"
-				tabindex="0"
-			>
-				<div
-					class="mobile-menu"
-					on:click={(e) => e.stopPropagation()}
-					on:keydown={(e) => e.stopPropagation()}
-					role="menu"
-					tabindex="-1"
-				>
-					{#each sections as section, i}
-						<button
-							on:click={() => scrollToSection(section)}
-							class="mobile-menu-link"
-							class:active={activeSection === section}
-							in:fly={{ y: -20, duration: 300, delay: i * 50 }}
-						>
-							{section.charAt(0).toUpperCase() + section.slice(1)}
-						</button>
-					{/each}
-				</div>
-			</div>
-		{/if}
 	</nav>
+
+	<!-- Mobile Sidebar Overlay -->
+	{#if mobileMenuOpen}
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div
+			class="sidebar-overlay"
+			transition:fade={{ duration: 250 }}
+			on:click={() => (mobileMenuOpen = false)}
+			on:keydown={(e) => e.key === 'Escape' && (mobileMenuOpen = false)}
+			role="button"
+			tabindex="0"
+		></div>
+	{/if}
+
+	<aside
+		class="sidebar"
+		class:open={mobileMenuOpen}
+		role="navigation"
+		aria-label="Menú principal"
+	>
+		<!-- Sidebar Header -->
+		<div class="sidebar-header">
+			<img
+				src="/assets/logo_transmeralda.png"
+				alt="Transmeralda"
+				class="sidebar-logo"
+			/>
+			<button
+				on:click={() => (mobileMenuOpen = false)}
+				class="sidebar-close"
+				aria-label="Cerrar menú"
+			>
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<line x1="18" y1="6" x2="6" y2="18"></line>
+					<line x1="6" y1="6" x2="18" y2="18"></line>
+				</svg>
+			</button>
+		</div>
+
+		<!-- Sidebar Links -->
+		<nav class="sidebar-nav">
+			{#each sections as section}
+				<button
+					on:click={() => scrollToSection(section)}
+					class="sidebar-link"
+					class:active={activeSection === section}
+				>
+					{section.charAt(0).toUpperCase() + section.slice(1)}
+				</button>
+			{/each}
+		</nav>
+
+		<!-- Sidebar Footer -->
+		<div class="sidebar-footer">
+			<a href="tel:+573001234567" class="sidebar-cta">
+				<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+				</svg>
+				Contáctanos
+			</a>
+		</div>
+	</aside>
 
 	<!-- 📜 CONTENIDO PRINCIPAL -->
 	<main class="main-content">
@@ -267,144 +298,19 @@
 		</section>
 
 		<!-- ========================================
-		     SECCIÓN 2 - CAPACIDADES (AUTO HEIGHT)
+		     SECCIÓN - CONTACTO
 		     ======================================== -->
-		<section id="capacidades" class="section-normal">
-			<div class="container">
-				<div class="section-header">
-					<h2 class="section-title">Capacidades que respaldan nuestro servicio</h2>
-					<p class="section-subtitle">
-						Todo lo que usamos para garantizar un transporte seguro, puntual y confiable.
-					</p>
-				</div>
-
-				<div class="grid-3">
-					{#each capacidades as card}
-						<article class="card">
-							<div class="card-image">
-								<img src={card.img} alt={card.title} loading="lazy" />
-							</div>
-							<div class="card-content">
-								<h3 class="card-title">{card.title}</h3>
-								<p class="card-desc">{card.desc}</p>
-							</div>
-						</article>
-					{/each}
-				</div>
-			</div>
-		</section>
-
-		<!-- ========================================
-		     SECCIÓN 3 - NOSOTROS (AUTO HEIGHT)
-		     ======================================== -->
-		<section id="nosotros" class="section-colored">
-			<div class="container">
-				<div class="section-header">
-					<h2 class="section-title text-white">Nosotros</h2>
-					<p class="section-subtitle text-emerald-100">
-						Profesionales dedicados a la innovación y el transporte inteligente.
-					</p>
-				</div>
-
-				<div class="stats-grid">
-					<div class="stat-card">
-						<div class="stat-number">10+</div>
-						<div class="stat-label">Años de experiencia</div>
-					</div>
-					<div class="stat-card">
-						<div class="stat-number">500+</div>
-						<div class="stat-label">Clientes satisfechos</div>
-					</div>
-					<div class="stat-card">
-						<div class="stat-number">50+</div>
-						<div class="stat-label">Vehículos en operación</div>
-					</div>
-					<div class="stat-card">
-						<div class="stat-number">99%</div>
-						<div class="stat-label">Tasa de cumplimiento</div>
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<!-- ========================================
-		     SECCIÓN 4 - BENEFICIOS
-		     ======================================== -->
-		<section id="beneficios" class="section-normal">
-			<div class="container">
-				<div class="section-header">
-					<h2 class="section-title">Beneficios reales para tu empresa</h2>
-					<p class="section-subtitle">
-						Resultados medibles que impactan positivamente tu operación.
-					</p>
-				</div>
-
-				<div class="grid-3">
-					{#each beneficios as card}
-						<article class="card">
-							<div class="card-image">
-								<img src={card.img} alt={card.title} loading="lazy" />
-							</div>
-							<div class="card-content">
-								<h3 class="card-title">{card.title}</h3>
-								<p class="card-desc">{card.desc}</p>
-							</div>
-						</article>
-					{/each}
-				</div>
-			</div>
-		</section>
-
-		<!-- ========================================
-		     SECCIÓN 5 - GALERÍA
-		     ======================================== -->
-		<section id="galeria" class="section-colored">
-			<div class="container">
-				<div class="section-header">
-					<h2 class="section-title text-white">Galería</h2>
-					<p class="section-subtitle text-emerald-100">
-						Conoce nuestra flota y operaciones en imágenes.
-					</p>
-				</div>
-
-				<div class="gallery-grid">
-					{#each Array(6) as _, i}
-						<div class="gallery-item">
-							<img
-								src={`/images/galeria/imagen-${i + 1}.jpg`}
-								alt={`Galería ${i + 1}`}
-								loading="lazy"
-							/>
-						</div>
-					{/each}
-				</div>
-			</div>
-		</section>
-
-		<!-- ========================================
-		     SECCIÓN 6 - CONTACTO
-		     ======================================== -->
-		<section id="contacto" class="section-normal">
+		<section id="contacto" class="section-contact">
 			<div class="container">
 				<div class="section-header">
 					<h2 class="section-title">Contáctanos</h2>
-					<p class="section-subtitle">Estamos listos para atender tus necesidades de transporte.</p>
+					<p class="section-subtitle">
+						Estamos listos para atender tus necesidades de transporte.
+					</p>
 				</div>
 
 				<div class="contact-grid">
-					<a href="tel:+573001234567" class="contact-card">
-						<svg class="contact-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-							/>
-						</svg>
-						<span class="contact-text">+57 300 123 4567</span>
-					</a>
-
-					<a href="mailto:info@transmeralda.com" class="contact-card">
+					<a href="mailto:operaciones.transmeraldasas@gmail.com" class="contact-card">
 						<svg class="contact-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 							<path
 								stroke-linecap="round"
@@ -413,11 +319,14 @@
 								d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
 							/>
 						</svg>
-						<span class="contact-text">info@transmeralda.com</span>
+						<div class="contact-info">
+							<span class="contact-label">Correo electrónico</span>
+							<span class="contact-text">operaciones.transmeraldasas@gmail.com</span>
+						</div>
 					</a>
 
 					<a
-						href="https://wa.me/573001234567"
+						href="https://wa.me/573232340117"
 						target="_blank"
 						rel="noopener noreferrer"
 						class="contact-card"
@@ -427,16 +336,29 @@
 								d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"
 							/>
 						</svg>
-						<span class="contact-text">WhatsApp</span>
+						<div class="contact-info">
+							<span class="contact-label">WhatsApp</span>
+							<span class="contact-text">323 234 0117</span>
+						</div>
 					</a>
 				</div>
-
-				<button on:click={() => scrollToSection('inicio')} class="btn-back-to-top">
-					↑ Volver al inicio
-				</button>
 			</div>
 		</section>
 	</main>
+
+	<!-- ========================================
+	     FOOTER
+	     ======================================== -->
+	<footer class="footer">
+		<div class="footer-container">
+			<div class="footer-brand">
+				<img src="/assets/logo_transmeralda.png" alt="Transmeralda" class="footer-logo" />
+				<p class="footer-tagline">Movilidad inteligente, eficiencia real.</p>
+			</div>
+			<div class="footer-divider"></div>
+			<p class="footer-copy">&copy; {new Date().getFullYear()} Transmeralda S.A.S. Todos los derechos reservados.</p>
+		</div>
+	</footer>
 {/if}
 
 <style>
@@ -606,72 +528,157 @@
 		transform: translateY(-6px) rotate(-45deg);
 	}
 
-	/* Mobile Menu Overlay */
-	.mobile-menu-overlay {
+	/* Sidebar Mobile */
+	.sidebar-overlay {
 		position: fixed;
-		top: 48px;
+		inset: 0;
+		z-index: 1001;
+		background: rgba(0, 0, 0, 0.5);
+		backdrop-filter: blur(4px);
+	}
+
+	.sidebar {
+		position: fixed;
+		top: 0;
 		left: 0;
-		right: 0;
 		bottom: 0;
-		z-index: 999;
-		background: rgba(0, 0, 0, 0.4);
-		backdrop-filter: blur(10px);
+		z-index: 1002;
+		width: 280px;
+		max-width: 80vw;
+		background: #ffffff;
+		transform: translateX(-100%);
+		transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+		display: flex;
+		flex-direction: column;
+		box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+		overflow-y: auto;
 	}
 
-	.mobile-menu {
-		background: rgba(255, 255, 255, 0.95);
-		backdrop-filter: saturate(180%) blur(20px);
-		border-radius: 0 0 1.5rem 1.5rem;
-		padding: 1rem;
-		margin: 0 1rem;
-		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+	.sidebar.open {
+		transform: translateX(0);
 	}
 
-	.mobile-menu-link {
-		display: block;
+	@media (min-width: 768px) {
+		.sidebar {
+			display: none;
+		}
+		.sidebar-overlay {
+			display: none;
+		}
+	}
+
+	.sidebar-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 1.25rem 1.25rem 1rem;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+	}
+
+	.sidebar-logo {
+		height: 1.75rem;
+		width: auto;
+		object-fit: contain;
+	}
+
+	.sidebar-close {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 36px;
+		height: 36px;
+		border: none;
+		background: rgba(0, 0, 0, 0.04);
+		border-radius: 0.5rem;
+		cursor: pointer;
+		color: rgba(0, 0, 0, 0.6);
+		transition: all 0.2s ease;
+	}
+
+	.sidebar-close:hover {
+		background: rgba(0, 0, 0, 0.08);
+		color: rgba(0, 0, 0, 0.9);
+	}
+
+	.sidebar-nav {
+		flex: 1;
+		padding: 0.75rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.125rem;
+	}
+
+	.sidebar-link {
+		display: flex;
+		align-items: center;
 		width: 100%;
-		padding: 1rem 1.5rem;
-		font-size: 1.125rem;
+		padding: 0.875rem 1rem;
+		font-size: 1rem;
 		font-weight: 400;
-		color: rgba(0, 0, 0, 0.8);
+		color: rgba(0, 0, 0, 0.75);
 		text-align: left;
 		background: transparent;
 		border: none;
-		border-radius: 0.75rem;
+		border-radius: 0.625rem;
 		cursor: pointer;
 		transition: all 0.2s ease;
 	}
 
-	.mobile-menu-link:hover,
-	.mobile-menu-link.active {
-		background: rgba(16, 185, 129, 0.1);
+	.sidebar-link:hover {
+		background: rgba(16, 185, 129, 0.08);
 		color: #059669;
+	}
+
+	.sidebar-link.active {
+		background: rgba(16, 185, 129, 0.12);
+		color: #059669;
+		font-weight: 600;
+	}
+
+	.sidebar-footer {
+		padding: 1rem 1.25rem 1.5rem;
+		border-top: 1px solid rgba(0, 0, 0, 0.08);
+	}
+
+	.sidebar-cta {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+		width: 100%;
+		padding: 0.75rem 1rem;
+		font-size: 0.9375rem;
+		font-weight: 600;
+		color: white;
+		background: #10b981;
+		border: none;
+		border-radius: 0.625rem;
+		cursor: pointer;
+		text-decoration: none;
+		transition: all 0.2s ease;
+		box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+	}
+
+	.sidebar-cta:hover {
+		background: #059669;
+		transform: translateY(-1px);
+		box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
 	}
 
 	/* ========================================
 	   SECCIÓN HERO
 	   ======================================== */
+	/* ---- HERO ---- */
 	.section-hero {
 		position: relative;
-		min-height: 100vh;
-		min-height: 100dvh;
+		width: 100%;
+		height: 100vh;
+		height: 100dvh; /* viewport dinámico: se ajusta cuando la barra del navegador aparece/desaparece */
+		min-height: 480px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		overflow: hidden;
-		padding: 6rem 1rem 4rem;
-	}
-
-	@media (min-width: 768px) {
-		.section-hero {
-			padding: 8rem 2rem;
-		}
-	}
-
-	@media (min-width: 1024px) {
-		.section-hero {
-			padding: 12rem 3rem;
-		}
 	}
 
 	.hero-video {
@@ -686,7 +693,7 @@
 	.hero-overlay {
 		position: absolute;
 		inset: 0;
-		background: rgba(6, 78, 59, 0.4);
+		background: rgba(6, 78, 59, 0.45);
 	}
 
 	.hero-content {
@@ -694,16 +701,28 @@
 		z-index: 10;
 		width: 100%;
 		max-width: 1280px;
+		height: 100%;
 		margin: 0 auto;
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: 2rem;
+		padding: 4.5rem 1.25rem 2rem; /* top: navbar (48px) + respiro */
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
 		text-align: center;
+		gap: 0;
 	}
 
 	@media (min-width: 768px) {
 		.hero-content {
+			padding: 5rem 2rem 2rem;
+			align-items: flex-start;
 			text-align: left;
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.hero-content {
+			padding: 6rem 3rem 3rem;
 		}
 	}
 
@@ -711,44 +730,40 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 1.5rem;
+		gap: clamp(0.75rem, 2vh, 1.5rem);
+		max-width: 680px;
 	}
 
 	@media (min-width: 768px) {
 		.hero-text {
 			align-items: flex-start;
+			max-width: 55%;
 		}
 	}
 
 	.hero-title {
-		font-size: clamp(2rem, 8vw, 3.5rem);
+		font-size: clamp(1.75rem, 6vw + 1vh, 3.5rem);
 		font-weight: 800;
 		line-height: 1.1;
 		color: white;
 		text-shadow: 0 2px 20px rgba(16, 185, 129, 0.3);
-		margin-bottom: 1rem;
-	}
-
-	@media (min-width: 768px) {
-		.hero-title {
-			font-size: clamp(2.5rem, 5vw, 3.5rem);
-		}
+		margin: 0;
 	}
 
 	.hero-subtitle {
-		max-width: 600px;
-		font-size: clamp(1rem, 3vw, 1.25rem);
+		font-size: clamp(0.9rem, 2.5vw + 0.5vh, 1.25rem);
 		line-height: 1.6;
 		color: rgba(255, 255, 255, 0.95);
 		font-weight: 400;
+		margin: 0;
 	}
 
 	.hero-cta {
 		display: inline-flex;
 		align-items: center;
 		gap: 0.5rem;
-		padding: 1rem 2rem;
-		font-size: 1rem;
+		padding: clamp(0.6rem, 1.5vh, 1rem) clamp(1.25rem, 3vw, 2rem);
+		font-size: clamp(0.875rem, 1.5vw, 1rem);
 		font-weight: 600;
 		color: white;
 		background: rgba(255, 255, 255, 0.2);
@@ -758,10 +773,11 @@
 		cursor: pointer;
 		transition: all 0.3s ease;
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+		white-space: nowrap;
 	}
 
 	.hero-cta:hover {
-		background: rgba(255, 255, 255, 0.25);
+		background: rgba(255, 255, 255, 0.28);
 		transform: translateY(-2px);
 		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 	}
@@ -772,39 +788,45 @@
 		flex-shrink: 0;
 	}
 
+	/* Mascota anclada al borde inferior del hero */
 	.hero-mascot {
 		position: absolute;
-		right: 0;
-		bottom: -5rem;
+		bottom: 0;
+		left: 50%;
+		transform: translateX(-50%) translateY(5%);
 		width: 16rem;
-		height: 16rem;
+		height: auto;
 		object-fit: contain;
 		pointer-events: none;
-		display: none;
+		z-index: 15;
+	}
+
+	@media (min-width: 480px) {
+		.hero-mascot {
+			width: 19rem;
+		}
 	}
 
 	@media (min-width: 768px) {
 		.hero-mascot {
-			display: block;
-			width: 20rem;
-			height: 20rem;
-			bottom: -6rem;
+			left: auto;
+			right: 0;
+			transform: translateY(6%);
+			width: clamp(14rem, 22vw, 20rem);
+			opacity: 1;
 		}
 	}
 
 	@media (min-width: 1024px) {
 		.hero-mascot {
-			width: 28rem;
-			height: 28rem;
-			bottom: -8rem;
+			width: clamp(18rem, 22vw, 24rem);
 		}
 	}
 
-	@media (min-width: 1536px) {
+	@media (min-width: 1280px) {
 		.hero-mascot {
-			width: 32rem;
-			height: 32rem;
-			bottom: -10rem;
+			width: clamp(22rem, 24vw, 30rem);
+			transform: translateY(8%);
 		}
 	}
 
@@ -813,7 +835,6 @@
 	   ======================================== */
 	.main-content {
 		width: 100%;
-		margin-top: 48px;
 	}
 
 	.container {
@@ -1178,11 +1199,172 @@
 	}
 
 	/* ========================================
-	   UTILITY CLASSES
+	   SECCIÓN CONTACTO
 	   ======================================== */
-	@media (max-width: 640px) {
-		.mobile-hidden {
-			display: none;
+	.section-contact {
+		background: #f0fdf4;
+		padding: 4rem 0;
+	}
+
+	@media (min-width: 768px) {
+		.section-contact {
+			padding: 6rem 0;
 		}
 	}
+
+	.contact-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1rem;
+		max-width: 500px;
+		margin: 0 auto;
+	}
+
+	@media (min-width: 640px) {
+		.contact-grid {
+			grid-template-columns: repeat(2, 1fr);
+			max-width: 960px;
+		}
+	}
+
+	.contact-card {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 1rem;
+		background: white;
+		border: 1px solid #d1fae5;
+		border-radius: 1rem;
+		text-decoration: none;
+		transition: all 0.3s ease;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+		overflow: hidden;
+	}
+
+	.contact-card:hover {
+		background: #ecfdf5;
+		transform: translateY(-2px);
+		box-shadow: 0 8px 24px rgba(16, 185, 129, 0.12);
+		border-color: #a7f3d0;
+	}
+
+	@media (min-width: 768px) {
+		.contact-card {
+			padding: 1.5rem 2rem;
+			gap: 1rem;
+		}
+	}
+
+	.contact-icon {
+		width: 1.5rem;
+		height: 1.5rem;
+		color: #10b981;
+		flex-shrink: 0;
+	}
+
+	@media (min-width: 768px) {
+		.contact-icon {
+			width: 2rem;
+			height: 2rem;
+		}
+	}
+
+	.contact-info {
+		display: flex;
+		flex-direction: column;
+		gap: 0.15rem;
+		min-width: 0;
+		overflow: hidden;
+	}
+
+	.contact-label {
+		font-size: 0.6875rem;
+		font-weight: 500;
+		color: #94a3b8;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	@media (min-width: 768px) {
+		.contact-label {
+			font-size: 0.75rem;
+		}
+	}
+
+	.contact-text {
+		color: #064e3b;
+		font-size: 0.75rem;
+		font-weight: 500;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	@media (min-width: 768px) {
+		.contact-text {
+			font-size: 1rem;
+		}
+	}
+
+	/* ========================================
+	   FOOTER
+	   ======================================== */
+	.footer {
+		background: #014f3d;
+		padding: 2rem 0;
+	}
+
+	.footer-container {
+		max-width: 1280px;
+		margin: 0 auto;
+		padding: 0 1rem;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+		text-align: center;
+	}
+
+	@media (min-width: 768px) {
+		.footer-container {
+			padding: 0 2rem;
+		}
+	}
+
+	.footer-brand {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.footer-logo {
+		height: 1.75rem;
+		width: auto;
+		object-fit: contain;
+		filter: brightness(0) invert(1);
+		opacity: 0.85;
+	}
+
+	.footer-tagline {
+		font-size: 0.8125rem;
+		color: rgba(255, 255, 255, 0.5);
+		font-weight: 400;
+	}
+
+	.footer-divider {
+		width: 60px;
+		height: 1px;
+		background: rgba(255, 255, 255, 0.12);
+	}
+
+	.footer-copy {
+		font-size: 0.75rem;
+		color: rgba(255, 255, 255, 0.35);
+		font-weight: 400;
+	}
+
+	/* ========================================
+	   UTILITY CLASSES
+	   ======================================== */
 </style>
