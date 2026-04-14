@@ -1,3 +1,10 @@
-# allow crawling everything by default
+# Transmeralda S.A.S. - Robots.txt
+# Servicio de Transporte Especial en Casanare y Colombia
+
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /api/
+Disallow: /_app/
+
+# Sitemap
+Sitemap: https://www.transmeralda.com/sitemap.xml

@@ -261,11 +261,10 @@
 			<div class="hero-content" in:fly={{ y: 200, duration: 1000, easing: elasticOut }}>
 				<div class="hero-text">
 					<h1 class="hero-title">
-						Bienvenido a Transmeralda
+						Servicio de Transporte Especial en Casanare y toda Colombia
 					</h1>
 					<p class="hero-subtitle">
-						Movilidad inteligente, eficiencia real. Una nueva experiencia en transporte corporativo
-						con el sello Transmeralda.
+						Transmeralda S.A.S. — Transporte terrestre automotor especial desde Yopal, Casanare. Movilidad inteligente, eficiencia real y seguridad para tu equipo.
 					</p>
 					<button
 						in:fly={{ y: 200, duration: 1000, easing: elasticOut }}
@@ -294,7 +293,7 @@
 				in:fly={{ y: 200, duration: 1000, easing: elasticOut, delay: 200 }}
 				class="hero-mascot"
 				src="/assets/codi.png"
-				alt="Logo Transmeralda"
+				alt="Codi - Mascota de Transmeralda, empresa de transporte especial en Casanare"
 			/>
 		</section>
 
@@ -313,7 +312,7 @@
 				<!-- Banner con imagen de flota -->
 				<div class="servicios-banner">
 					<div class="servicios-banner-img">
-						<img src="/images/flota/slide-1.jpg" alt="Flota Transmeralda" loading="lazy" />
+						<img src="/images/flota/slide-1.jpg" alt="Flota de vehículos Transmeralda para transporte especial en Yopal, Casanare" loading="lazy" />
 					</div>
 					<div class="servicios-banner-content">
 						<h3 class="servicios-banner-title">Flota moderna y segura</h3>
@@ -413,8 +412,8 @@
 	<footer class="footer">
 		<div class="footer-container">
 			<div class="footer-brand">
-				<img src="/assets/logo_transmeralda.png" alt="Transmeralda" class="footer-logo" />
-				<p class="footer-tagline">Movilidad inteligente, eficiencia real.</p>
+				<img src="/assets/logo_transmeralda.png" alt="Transmeralda S.A.S. - Transporte Especial Casanare" class="footer-logo" />
+				<p class="footer-tagline">Transporte terrestre automotor especial desde los llanos orientales.</p>
 			</div>
 			<div class="footer-divider"></div>
 			<p class="footer-copy">&copy; {new Date().getFullYear()} Transmeralda S.A.S. Todos los derechos reservados.</p>

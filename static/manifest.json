@@ -1,0 +1,23 @@
+{
+	"name": "Transmeralda S.A.S.",
+	"short_name": "Transmeralda",
+	"description": "Servicio de Transporte Terrestre Automotor Especial en Casanare y toda Colombia. Transporte privado de personal desde Yopal, Villanueva, Tauramena y Aguazul.",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#ffffff",
+	"theme_color": "#064e3b",
+	"lang": "es-CO",
+	"categories": ["transportation", "business"],
+	"icons": [
+		{
+			"src": "/assets/logo_transmeralda.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "/assets/logo_transmeralda.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	]
+}
