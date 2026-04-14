@@ -250,6 +250,8 @@
 				muted
 				loop
 				playsinline
+				preload="auto"
+				poster="/images/flota/slide-1.jpg"
 				class="hero-video"
 			>
 				<source src="/videos/fondo_transmeralda.mp4" type="video/mp4" />
@@ -733,12 +735,13 @@
 		position: relative;
 		width: 100%;
 		height: 100vh;
-		height: 100dvh; /* viewport dinámico: se ajusta cuando la barra del navegador aparece/desaparece */
+		height: 100dvh;
 		min-height: 480px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		overflow: hidden;
+		background-color: #064e3b;
 	}
 
 	.hero-video {
