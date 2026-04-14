@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { fly, fade } from 'svelte/transition';
-	import { elasticOut, cubicOut } from 'svelte/easing';
+	import { fly, fade, scale, slide } from 'svelte/transition';
+	import { elasticOut, cubicOut, quintOut } from 'svelte/easing';
 
 	// Estado reactivo
 	let show: boolean = false;
@@ -9,13 +9,75 @@
 	let mobileMenuOpen: boolean = false;
 	let activeSection: string = 'inicio';
 
+	// Scroll-triggered visibility
+	let capVisible: boolean = false;
+	let nosotrosVisible: boolean = false;
+	let flotaVisible: boolean = false;
+
+	// Flota showcase
+	let activeFlota: number = 0;
+	let flotaInterval: ReturnType<typeof setInterval> | null = null;
+
+	function startFlotaAutoplay() {
+		stopFlotaAutoplay();
+		flotaInterval = setInterval(() => {
+			activeFlota = (activeFlota + 1) % flotaItems.length;
+		}, 4000);
+	}
+
+	function stopFlotaAutoplay() {
+		if (flotaInterval) {
+			clearInterval(flotaInterval);
+			flotaInterval = null;
+		}
+	}
+
+	function selectFlota(index: number) {
+		activeFlota = index;
+		// Reiniciar el autoplay al seleccionar manualmente
+		startFlotaAutoplay();
+	}
+
+	const flotaItems = [
+		{
+			img: '/images/flota/slide-1.jpg',
+			title: 'Camionetas',
+			desc: 'Camionetas robustas y confiables para rutas exigentes en el piedemonte llanero.',
+			alt: 'Camioneta Transmeralda para transporte especial en Casanare'
+		},
+		{
+			img: '/images/flota/slide-2.jpg',
+			title: 'Buses',
+			desc: 'Buses cómodos y seguros para el transporte grupal de personal corporativo.',
+			alt: 'Bus Transmeralda - Transporte de personal en Casanare'
+		},
+		{
+			img: '/images/flota/slide-3.png',
+			title: 'Equipamiento completo',
+			desc: 'Todas nuestras unidades cuentan con GPS, aire acondicionado y protocolos de seguridad.',
+			alt: 'Vehículo Transmeralda equipado con GPS y aire acondicionado'
+		},
+		{
+			img: '/images/flota/',
+			title: 'Transporte especial',
+			desc: 'Camionetas y buses habilitados para transporte terrestre automotor especial.',
+			alt: 'Transporte terrestre automotor especial - Transmeralda Yopal'
+		}
+	];
+
+	// Años de experiencia calculados automáticamente desde el 3 de octubre de 2021
+	const FECHA_FUNDACION = new Date(2021, 9, 3); // Octubre = mes 9 (0-indexed)
+	const hoy = new Date();
+	const yearsExperiencia = Math.floor(
+		(hoy.getTime() - FECHA_FUNDACION.getTime()) / (365.25 * 24 * 60 * 60 * 1000)
+	);
+
 	const sections: string[] = [
 		'inicio',
 		'capacidades',
 		'nosotros',
 		'servicios',
-		'beneficios',
-		'galeria',
+		'flota',
 		'contacto'
 	];
 
@@ -69,8 +131,35 @@
 		window.addEventListener('scroll', handleScroll, { passive: true });
 		handleScroll();
 
+		// Intersection Observer para animaciones al hacer scroll
+		const observerOptions = { threshold: 0.15 };
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach((entry) => {
+				if (entry.isIntersecting) {
+					if (entry.target.id === 'capacidades') capVisible = true;
+					if (entry.target.id === 'nosotros') nosotrosVisible = true;
+					if (entry.target.id === 'flota') flotaVisible = true;
+				}
+			});
+		}, observerOptions);
+
+		// Observar secciones después de un tick
+		setTimeout(() => {
+			const capSection = document.getElementById('capacidades');
+			const nosSection = document.getElementById('nosotros');
+			const flotaSection = document.getElementById('flota');
+			if (capSection) observer.observe(capSection);
+			if (nosSection) observer.observe(nosSection);
+			if (flotaSection) observer.observe(flotaSection);
+		}, 200);
+
+		// Iniciar autoplay de flota
+		startFlotaAutoplay();
+
 		return () => {
 			window.removeEventListener('scroll', handleScroll);
+			observer.disconnect();
+			stopFlotaAutoplay();
 		};
 	});
 
@@ -113,24 +202,6 @@
 			title: 'App & Reportes',
 			desc: 'Seguimiento, novedades y reportes para tus auditorías.',
 			img: '/images/capacidades/app.png'
-		}
-	];
-
-	const beneficios: Card[] = [
-		{
-			title: 'Reducción de Costos',
-			desc: 'Optimiza el uso de combustible y reduce gastos operativos hasta un 30%.',
-			img: '/images/beneficios/costos.jpg'
-		},
-		{
-			title: 'Mayor Seguridad',
-			desc: 'Monitoreo 24/7 y protocolos certificados para la protección de tu equipo.',
-			img: '/images/beneficios/seguridad.jpg'
-		},
-		{
-			title: 'Cumplimiento Legal',
-			desc: 'Documentación actualizada y auditable para todas las normativas vigentes.',
-			img: '/images/beneficios/legal.jpg'
 		}
 	];
 </script>
@@ -300,6 +371,127 @@
 		</section>
 
 		<!-- ========================================
+		     SECCIÓN - CAPACIDADES
+		     ======================================== -->
+		<section id="capacidades" class="section-cap">
+			<div class="container">
+				{#if capVisible}
+					<div class="cap-header" in:fly={{ y: 40, duration: 700, easing: quintOut }}>
+						<span class="cap-badge">Lo que nos respalda</span>
+						<h2 class="section-title">Nuestras Capacidades</h2>
+						<p class="section-subtitle">
+							Tecnología, talento y procesos que garantizan un servicio de primer nivel.
+						</p>
+					</div>
+
+					<div class="cap-grid">
+						{#each capacidades as cap, i}
+							<div
+								class="cap-card"
+								in:fly={{ y: 60, duration: 600, delay: 100 + i * 120, easing: quintOut }}
+							>
+								<div class="cap-card-icon">
+									<img src={cap.img} alt={cap.title} loading="lazy" />
+								</div>
+								<div class="cap-card-body">
+									<h3 class="cap-card-title">{cap.title}</h3>
+									<p class="cap-card-desc">{cap.desc}</p>
+								</div>
+								<div class="cap-card-number">{String(i + 1).padStart(2, '0')}</div>
+							</div>
+						{/each}
+					</div>
+				{/if}
+			</div>
+		</section>
+
+		<!-- ========================================
+		     SECCIÓN - NOSOTROS
+		     ======================================== -->
+		<section id="nosotros" class="section-nosotros">
+			<div class="container">
+				{#if nosotrosVisible}
+					<div class="nosotros-layout">
+						<div class="nosotros-text" in:fly={{ x: -60, duration: 800, easing: quintOut }}>
+							<span class="nosotros-badge">Sobre nosotros</span>
+							<h2 class="nosotros-title">Una empresa casanareña con alcance nacional</h2>
+							<p class="nosotros-desc">
+								Desde Yopal, Casanare, nos hemos consolidado como referente en transporte terrestre automotor especial. Nuestra misión es mover personas con seguridad, eficiencia y calidez humana.
+							</p>
+							<div class="nosotros-highlights">
+								<div class="nosotros-highlight" in:fly={{ y: 20, duration: 500, delay: 400, easing: quintOut }}>
+									<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+									<span>Habilitación nacional vigente</span>
+								</div>
+								<div class="nosotros-highlight" in:fly={{ y: 20, duration: 500, delay: 550, easing: quintOut }}>
+									<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+									<span>Cobertura en todo el territorio</span>
+								</div>
+							</div>
+
+							<!-- Certificaciones ISO -->
+							<div class="nosotros-iso" in:fly={{ y: 30, duration: 600, delay: 800, easing: quintOut }}>
+								<span class="iso-label">Alineados con estándares internacionales</span>
+								<div class="iso-badges">
+									<div class="iso-badge">
+										<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" /></svg>
+										<div>
+											<strong>ISO 9001</strong>
+											<span>Gestión de Calidad</span>
+										</div>
+									</div>
+									<div class="iso-badge">
+										<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5a17.92 17.92 0 0 1-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" /></svg>
+										<div>
+											<strong>ISO 14001</strong>
+											<span>Gestión Ambiental</span>
+										</div>
+									</div>
+									<div class="iso-badge">
+										<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>
+										<div>
+											<strong>ISO 45001</strong>
+											<span>Seguridad y Salud en el Trabajo</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="nosotros-visual" in:fly={{ x: 60, duration: 800, delay: 200, easing: quintOut }}>
+							<!-- Casanare showcase -->
+							<div class="casanare-showcase">
+								<div class="casanare-pulse"></div>
+								<img class="casanare-outline" src="/assets/casanare-polyline.png" alt="Departamento de Casanare" />
+								<span class="casanare-label">Casanare, Colombia</span>
+							</div>
+
+							<!-- Stats cards debajo -->
+							<div class="nosotros-stats">
+								<div class="stat-item">
+									<span class="stat-value">{yearsExperiencia}+</span>
+									<span class="stat-name">Años de experiencia</span>
+								</div>
+								<div class="stat-item">
+									<span class="stat-value">50+</span>
+									<span class="stat-name">Vehículos en flota</span>
+								</div>
+								<div class="stat-item">
+									<span class="stat-value">100+</span>
+									<span class="stat-name">Conductores certificados</span>
+								</div>
+								<div class="stat-item stat-item--accent">
+									<span class="stat-value">24/7</span>
+									<span class="stat-name">Monitoreo GPS</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				{/if}
+			</div>
+		</section>
+
+		<!-- ========================================
 		     SECCIÓN - SERVICIOS
 		     ======================================== -->
 		<section id="servicios" class="section-servicios">
@@ -360,49 +552,135 @@
 		</section>
 
 		<!-- ========================================
+		     SECCIÓN - FLOTA
+		     ======================================== -->
+		<section id="flota" class="section-flota">
+			<div class="container">
+				{#if flotaVisible}
+					<div class="flota-header" in:fly={{ y: 40, duration: 700, easing: quintOut }}>
+						<span class="flota-badge">Nuestra Flota</span>
+						<h2 class="section-title">Vehículos que inspiran confianza</h2>
+						<p class="section-subtitle">
+							Cada unidad cuenta con GPS, aire acondicionado, documentación al día y protocolos de seguridad certificados.
+						</p>
+					</div>
+
+					<!-- Showcase principal -->
+					<div class="flota-showcase" in:fly={{ y: 60, duration: 800, delay: 200, easing: quintOut }}>
+						<!-- Imagen principal con crossfade -->
+						<div class="flota-hero">
+							{#each flotaItems as item, i}
+								{#if activeFlota === i}
+									<div class="flota-hero-img" in:fade={{ duration: 500 }} out:fade={{ duration: 300 }}>
+										<img src={item.img} alt={item.alt} />
+										<div class="flota-hero-overlay">
+											<div class="flota-hero-info" in:fly={{ y: 20, duration: 400, delay: 200, easing: quintOut }}>
+												<h3>{item.title}</h3>
+												<p>{item.desc}</p>
+											</div>
+										</div>
+									</div>
+								{/if}
+							{/each}
+							<!-- Indicador de posición -->
+							<div class="flota-counter">
+								<span class="flota-counter-current">{String(activeFlota + 1).padStart(2, '0')}</span>
+								<span class="flota-counter-sep">/</span>
+								<span class="flota-counter-total">{String(flotaItems.length).padStart(2, '0')}</span>
+							</div>
+						</div>
+
+						<!-- Thumbnails -->
+						<div class="flota-thumbs">
+							{#each flotaItems as item, i}
+								<button
+									class="flota-thumb"
+									class:flota-thumb--active={activeFlota === i}
+									on:click={() => selectFlota(i)}
+									in:fly={{ y: 30, duration: 500, delay: 400 + i * 100, easing: quintOut }}
+								>
+									<img src={item.img} alt={item.alt} loading="lazy" />
+									<div class="flota-thumb-label">
+										<span class="flota-thumb-num">{String(i + 1).padStart(2, '0')}</span>
+										<span class="flota-thumb-title">{item.title}</span>
+									</div>
+								</button>
+							{/each}
+						</div>
+					</div>
+				{/if}
+			</div>
+		</section>
+
+		<!-- ========================================
 		     SECCIÓN - CONTACTO
 		     ======================================== -->
 		<section id="contacto" class="section-contact">
 			<div class="container">
-				<div class="section-header">
-					<h2 class="section-title">Contáctanos</h2>
-					<p class="section-subtitle">
-						Estamos listos para atender tus necesidades de transporte.
-					</p>
-				</div>
+				<div class="contact-layout">
+					<!-- Lado izquierdo: Cody + vehículo -->
+					<div class="contact-visual">
+						<img src="/assets/codi_vehiculo.png" alt="Cody, mascota de Transmeralda, junto a camioneta" class="contact-cody" />
+					</div>
 
-				<div class="contact-grid">
-					<a href="mailto:operaciones.transmeraldasas@gmail.com" class="contact-card">
-						<svg class="contact-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-							/>
-						</svg>
-						<div class="contact-info">
-							<span class="contact-label">Correo electrónico</span>
-							<span class="contact-text">operaciones.transmeraldasas@gmail.com</span>
-						</div>
-					</a>
+					<!-- Lado derecho: contenido -->
+					<div class="contact-content">
+						<span class="contact-badge">¿Listo para viajar seguro?</span>
+						<h2 class="contact-title">Hablemos sobre tu próximo <span class="contact-highlight">servicio de transporte</span></h2>
+						<p class="contact-desc">
+							Nuestro equipo está disponible para cotizar, resolver dudas y organizar el transporte de tu personal. ¡Escríbenos ahora!
+						</p>
 
-					<a
-						href="https://wa.me/573232340117"
-						target="_blank"
-						rel="noopener noreferrer"
-						class="contact-card"
-					>
-						<svg class="contact-icon" fill="currentColor" viewBox="0 0 24 24">
-							<path
-								d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"
-							/>
-						</svg>
-						<div class="contact-info">
-							<span class="contact-label">WhatsApp</span>
-							<span class="contact-text">323 234 0117</span>
+						<!-- CTA Buttons -->
+						<div class="contact-actions">
+							<a
+								href="https://wa.me/573232340117?text=Hola%20Transmeralda%2C%20estoy%20interesado%20en%20cotizar%20un%20servicio%20de%20transporte%20especial.%20%C2%BFPodr%C3%ADan%20brindarme%20informaci%C3%B3n%3F"
+								target="_blank"
+								rel="noopener noreferrer"
+								class="contact-cta contact-cta--whatsapp"
+							>
+								<span class="cta-pulse"></span>
+								<svg class="cta-icon" fill="currentColor" viewBox="0 0 24 24">
+									<path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+								</svg>
+								Cotizar por WhatsApp
+							</a>
+
+							<a href="mailto:operaciones.transmeraldasas@gmail.com" class="contact-cta contact-cta--email">
+								<svg class="cta-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+									<path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+								</svg>
+								Enviar correo
+							</a>
+
+							<a href="tel:+573232340117" class="contact-cta contact-cta--phone">
+								<svg class="cta-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+									<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+								</svg>
+								Llamar ahora
+							</a>
 						</div>
-					</a>
+
+						<!-- Info cards compactas -->
+						<div class="contact-info-row">
+							<div class="contact-info-chip">
+								<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+								<span>Lun - Sáb · 6am a 6pm</span>
+							</div>
+							<div class="contact-info-chip">
+								<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 0 1 15 0Z" /></svg>
+								<span>Villanueva</span>
+							</div>
+							<div class="contact-info-chip">
+								<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 0 1 15 0Z" /></svg>
+								<span>Monterrey</span>
+							</div>
+							<div class="contact-info-chip">
+								<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 0 1 15 0Z" /></svg>
+								<span>Tauramena</span>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</section>
@@ -912,48 +1190,443 @@
 		}
 	}
 
-	/* Secciones */
-	.section-normal {
+	/* ========================================
+	   CAPACIDADES SECTION
+	   ======================================== */
+	.section-cap {
+		background: #f8fafb;
 		padding: 4rem 0;
+		min-height: 100vh;
+		min-height: 100dvh;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
 	}
 
 	@media (min-width: 768px) {
-		.section-normal {
+		.section-cap {
 			padding: 6rem 0;
 		}
 	}
 
 	@media (min-width: 1024px) {
-		.section-normal {
+		.section-cap {
 			padding: 8rem 0;
 		}
 	}
 
-	.section-colored {
-		background: linear-gradient(135deg, #064e3b 0%, #059669 100%);
-		padding: 4rem 0;
-	}
-
-	@media (min-width: 768px) {
-		.section-colored {
-			padding: 6rem 0;
-		}
-	}
-
-	@media (min-width: 1024px) {
-		.section-colored {
-			padding: 8rem 0;
-		}
-	}
-
-	.section-header {
+	.cap-header {
 		text-align: center;
 		margin-bottom: 3rem;
 	}
 
+	.cap-badge {
+		display: inline-block;
+		background: #ecfdf5;
+		color: #059669;
+		padding: 0.375rem 1rem;
+		border-radius: 2rem;
+		font-size: 0.8rem;
+		font-weight: 600;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		margin-bottom: 1rem;
+	}
+
+	.cap-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1rem;
+	}
+
+	@media (min-width: 640px) {
+		.cap-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.cap-grid {
+			grid-template-columns: repeat(3, 1fr);
+			gap: 1.25rem;
+		}
+	}
+
+	.cap-card {
+		position: relative;
+		display: flex;
+		align-items: flex-start;
+		gap: 1rem;
+		background: white;
+		padding: 1.5rem;
+		border-radius: 1rem;
+		border: 1px solid #e2e8f0;
+		transition: all 0.35s ease;
+		overflow: hidden;
+	}
+
+	.cap-card:hover {
+		border-color: #a7f3d0;
+		box-shadow: 0 8px 30px rgba(5, 150, 105, 0.08);
+		transform: translateY(-2px);
+	}
+
+	.cap-card-icon {
+		flex-shrink: 0;
+		width: 48px;
+		height: 48px;
+		background: #ecfdf5;
+		border-radius: 0.75rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0.5rem;
+	}
+
+	.cap-card-icon img {
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+	}
+
+	.cap-card-body {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.cap-card-title {
+		font-size: 1rem;
+		font-weight: 600;
+		color: #1e293b;
+		margin-bottom: 0.35rem;
+		line-height: 1.3;
+	}
+
+	.cap-card-desc {
+		font-size: 0.85rem;
+		color: #64748b;
+		line-height: 1.55;
+	}
+
+	.cap-card-number {
+		position: absolute;
+		bottom: 0.75rem;
+		right: 1rem;
+		font-size: 2rem;
+		font-weight: 800;
+		color: #f1f5f9;
+		line-height: 1;
+		pointer-events: none;
+	}
+
+	.cap-card:hover .cap-card-number {
+		color: #d1fae5;
+	}
+
+	/* ========================================
+	   NOSOTROS SECTION
+	   ======================================== */
+	.section-nosotros {
+		background: linear-gradient(160deg, #064e3b 0%, #047857 50%, #059669 100%);
+		padding: 4rem 0;
+		position: relative;
+		overflow: hidden;
+		min-height: 100vh;
+		min-height: 100dvh;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	.section-nosotros::before {
+		content: '';
+		position: absolute;
+		top: -50%;
+		right: -20%;
+		width: 500px;
+		height: 500px;
+		background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+		border-radius: 50%;
+		pointer-events: none;
+	}
+
+	@media (min-width: 768px) {
+		.section-nosotros {
+			padding: 6rem 0;
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.section-nosotros {
+			padding: 8rem 0;
+		}
+	}
+
+	.nosotros-layout {
+		display: flex;
+		flex-direction: column;
+		gap: 3rem;
+	}
+
+	@media (min-width: 1024px) {
+		.nosotros-layout {
+			flex-direction: row;
+			align-items: center;
+			gap: 4rem;
+		}
+	}
+
+	.nosotros-text {
+		flex: 1.2;
+	}
+
+	.nosotros-badge {
+		display: inline-block;
+		background: rgba(255,255,255,0.12);
+		color: #a7f3d0;
+		padding: 0.375rem 1rem;
+		border-radius: 2rem;
+		font-size: 0.8rem;
+		font-weight: 600;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		margin-bottom: 1rem;
+		backdrop-filter: blur(4px);
+	}
+
+	.nosotros-title {
+		font-size: clamp(1.75rem, 4vw, 2.5rem);
+		font-weight: 700;
+		color: white;
+		line-height: 1.2;
+		margin-bottom: 1rem;
+	}
+
+	.nosotros-desc {
+		font-size: clamp(0.9rem, 2vw, 1.05rem);
+		color: rgba(255,255,255,0.85);
+		line-height: 1.7;
+		margin-bottom: 1.5rem;
+	}
+
+	.nosotros-highlights {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.nosotros-highlight {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		color: #a7f3d0;
+		font-size: 0.9rem;
+		font-weight: 500;
+	}
+
+	.nosotros-highlight svg {
+		width: 20px;
+		height: 20px;
+		flex-shrink: 0;
+	}
+
+	/* ISO Certifications */
+	.nosotros-iso {
+		margin-top: 2rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid rgba(255,255,255,0.1);
+	}
+
+	.iso-label {
+		display: block;
+		font-size: 0.75rem;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: rgba(255,255,255,0.5);
+		margin-bottom: 1rem;
+	}
+
+	.iso-badges {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	@media (min-width: 640px) {
+		.iso-badges {
+			flex-direction: row;
+			gap: 1rem;
+		}
+	}
+
+	.iso-badge {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		background: rgba(255,255,255,0.06);
+		border: 1px solid rgba(255,255,255,0.08);
+		border-radius: 0.75rem;
+		padding: 0.65rem 0.85rem;
+		transition: all 0.3s ease;
+		flex: 1;
+	}
+
+	.iso-badge:hover {
+		background: rgba(255,255,255,0.1);
+		border-color: rgba(167, 243, 208, 0.25);
+	}
+
+	.iso-badge svg {
+		width: 22px;
+		height: 22px;
+		color: #6ee7b7;
+		flex-shrink: 0;
+	}
+
+	.iso-badge div {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+	}
+
+	.iso-badge strong {
+		font-size: 0.8rem;
+		font-weight: 700;
+		color: white;
+		line-height: 1.2;
+	}
+
+	.iso-badge span {
+		font-size: 0.7rem;
+		color: rgba(255,255,255,0.6);
+		line-height: 1.3;
+	}
+
+	.nosotros-visual {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 2rem;
+	}
+
+	.casanare-showcase {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		width: 380px;
+		height: 250px;
+	}
+
+	.casanare-pulse {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 75%;
+		height: 75%;
+		background: radial-gradient(circle, rgba(16, 185, 129, 0.35) 0%, rgba(16, 185, 129, 0) 70%);
+		border-radius: 50%;
+		animation: casanarePulse 3s ease-in-out infinite;
+		z-index: 0;
+	}
+
+	@keyframes casanarePulse {
+		0%, 100% {
+			transform: translate(-50%, -50%) scale(0.85);
+			opacity: 0.4;
+		}
+		50% {
+			transform: translate(-50%, -50%) scale(1.2);
+			opacity: 0.8;
+		}
+	}
+
+	.casanare-outline {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+		z-index: 1;
+		filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.3));
+		animation: casanareFloat 4s ease-in-out infinite;
+	}
+
+	@keyframes casanareFloat {
+		0%, 100% {
+			transform: translateY(0);
+		}
+		50% {
+			transform: translateY(-8px);
+		}
+	}
+
+	.casanare-label {
+		position: relative;
+		z-index: 1;
+		margin-top: 0.5rem;
+		font-size: 0.8rem;
+		font-weight: 600;
+		color: rgba(167, 243, 208, 0.8);
+		letter-spacing: 0.15em;
+		text-transform: uppercase;
+	}
+
+	.nosotros-stats {
+		width: 100%;
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 1rem;
+	}
+
+	.stat-item {
+		background: rgba(255,255,255,0.08);
+		border: 1px solid rgba(255,255,255,0.1);
+		border-radius: 1rem;
+		padding: 1.5rem 1.25rem;
+		text-align: center;
+		backdrop-filter: blur(8px);
+		transition: all 0.3s ease;
+	}
+
+	.stat-item:hover {
+		background: rgba(255,255,255,0.13);
+		transform: translateY(-3px);
+	}
+
+	.stat-item--accent {
+		background: rgba(167, 243, 208, 0.15);
+		border-color: rgba(167, 243, 208, 0.25);
+	}
+
+	.stat-value {
+		display: block;
+		font-size: clamp(1.75rem, 5vw, 2.5rem);
+		font-weight: 800;
+		color: white;
+		line-height: 1;
+		margin-bottom: 0.4rem;
+	}
+
+	.stat-name {
+		display: block;
+		font-size: 0.8rem;
+		color: rgba(255,255,255,0.75);
+		line-height: 1.4;
+		font-weight: 500;
+	}
+
+	.section-header {
+		text-align: center;
+		margin-bottom: 2rem;
+	}
+
 	@media (min-width: 768px) {
 		.section-header {
-			margin-bottom: 4rem;
+			margin-bottom: 2.5rem;
 		}
 	}
 
@@ -973,292 +1646,268 @@
 		line-height: 1.6;
 	}
 
-	/* Utilities */
-	.text-white {
-		color: white;
-	}
-
-	.text-emerald-100 {
-		color: rgba(255, 255, 255, 0.9);
-	}
-
 	/* ========================================
-	   GRIDS
+	   FLOTA SHOWCASE
 	   ======================================== */
-	.grid-3 {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: 1.5rem;
+	.section-flota {
+		background: #0f172a;
+		padding: 3rem 0;
+		overflow: hidden;
+		min-height: 100vh;
+		min-height: 100dvh;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
 	}
 
-	@media (min-width: 640px) {
-		.grid-3 {
-			grid-template-columns: repeat(2, 1fr);
+	@media (min-width: 768px) {
+		.section-flota {
+			padding: 4rem 0;
 		}
 	}
 
 	@media (min-width: 1024px) {
-		.grid-3 {
-			grid-template-columns: repeat(3, 1fr);
-			gap: 2rem;
+		.section-flota {
+			padding: 4rem 0;
 		}
 	}
 
-	/* Cards */
-	.card {
-		background: white;
+	.section-flota .section-title {
+		color: white;
+	}
+
+	.section-flota .section-subtitle {
+		color: rgba(255, 255, 255, 0.6);
+	}
+
+	.flota-header {
+		text-align: center;
+		margin-bottom: 1.5rem;
+	}
+
+	.flota-badge {
+		display: inline-block;
+		background: rgba(5, 150, 105, 0.15);
+		color: #6ee7b7;
+		padding: 0.375rem 1rem;
+		border-radius: 2rem;
+		font-size: 0.8rem;
+		font-weight: 600;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		margin-bottom: 1rem;
+		border: 1px solid rgba(110, 231, 183, 0.15);
+	}
+
+	.flota-showcase {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	/* Hero image */
+	.flota-hero {
+		position: relative;
+		width: 100%;
+		aspect-ratio: 16 / 7;
+		max-height: 45vh;
 		border-radius: 1rem;
 		overflow: hidden;
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-		transition: all 0.3s ease;
+		background: #1e293b;
 	}
 
 	@media (min-width: 768px) {
-		.card {
+		.flota-hero {
 			border-radius: 1.5rem;
+			aspect-ratio: 21 / 8;
+			max-height: 50vh;
 		}
 	}
 
-	.card:hover {
-		transform: translateY(-4px);
-		box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+	.flota-hero-img {
+		position: absolute;
+		inset: 0;
 	}
 
-	.card-image {
-		width: 100%;
-		aspect-ratio: 16 / 9;
-		overflow: hidden;
-		background: #f1f5f9;
-	}
-
-	.card-image img {
+	.flota-hero-img img {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-		transition: transform 0.3s ease;
 	}
 
-	.card:hover .card-image img {
-		transform: scale(1.05);
-	}
-
-	.card-content {
-		padding: 1.25rem;
-	}
-
-	@media (min-width: 768px) {
-		.card-content {
-			padding: 1.5rem;
-		}
-	}
-
-	.card-title {
-		font-size: 1.125rem;
-		font-weight: 600;
-		color: #064e3b;
-		margin-bottom: 0.5rem;
-		line-height: 1.3;
+	.flota-hero-overlay {
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			0deg,
+			rgba(0, 0, 0, 0.7) 0%,
+			rgba(0, 0, 0, 0.1) 40%,
+			transparent 100%
+		);
+		display: flex;
+		align-items: flex-end;
+		padding: 1.5rem;
 	}
 
 	@media (min-width: 768px) {
-		.card-title {
-			font-size: 1.25rem;
+		.flota-hero-overlay {
+			padding: 2.5rem;
 		}
 	}
 
-	.card-desc {
-		font-size: 0.875rem;
-		color: #64748b;
-		line-height: 1.6;
-	}
-
-	/* Stats Grid */
-	.stats-grid {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		gap: 1rem;
-	}
-
-	@media (min-width: 768px) {
-		.stats-grid {
-			grid-template-columns: repeat(4, 1fr);
-			gap: 2rem;
-		}
-	}
-
-	.stat-card {
-		text-align: center;
-		padding: 1.5rem 1rem;
-		background: rgba(255, 255, 255, 0.1);
-		border-radius: 1rem;
-		backdrop-filter: blur(10px);
-		transition: all 0.3s ease;
-	}
-
-	@media (min-width: 768px) {
-		.stat-card {
-			padding: 2rem;
-		}
-	}
-
-	.stat-card:hover {
-		background: rgba(255, 255, 255, 0.15);
-		transform: translateY(-4px);
-	}
-
-	.stat-number {
-		font-size: clamp(2rem, 6vw, 3rem);
+	.flota-hero-info h3 {
+		font-size: clamp(1.125rem, 3vw, 1.5rem);
 		font-weight: 700;
 		color: white;
-		margin-bottom: 0.5rem;
-		line-height: 1;
+		margin-bottom: 0.35rem;
 	}
 
-	.stat-label {
-		font-size: clamp(0.75rem, 2vw, 1rem);
-		color: rgba(255, 255, 255, 0.9);
-		line-height: 1.4;
+	.flota-hero-info p {
+		font-size: clamp(0.8rem, 2vw, 0.95rem);
+		color: rgba(255, 255, 255, 0.75);
+		line-height: 1.5;
+		max-width: 500px;
 	}
 
-	/* Gallery Grid */
-	.gallery-grid {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: 1rem;
-	}
-
-	@media (min-width: 640px) {
-		.gallery-grid {
-			grid-template-columns: repeat(2, 1fr);
-			gap: 1.5rem;
-		}
-	}
-
-	@media (min-width: 1024px) {
-		.gallery-grid {
-			grid-template-columns: repeat(3, 1fr);
-		}
-	}
-
-	.gallery-item {
-		aspect-ratio: 4 / 3;
-		border-radius: 0.75rem;
-		overflow: hidden;
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-		transition: all 0.3s ease;
-		background: #f1f5f9;
+	/* Counter */
+	.flota-counter {
+		position: absolute;
+		top: 1rem;
+		right: 1rem;
+		background: rgba(0, 0, 0, 0.4);
+		backdrop-filter: blur(8px);
+		border-radius: 0.5rem;
+		padding: 0.4rem 0.75rem;
+		display: flex;
+		align-items: baseline;
+		gap: 0.15rem;
+		font-family: 'Space Grotesk', monospace;
 	}
 
 	@media (min-width: 768px) {
-		.gallery-item {
-			border-radius: 1rem;
+		.flota-counter {
+			top: 1.5rem;
+			right: 1.5rem;
 		}
 	}
 
-	.gallery-item:hover {
-		transform: scale(1.02);
-		box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+	.flota-counter-current {
+		font-size: 1.25rem;
+		font-weight: 700;
+		color: white;
 	}
 
-	.gallery-item img {
+	.flota-counter-sep {
+		font-size: 0.85rem;
+		color: rgba(255, 255, 255, 0.35);
+		margin: 0 0.1rem;
+	}
+
+	.flota-counter-total {
+		font-size: 0.85rem;
+		font-weight: 500;
+		color: rgba(255, 255, 255, 0.5);
+	}
+
+	/* Thumbnails */
+	.flota-thumbs {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 0.6rem;
+	}
+
+	@media (min-width: 768px) {
+		.flota-thumbs {
+			gap: 1rem;
+		}
+	}
+
+	.flota-thumb {
+		position: relative;
+		aspect-ratio: 4 / 3;
+		border-radius: 0.6rem;
+		overflow: hidden;
+		cursor: pointer;
+		border: 2px solid transparent;
+		transition: all 0.35s ease;
+		background: #1e293b;
+		padding: 0;
+	}
+
+	@media (min-width: 768px) {
+		.flota-thumb {
+			border-radius: 0.75rem;
+		}
+	}
+
+	.flota-thumb img {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
+		transition: all 0.4s ease;
+		opacity: 0.5;
 	}
 
-	/* Contact Grid */
-	.contact-grid {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: 1rem;
-		margin-bottom: 2rem;
+	.flota-thumb:hover img {
+		opacity: 0.8;
 	}
 
-	@media (min-width: 640px) {
-		.contact-grid {
-			grid-template-columns: repeat(2, 1fr);
-		}
+	.flota-thumb--active {
+		border-color: #10b981;
+		box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
 	}
 
-	@media (min-width: 1024px) {
-		.contact-grid {
-			grid-template-columns: repeat(3, 1fr);
-			gap: 1.5rem;
-			margin-bottom: 3rem;
-		}
+	.flota-thumb--active img {
+		opacity: 1;
 	}
 
-	.contact-card {
+	.flota-thumb-label {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		padding: 0.4rem 0.5rem;
+		background: linear-gradient(0deg, rgba(0,0,0,0.7) 0%, transparent 100%);
 		display: flex;
-		align-items: center;
-		gap: 1rem;
-		padding: 1.25rem;
-		background: rgba(16, 185, 129, 0.1);
-		border-radius: 0.75rem;
-		text-decoration: none;
-		transition: all 0.3s ease;
+		flex-direction: column;
+		opacity: 0;
+		transition: opacity 0.3s ease;
 	}
 
-	@media (min-width: 768px) {
-		.contact-card {
-			padding: 1.5rem;
-			border-radius: 1rem;
-		}
+	.flota-thumb:hover .flota-thumb-label,
+	.flota-thumb--active .flota-thumb-label {
+		opacity: 1;
 	}
 
-	.contact-card:hover {
-		background: rgba(16, 185, 129, 0.15);
-		transform: translateY(-2px);
-		box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+	.flota-thumb-num {
+		font-size: 0.6rem;
+		font-weight: 700;
+		color: #6ee7b7;
+		font-family: 'Space Grotesk', monospace;
+		letter-spacing: 0.05em;
 	}
 
-	.contact-icon {
-		width: 1.5rem;
-		height: 1.5rem;
-		color: #10b981;
-		flex-shrink: 0;
-	}
-
-	.contact-text {
-		color: #064e3b;
-		font-size: 0.875rem;
-		font-weight: 500;
-		word-break: break-word;
-	}
-
-	@media (min-width: 768px) {
-		.contact-text {
-			font-size: 1rem;
-		}
-	}
-
-	/* Back to Top Button */
-	.btn-back-to-top {
-		display: block;
-		margin: 0 auto;
-		padding: 0.875rem 2rem;
-		background: #10b981;
-		color: white;
-		border: none;
-		border-radius: 9999px;
+	.flota-thumb-title {
+		font-size: 0.65rem;
 		font-weight: 600;
-		font-size: 0.875rem;
-		cursor: pointer;
-		transition: all 0.3s ease;
-		box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+		color: white;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	@media (min-width: 768px) {
-		.btn-back-to-top {
-			padding: 1rem 2.5rem;
-			font-size: 1rem;
+		.flota-thumb-label {
+			padding: 0.5rem 0.65rem;
 		}
-	}
 
-	.btn-back-to-top:hover {
-		background: #059669;
-		transform: translateY(-2px);
-		box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+		.flota-thumb-num {
+			font-size: 0.65rem;
+		}
+
+		.flota-thumb-title {
+			font-size: 0.75rem;
+		}
 	}
 
 	/* ========================================
@@ -1268,13 +1917,18 @@
 		background-color: #ffffff;
 		background-image: radial-gradient(circle, rgba(16, 185, 129, 0.09) 1px, transparent 1px);
 		background-size: 24px 24px;
-		padding: 4rem 0;
+		padding: 3rem 0;
 		position: relative;
+		min-height: 100vh;
+		min-height: 100dvh;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
 	}
 
 	@media (min-width: 768px) {
 		.section-servicios {
-			padding: 6rem 0;
+			padding: 4rem 0;
 		}
 	}
 
@@ -1285,27 +1939,27 @@
 		border-radius: 1.25rem;
 		overflow: hidden;
 		background: #064e3b;
-		margin-bottom: 3rem;
+		margin-bottom: 2rem;
 		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
 	}
 
 	@media (min-width: 768px) {
 		.servicios-banner {
 			flex-direction: row;
-			min-height: 320px;
+			max-height: 220px;
 		}
 	}
 
 	.servicios-banner-img {
 		flex: 1;
-		min-height: 220px;
+		max-height: 180px;
 		overflow: hidden;
 	}
 
 	@media (min-width: 768px) {
 		.servicios-banner-img {
 			flex: 1.2;
-			min-height: auto;
+			max-height: none;
 		}
 	}
 
@@ -1318,7 +1972,7 @@
 
 	.servicios-banner-content {
 		flex: 1;
-		padding: 2rem 1.5rem;
+		padding: 1.5rem 1.25rem;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -1327,7 +1981,7 @@
 
 	@media (min-width: 768px) {
 		.servicios-banner-content {
-			padding: 2.5rem 3rem;
+			padding: 2rem 2.5rem;
 		}
 	}
 
@@ -1379,7 +2033,7 @@
 	.servicio-card {
 		background: #f0fdf4;
 		border-radius: 1rem;
-		padding: 2rem 1.5rem;
+		padding: 1.5rem 1.25rem;
 		text-align: center;
 		transition: transform 0.3s ease, box-shadow 0.3s ease;
 		border: 1px solid #d1fae5;
@@ -1391,9 +2045,9 @@
 	}
 
 	.servicio-icon {
-		width: 56px;
-		height: 56px;
-		margin: 0 auto 1.25rem;
+		width: 48px;
+		height: 48px;
+		margin: 0 auto 1rem;
 		background: #064e3b;
 		border-radius: 50%;
 		display: flex;
@@ -1403,8 +2057,8 @@
 	}
 
 	.servicio-icon svg {
-		width: 28px;
-		height: 28px;
+		width: 24px;
+		height: 24px;
 	}
 
 	.servicio-title {
@@ -1425,108 +2079,243 @@
 	   SECCIÓN CONTACTO
 	   ======================================== */
 	.section-contact {
-		background: #f0fdf4;
-		padding: 4rem 0;
+		background: linear-gradient(160deg, #064e3b 0%, #047857 50%, #059669 100%);
+		padding: 3rem 0;
+		min-height: 100vh;
+		min-height: 100dvh;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		position: relative;
+		overflow: hidden;
 	}
 
 	@media (min-width: 768px) {
 		.section-contact {
-			padding: 6rem 0;
+			padding: 4rem 0;
 		}
 	}
 
-	.contact-grid {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: 1rem;
-		max-width: 500px;
-		margin: 0 auto;
-	}
-
-	@media (min-width: 640px) {
-		.contact-grid {
-			grid-template-columns: repeat(2, 1fr);
-			max-width: 960px;
-		}
-	}
-
-	.contact-card {
+	.contact-layout {
 		display: flex;
+		flex-direction: column;
 		align-items: center;
-		gap: 0.75rem;
-		padding: 1rem;
-		background: white;
-		border: 1px solid #d1fae5;
-		border-radius: 1rem;
-		text-decoration: none;
-		transition: all 0.3s ease;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-		overflow: hidden;
+		gap: 2rem;
 	}
 
-	.contact-card:hover {
-		background: #ecfdf5;
-		transform: translateY(-2px);
-		box-shadow: 0 8px 24px rgba(16, 185, 129, 0.12);
-		border-color: #a7f3d0;
+	@media (min-width: 1024px) {
+		.contact-layout {
+			flex-direction: row;
+			align-items: center;
+			gap: 3rem;
+		}
+	}
+
+	.contact-visual {
+		flex: 1;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.contact-cody {
+		width: 280px;
+		height: auto;
+		filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.3));
+		animation: codyBounce 3s ease-in-out infinite;
 	}
 
 	@media (min-width: 768px) {
-		.contact-card {
-			padding: 1.5rem 2rem;
-			gap: 1rem;
+		.contact-cody {
+			width: 380px;
 		}
 	}
 
-	.contact-icon {
-		width: 1.5rem;
-		height: 1.5rem;
-		color: #10b981;
+	@media (min-width: 1024px) {
+		.contact-cody {
+			width: 440px;
+		}
+	}
+
+	@keyframes codyBounce {
+		0%, 100% { transform: translateY(0); }
+		50% { transform: translateY(-12px); }
+	}
+
+	.contact-content {
+		flex: 1.2;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+	}
+
+	@media (min-width: 1024px) {
+		.contact-content {
+			align-items: flex-start;
+			text-align: left;
+		}
+	}
+
+	.contact-badge {
+		display: inline-block;
+		background: rgba(255, 255, 255, 0.12);
+		color: #a7f3d0;
+		padding: 0.375rem 1rem;
+		border-radius: 2rem;
+		font-size: 0.8rem;
+		font-weight: 600;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		margin-bottom: 1rem;
+		border: 1px solid rgba(167, 243, 208, 0.15);
+	}
+
+	.contact-title {
+		font-size: clamp(1.5rem, 4vw, 2.25rem);
+		font-weight: 700;
+		color: #ffffff;
+		line-height: 1.2;
+		margin-bottom: 0.75rem;
+	}
+
+	.contact-highlight {
+		color: #a7f3d0;
+	}
+
+	.contact-desc {
+		font-size: 1rem;
+		color: rgba(255, 255, 255, 0.7);
+		line-height: 1.6;
+		margin-bottom: 1.5rem;
+		max-width: 480px;
+	}
+
+	/* CTA Buttons */
+	.contact-actions {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+		width: 100%;
+		max-width: 400px;
+		margin-bottom: 1.5rem;
+	}
+
+	@media (min-width: 480px) {
+		.contact-actions {
+			flex-direction: row;
+			flex-wrap: wrap;
+			max-width: none;
+		}
+	}
+
+	.contact-cta {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.6rem;
+		padding: 0.875rem 1.5rem;
+		border-radius: 0.75rem;
+		font-size: 0.9rem;
+		font-weight: 600;
+		text-decoration: none;
+		transition: all 0.3s ease;
+		position: relative;
+		overflow: hidden;
+		cursor: pointer;
+	}
+
+	.contact-cta--whatsapp {
+		background: #25d366;
+		color: #ffffff;
+		box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+	}
+
+	.contact-cta--whatsapp:hover {
+		background: #20bd5a;
+		transform: translateY(-2px);
+		box-shadow: 0 8px 30px rgba(37, 211, 102, 0.5);
+	}
+
+	/* Pulse animation behind WhatsApp button */
+	.cta-pulse {
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		animation: ctaPulse 2s ease-in-out infinite;
+	}
+
+	.contact-cta--whatsapp .cta-pulse {
+		box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5);
+	}
+
+	@keyframes ctaPulse {
+		0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5); }
+		70% { box-shadow: 0 0 0 12px rgba(37, 211, 102, 0); }
+		100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+	}
+
+	.contact-cta--email {
+		background: rgba(255, 255, 255, 0.12);
+		color: #ffffff;
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		backdrop-filter: blur(8px);
+	}
+
+	.contact-cta--email:hover {
+		background: rgba(255, 255, 255, 0.2);
+		transform: translateY(-2px);
+	}
+
+	.contact-cta--phone {
+		background: rgba(255, 255, 255, 0.12);
+		color: #ffffff;
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		backdrop-filter: blur(8px);
+	}
+
+	.contact-cta--phone:hover {
+		background: rgba(255, 255, 255, 0.2);
+		transform: translateY(-2px);
+	}
+
+	.cta-icon {
+		width: 20px;
+		height: 20px;
 		flex-shrink: 0;
 	}
 
-	@media (min-width: 768px) {
-		.contact-icon {
-			width: 2rem;
-			height: 2rem;
-		}
-	}
-
-	.contact-info {
+	/* Info chips */
+	.contact-info-row {
 		display: flex;
-		flex-direction: column;
-		gap: 0.15rem;
-		min-width: 0;
-		overflow: hidden;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+		justify-content: center;
 	}
 
-	.contact-label {
-		font-size: 0.6875rem;
-		font-weight: 500;
-		color: #94a3b8;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-	}
-
-	@media (min-width: 768px) {
-		.contact-label {
-			font-size: 0.75rem;
+	@media (min-width: 1024px) {
+		.contact-info-row {
+			justify-content: flex-start;
 		}
 	}
 
-	.contact-text {
-		color: #064e3b;
-		font-size: 0.75rem;
-		font-weight: 500;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
+	.contact-info-chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0.4rem 0.85rem;
+		background: rgba(255, 255, 255, 0.08);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 2rem;
+		color: rgba(255, 255, 255, 0.6);
+		font-size: 0.8rem;
 	}
 
-	@media (min-width: 768px) {
-		.contact-text {
-			font-size: 1rem;
-		}
+	.contact-info-chip svg {
+		width: 16px;
+		height: 16px;
+		flex-shrink: 0;
+		color: #a7f3d0;
 	}
 
 	/* ========================================
