@@ -1,38 +1,81 @@
 /* 1️⃣ Todos los imports al inicio */
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
 /* 2️⃣ Declaración de tema (fonts) */
 @theme {
-  --font-sans: "Inter", system-ui, sans-serif;
-  --font-display: "Space Grotesk", sans-serif;
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-sans: "Inter Tight", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
 }
 
 /* 3️⃣ Variables de color y efectos personalizados */
 :root {
-  /* Paleta esmeralda */
+  /* Paleta emerald (acento) */
   --emerald-500: #10B981;
   --emerald-600: #059669;
   --emerald-700: #047857;
   --emerald-800: #065F46;
+  --emerald-deep: #0E6B4E;
 
-  /* Tonos neutros */
+  /* Base off-white cálido */
+  --bg-base: #FAF7F2;
+  --bg-surface: #FFFFFF;
+  --bg-charcoal: #0F1F1A;
+  --bg-charcoal-deep: #0A1410;
+
+  /* Texto */
+  --text-primary: #1A1A1A;
+  --text-secondary: #4A4A4A;
+  --text-muted: #6B6B6B;
+  --text-very-muted: #9A9A9A;
+  --text-on-dark: #F0EDE6;
+  --text-on-dark-muted: rgba(240, 237, 230, 0.65);
+
+  /* Bordes y reglas */
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-default: rgba(0, 0, 0, 0.12);
+  --border-emphasis: rgba(0, 0, 0, 0.24);
+  --rule: rgba(0, 0, 0, 0.12);
+  --rule-on-dark: rgba(240, 237, 230, 0.15);
+
+  /* Tonos neutros legacy (mantener) */
   --slate-900: #0F172A;
   --slate-800: #1E293B;
   --gray-50: #F9FAFB;
 
-  /* Modo oscuro */
+  /* Modo oscuro legacy (mantener) */
   --dark-bg: #0C0F0D;
   --dark-surface: #111827;
   --dark-emerald: #022C22;
   --text-light: #E5E7EB;
 
-  /* Efecto glass */
+  /* Efecto glass (mantener) */
   --glass-bg: rgba(255, 255, 255, 0.85);
   --glass-border: rgba(255, 255, 255, 0.1);
 }
 
-/* 4️⃣ Glassmorphism */
+/* 4️⃣ Base body */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: "Inter Tight", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 5️⃣ Glassmorphism (mantener) */
 .glass {
   background: var(--glass-bg);
   backdrop-filter: blur(24px);
@@ -47,7 +90,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* 5️⃣ Animaciones suaves tipo Apple */
+/* 6️⃣ Animaciones suaves tipo Apple (mantener) */
 .apple-transition {
   transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
@@ -57,7 +100,7 @@
   transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* 6️⃣ Sombras y brillos */
+/* 7️⃣ Sombras y brillos (mantener) */
 .soft-shadow {
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
 }
@@ -68,10 +111,21 @@
     0 2px 8px rgba(16, 185, 129, 0.15);
 }
 
-/* 7️⃣ Inputs con glow */
+/* 8️⃣ Inputs con glow (mantener) */
 .input-glow:focus {
   box-shadow:
     inset 0 2px 4px rgba(0, 0, 0, 0.1),
     0 0 0 3px rgba(16, 185, 129, 0.1);
   outline: none;
+}
+
+/* 9️⃣ Drop cap editorial */
+.dropcap::first-letter {
+  font-family: "Fraunces", "Georgia", serif;
+  font-weight: 300;
+  font-size: 5rem;
+  line-height: 0.85;
+  float: left;
+  margin: 0.12em 0.12em 0 0;
+  color: var(--emerald-deep);
 }
