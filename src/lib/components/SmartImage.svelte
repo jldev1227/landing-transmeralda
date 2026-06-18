@@ -1,10 +1,10 @@
 <script lang="ts">
 	/**
-	 * SmartImage — Loads AVIF first, then WebP fallback.
-	 * Uses responsive srcset with 320/640/1024/1600/1920 sizes.
+	 * SmartImage — AVIF + WebP with responsive srcset.
+	 * Class is applied to <img> (not <picture>) for reliable CSS targeting.
 	 */
 	type Props = {
-		src: string; // e.g. /images/capacidades/localizacion-tiempo-real.avif
+		src: string;
 		alt: string;
 		width?: number;
 		height?: number;
@@ -12,6 +12,7 @@
 		fetchpriority?: 'high' | 'low' | 'auto';
 		class?: string;
 		sizes?: string;
+		fit?: 'cover' | 'contain';
 	};
 
 	let {
@@ -22,13 +23,12 @@
 		loading = 'lazy',
 		fetchpriority = 'auto',
 		class: className = '',
-		sizes = '(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw'
+		sizes = '(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw',
+		fit = 'cover'
 	}: Props = $props();
 
-	// Derive base name (strips any .jpg/.png/.webp/.avif extension)
 	const base = src.replace(/\.(jpe?g|png|webp|avif)$/i, '');
 
-	// Responsive variants: 320, 640, 1024, 1600, 1920
 	const avif320 = `${base}-320.avif`;
 	const avif640 = `${base}-640.avif`;
 	const avif1024 = `${base}-1024.avif`;
@@ -40,11 +40,11 @@
 	const webp1600 = `${base}-1600.webp`;
 	const webp1920 = `${base}-1920.webp`;
 
-	// Final fallback is the master WebP
 	const fallbackSrc = `${base}.webp`;
+	const fitClass = fit === 'contain' ? 'smart-img--contain' : 'smart-img--cover';
 </script>
 
-<picture class={className}>
+<picture>
 	<source
 		type="image/avif"
 		srcset={`${avif320} 320w, ${avif640} 640w, ${avif1024} 1024w, ${avif1600} 1600w, ${avif1920} 1920w`}
@@ -63,5 +63,24 @@
 		{loading}
 		decoding="async"
 		fetchpriority={fetchpriority}
+		class={`smart-img ${fitClass} ${className}`}
 	/>
 </picture>
+
+<style>
+	.smart-img {
+		display: block;
+		max-width: 100%;
+		height: auto;
+	}
+	.smart-img--cover {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+	.smart-img--contain {
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+	}
+</style>

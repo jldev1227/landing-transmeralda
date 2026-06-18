@@ -225,7 +225,8 @@
 			span: 'lg:col-span-2',
 			featured: true,
 			featuredTitle: 'Monitoreo GPS 24/7 y trazabilidad en tiempo real',
-			featuredDesc:
+			featuredDesc: 'GPS en cada unidad con centro de control 24/7.',
+			featuredDescLong:
 				'Cada vehículo de nuestra flota cuenta con GPS rastreable desde nuestro centro de control. Disponibilidad total de la información de rutas para clientes corporativos del sector petrolero y empresarial en Casanare.',
 			alt: 'Localización GPS en tiempo real de vehículo Transmeralda en ruta entre Yopal y Tauramena, Casanare'
 		},
@@ -472,7 +473,8 @@
 								<div class="bento__num">0{i + 1}</div>
 								{#if cap.featured}
 									<h3 class="bento__title">{cap.featuredTitle}</h3>
-									<p class="bento__desc">{cap.featuredDesc}</p>
+									<p class="bento__desc bento__desc--long">{cap.featuredDescLong}</p>
+									<p class="bento__desc bento__desc--short">{cap.featuredDesc}</p>
 								{:else}
 									<h3 class="bento__title">{cap.title}</h3>
 									<p class="bento__desc">{cap.desc}</p>
@@ -1404,22 +1406,7 @@
 		display: block;
 		z-index: 0;
 	}
-	.bento__card :global(picture img) {
-		position: absolute;
-		inset: 0;
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		transform: scale(1);
-		transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-			filter 0.5s ease;
-		filter: saturate(0.95) brightness(0.95);
-	}
-	.bento__card:hover :global(picture img) {
-		transform: scale(1.08);
-		filter: saturate(1.1) brightness(1.02);
-	}
-
+	
 	/* Overlay emerald de fondo (igual que featured pero más sutil) */
 	.bento__overlay {
 		position: absolute;
@@ -1533,6 +1520,12 @@
 		font-weight: 400;
 		opacity: 1;
 		transition: color 0.3s ease;
+	}
+	.bento__desc--long { display: none; }
+	.bento__desc--short { display: block; }
+	@media (min-width: 768px) {
+		.bento__desc--long { display: block; }
+		.bento__desc--short { display: none; }
 	}
 	.bento__card:hover .bento__desc {
 		color: rgba(255, 255, 255, 0.95);
@@ -1872,15 +1865,7 @@
 		display: block;
 		z-index: 0;
 	}
-	.srv-row__visual :global(picture img) {
-		position: absolute;
-		inset: 0;
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-	}
-	.srv-row__visual:hover :global(picture img) { transform: scale(1.04); }
+
 	.srv-row__visual-tag {
 		position: absolute;
 		top: 1.5rem;
