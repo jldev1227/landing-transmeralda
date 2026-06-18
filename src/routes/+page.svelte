@@ -45,7 +45,7 @@
 
 	// Leaflet map
 	let mapContainer = $state<HTMLDivElement | undefined>(undefined);
-	 let mapInstance: any = null;
+	let mapInstance: any = null;
 	let mapInitialized = $state(false);
 
 	const municipios = [
@@ -120,7 +120,7 @@
 		});
 
 		// Draw a soft line connecting all municipios (representing service area)
-		const polyline = L.polyline(
+		L.polyline(
 			municipios.map((m) => m.coords as [number, number]),
 			{ color: '#10B981', weight: 1.5, opacity: 0.3, dashArray: '4 8' }
 		).addTo(mapInstance);
@@ -1163,7 +1163,7 @@
 		z-index: 1;
 		transition: opacity 0.6s ease-out;
 	}
-	.hero-video.is-ready { opacity: 0.8; }
+	.hero-video.is-ready { opacity: 1; }
 	.hero-overlay { position: absolute; inset: 0; background: rgba(6, 78, 59, 0.45); }
 	.hero-content {
 		position: relative;
@@ -1608,6 +1608,7 @@
 		overflow: hidden;
 		background: #e8e4dc;
 		border: 1px solid var(--border-subtle);
+		z-index: 10;
 	}
 	@media (min-width: 1024px) { .map-wrap { height: 540px; } }
 
