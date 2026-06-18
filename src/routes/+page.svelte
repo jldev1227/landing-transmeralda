@@ -2,6 +2,7 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { fly, fade } from 'svelte/transition';
 	import { elasticOut, quintOut } from 'svelte/easing';
+	import SmartImage from '$lib/components/SmartImage.svelte';
 
 	let scrolled = $state(false);
 	let mobileMenuOpen = $state(false);
@@ -142,6 +143,17 @@
 	}
 
 	onMount(() => {
+		const video = document.querySelector('.hero-video') as HTMLVideoElement | null;
+		if (video) {
+			const markReady = () => video.classList.add('is-ready');
+			if (video.readyState >= 2) {
+				markReady();
+			} else {
+				video.addEventListener('loadeddata', markReady, { once: true });
+				setTimeout(markReady, 2500);
+			}
+		}
+
 		const handleScroll = () => {
 			scrolled = window.scrollY > 50;
 			showWhatsappFab = window.scrollY > 400;
@@ -207,47 +219,43 @@
 
 	const capacidades = [
 		{
-			title: 'Monitoreo GPS 24/7 y trazabilidad en tiempo real',
-			desc: 'Cada vehículo de nuestra flota cuenta con GPS rastreable desde nuestro centro de control. Disponibilidad de la información de rutas para clientes corporativos del sector petrolero en Casanare.',
-			img: '/images/flota/slide-1.jpg',
-			span: 'lg:col-span-2 lg:row-span-2',
+			title: 'GPS 24/7',
+			desc: 'Trazabilidad en tiempo real desde nuestro centro de control.',
+			img: '/images/capacidades/localizacion-tiempo-real.avif',
+			span: 'lg:col-span-2',
 			featured: true,
-			alt: 'Camioneta 4x4 Transmeralda con GPS rastreando ruta en tiempo real entre Yopal y Tauramena, Casanare'
+			featuredTitle: 'Monitoreo GPS 24/7 y trazabilidad en tiempo real',
+			featuredDesc:
+				'Cada vehículo de nuestra flota cuenta con GPS rastreable desde nuestro centro de control. Disponibilidad total de la información de rutas para clientes corporativos del sector petrolero y empresarial en Casanare.',
+			alt: 'Localización GPS en tiempo real de vehículo Transmeralda en ruta entre Yopal y Tauramena, Casanare'
 		},
 		{
-			title: 'Protocolos HSEQ y bioseguridad',
-			desc: 'Estandarización operativa, seguridad vial y bioseguridad documentadas. Cumplimos con los protocolos HSEQ exigidos por empresas petroleras y de construcción en Casanare.',
-			img: '/images/flota/slide-3.png',
+			title: 'Protocolos HSEQ',
+			desc: 'Seguridad y bioseguridad documentadas.',
+			img: '/images/capacidades/protocolos-documentados.avif',
 			span: '',
-			alt: 'Documentación de protocolos HSEQ y bioseguridad para transporte especial en Casanare'
+			alt: 'Documentación de protocolos HSEQ para transporte especial en Casanare'
 		},
 		{
-			title: 'Planificación de rutas empresariales',
-			desc: 'Diseño, horarios y asignaciones optimizadas para rutas de personal en Yopal, Tauramena, Villanueva y Aguazul. Menos tiempos muertos y mayor puntualidad.',
-			img: '/images/flota/slide-2.jpg',
+			title: 'Rutas optimizadas',
+			desc: 'Diseño, horarios y asignaciones a la medida.',
+			img: '/images/capacidades/planificacion-de-rutas.avif',
 			span: '',
-			alt: 'Bus de Transmeralda planificando ruta empresarial en Casanare con conductor certificado'
+			alt: 'Planificación de rutas empresariales para transporte de personal en Casanare'
 		},
 		{
-			title: 'Mantenimiento programado y vehículos modelo reciente',
-			desc: 'Mantenimiento preventivo y correctivo con registros digitales, alertas tempranas y pólizas vigentes. Flota renovada modelo 2020 en adelante.',
-			img: '/images/flota/slide-4.png',
+			title: 'Mantenimiento',
+			desc: 'Preventivo, correctivo, alertas digitales.',
+			img: '/images/capacidades/mantenimiento-programado.avif',
 			span: '',
-			alt: 'Vehículo de Transmeralda en taller de mantenimiento preventivo en Yopal, Casanare'
+			alt: 'Mantenimiento programado de vehículo Transmeralda en taller en Yopal, Casanare'
 		},
 		{
-			title: 'Conductores certificados y verificados',
-			desc: 'Licencia vigente, exámenes médicos al día, EPP, verificación de antecedentes y formación continua en atención al cliente y seguridad vial.',
-			img: '/images/flota/slide-1.jpg',
+			title: 'Conductores',
+			desc: 'Certificados, verificados, capacitados.',
+			img: '/images/capacidades/conductores-certificados.avif',
 			span: '',
 			alt: 'Conductor certificado de Transmeralda uniformado frente a bus de transporte especial en Casanare'
-		},
-		{
-			title: 'Reportes digitales y app para clientes',
-			desc: 'Plataforma digital para seguimiento de rutas, novedades operativas y reportes exportables para auditorías corporativas. Visibilidad total del servicio.',
-			img: '/images/flota/slide-2.jpg',
-			span: 'lg:col-span-2',
-			alt: 'App de seguimiento de rutas y reportes digitales Transmeralda para empresas en Casanare'
 		}
 	];
 
@@ -256,8 +264,8 @@
 			tag: '01',
 			title: 'Transporte de Personal Petrolero en Yopal',
 			desc: 'Rutas empresariales, turnos rotativos y traslados punto a punto para el sector petrolero en Casanare. Diseñamos cada operación según la ubicación de tus colaboradores y los horarios de tu operación, con puntualidad garantizada contractualmente y cumplimiento de protocolos HSEQ.',
-			img: '/images/flota/slide-1.jpg',
-			alt: 'Transporte de personal petrolero en Yopal, Casanare con buses de Transmeralda',
+			img: '/images/servicios/transporte-de-personal.avif',
+			alt: 'Servicio de transporte de personal petrolero en Yopal, Casanare con buses de Transmeralda',
 			points: ['Rutas a medida', 'Punto a punto', 'Turnos rotativos', 'Cumplimiento HSEQ'],
 			imgPosition: 'right'
 		},
@@ -265,8 +273,8 @@
 			tag: '02',
 			title: 'Alquiler de Buses y Camionetas con Conductor',
 			desc: 'Alquiler de buses desde 19 hasta 40 pasajeros y camionetas 4x4 con conductor certificado en Yopal, Tauramena, Villanueva y toda Casanare. Servicio mensual o por evento con tarifas competitivas para empresas, gobierno y eventos.',
-			img: '/images/flota/slide-2.jpg',
-			alt: 'Alquiler de buses y camionetas con conductor en Casanare para empresas y eventos',
+			img: '/images/servicios/logistica-rutas.avif',
+			alt: 'Logística y rutas para alquiler de buses y camionetas con conductor en Casanare',
 			points: ['Buses 19-40 pax', 'Camionetas 4x4', 'Conductor incluido', 'Tarifa por km o mes'],
 			imgPosition: 'left'
 		},
@@ -274,8 +282,8 @@
 			tag: '03',
 			title: 'Seguridad Vial y Cumplimiento',
 			desc: 'Habilitación nacional vigente del Ministerio de Transporte, SOAT y técnico-mecánica al día, protocolos de bioseguridad documentados y monitoreo GPS 24/7 desde nuestro centro de control. Cumplimos con los estándares más exigentes del sector petrolero y gubernamental.',
-			img: '/images/flota/slide-3.png',
-			alt: 'Centro de control con monitoreo GPS 24/7 de la flota Transmeralda en Casanare',
+			img: '/images/servicios/seguridad-y-cumplimiento.avif',
+			alt: 'Seguridad y cumplimiento con monitoreo GPS 24/7 y protocolos HSEQ de la flota Transmeralda en Casanare',
 			points: ['Habilitación nacional', 'SOAT y revisión al día', 'Bioseguridad', 'Monitoreo GPS 24/7'],
 			imgPosition: 'right'
 		}
@@ -354,7 +362,9 @@
 <main>
 	<!-- ═══════════════ HERO (CONSERVADO) ═══════════════ -->
 	<section id="inicio" class="section-hero" aria-label="Transporte Especial en Yopal, Casanare">
-		<video autoplay muted loop playsinline preload="metadata" poster="/images/servicios/transporte-de-personal.jpg" class="hero-video" aria-label="Video de flota Transmeralda en operación en Casanare">
+		<!-- Video poster como background-image para FCP instantáneo (el <video> bloquea render) -->
+		<div class="hero-poster" aria-hidden="true"></div>
+		<video autoplay muted loop playsinline preload="none" poster="/images/fallback-video-hero.avif" class="hero-video" aria-hidden="true">
 			<source src="/videos/fondo_transmeralda.mp4" type="video/mp4" />
 		</video>
 		<div class="hero-overlay"></div>
@@ -362,7 +372,7 @@
 		<div class="hero-content" in:fly={{ y: 200, duration: 1000, easing: elasticOut }}>
 			<div class="hero-text">
 				<h1 class="hero-title">
-					Transporte Especial en Yopal, Casanare — Para Empresas, Petroleras y Turismo
+					Transporte Especial en Yopal, Casanare — Para Empresas, Petroleras y Privadas
 				</h1>
 				<p class="hero-subtitle">
 					Transmeralda S.A.S. — Transporte terrestre automotor especial desde Yopal, Casanare. Movilidad inteligente, eficiencia real y seguridad para tu equipo.
@@ -430,12 +440,24 @@
 							class="bento__card {cap.span}"
 							in:fly={{ y: 30, duration: 700, delay: 100 + i * 80, easing: quintOut }}
 						>
-							<img src={cap.img} alt={cap.alt} width="800" height="600" class="bento__img" loading="lazy" />
+							<SmartImage
+								src={cap.img}
+								alt={cap.alt}
+								width="800"
+								height="600"
+								loading="lazy"
+								class="bento__img"
+							/>
 							<div class="bento__overlay" class:bento__overlay--featured={cap.featured}></div>
 							<div class="bento__content" class:bento__content--featured={cap.featured}>
 								<div class="bento__num">0{i + 1}</div>
-								<h3 class="bento__title">{cap.title}</h3>
-								<p class="bento__desc">{cap.desc}</p>
+								{#if cap.featured}
+									<h3 class="bento__title">{cap.featuredTitle}</h3>
+									<p class="bento__desc">{cap.featuredDesc}</p>
+								{:else}
+									<h3 class="bento__title">{cap.title}</h3>
+									<p class="bento__desc">{cap.desc}</p>
+								{/if}
 							</div>
 						</div>
 					{/each}
@@ -523,7 +545,7 @@
 	<!-- ═══════════════ 03 NOSOTROS (Hero-style fullscreen con imagen) ═══════════════ -->
 	<section id="nosotros" class="section section--nos-hero">
 		<div class="nos-bg">
-			<img src="/images/servicios/transporte-de-personal.jpg" alt="" class="nos-bg__img" />
+			<img src="/images/servicios/transporte-de-personal.avif" alt="" class="nos-bg__img" />
 			<div class="nos-bg__overlay"></div>
 		</div>
 
@@ -613,7 +635,14 @@
 							in:fly={{ y: 40, duration: 800, delay: 100 + i * 100, easing: quintOut }}
 						>
 							<div class="srv-row__visual">
-								<img src={srv.img} alt={srv.alt} width="1200" height="900" class="srv-row__img" loading="lazy" />
+								<SmartImage
+									src={srv.img}
+									alt={srv.alt}
+									width="1200"
+									height="900"
+									loading="lazy"
+									class="srv-row__img"
+								/>
 								<div class="srv-row__visual-tag">
 									<span>{srv.tag}</span>
 								</div>
@@ -1086,7 +1115,28 @@
 		overflow: hidden;
 		background-color: #064e3b;
 	}
-	.hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+	.hero-poster {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		background-image: url('/images/fallback-video-hero.avif');
+		background-size: cover;
+		background-position: center;
+		opacity: 0.8;
+		z-index: 0;
+	}
+	.hero-video {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		opacity: 0;
+		z-index: 1;
+		transition: opacity 0.6s ease-out;
+	}
+	.hero-video.is-ready { opacity: 0.8; }
 	.hero-overlay { position: absolute; inset: 0; background: rgba(6, 78, 59, 0.45); }
 	.hero-content {
 		position: relative;
@@ -1268,33 +1318,55 @@
 	.bento {
 		display: grid;
 		grid-template-columns: 1fr;
+		grid-auto-rows: 220px;
 		gap: 1rem;
 	}
 	@media (min-width: 768px) {
 		.bento {
-			grid-template-columns: repeat(2, 1fr);
-			grid-auto-rows: 240px;
+			grid-template-columns: repeat(3, 1fr);
+			grid-auto-rows: 280px;
 			gap: 1.25rem;
 		}
 	}
 	@media (min-width: 1024px) {
 		.bento {
 			grid-template-columns: repeat(4, 1fr);
-			grid-auto-rows: 220px;
+			grid-auto-rows: 260px;
+			gap: 1.25rem;
 		}
 	}
-
+	.bento__card {
+		min-height: 220px;
+		height: 100%;
+		width: 100%;
+	}
 	.bento__card {
 		position: relative;
 		overflow: hidden;
 		border-radius: 1.25rem;
 		cursor: default;
-		min-height: 280px;
+		min-height: 200px;
+		height: 100%;
+		width: 100%;
+		isolation: isolate;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+		transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+			box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+			border-radius 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+		will-change: transform;
 	}
-	@media (min-width: 768px) { .bento__card { min-height: 0; } }
 	@media (min-width: 1024px) {
-		.bento__card.lg\:col-span-2 { grid-column: span 2; }
-		.bento__card.lg\:row-span-2 { grid-row: span 2; }
+		.bento__card.lg\:col-span-2 { grid-column: span 2; grid-row: span 2; }
+	}
+	.bento__card:hover {
+		transform: translateY(-4px);
+		box-shadow:
+			0 20px 40px -8px rgba(0, 0, 0, 0.2),
+			0 0 0 1px rgba(14, 107, 78, 0.15);
+	}
+	.bento__card:active {
+		transform: translateY(-2px);
+		transition-duration: 0.1s;
 	}
 
 	.bento__img {
@@ -1302,67 +1374,145 @@
 		inset: 0;
 		width: 100%;
 		height: 100%;
-		object-fit: cover;
-		transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+		display: block;
+		z-index: 0;
 	}
-	.bento__card:hover .bento__img { transform: scale(1.06); }
+	.bento__card :global(picture img) {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transform: scale(1);
+		transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+			filter 0.5s ease;
+		filter: saturate(0.95) brightness(0.95);
+	}
+	.bento__card:hover :global(picture img) {
+		transform: scale(1.08);
+		filter: saturate(1.1) brightness(1.02);
+	}
 
+	/* Overlay emerald de fondo (igual que featured pero más sutil) */
 	.bento__overlay {
 		position: absolute;
 		inset: 0;
-		background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.85) 100%);
-		transition: background 0.4s;
+		z-index: 1;
+		background: linear-gradient(180deg, rgba(6, 78, 59, 0.15) 0%, rgba(0, 0, 0, 0.72) 100%);
+		transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+	.bento__card:hover .bento__overlay {
+		background: linear-gradient(180deg, rgba(6, 78, 59, 0.25) 0%, rgba(0, 0, 0, 0.85) 100%);
 	}
 	.bento__overlay--featured {
-		background: linear-gradient(135deg, rgba(6, 78, 59, 0.5) 0%, rgba(0, 0, 0, 0.9) 100%);
+		background: linear-gradient(135deg, rgba(6, 78, 59, 0.55) 0%, rgba(0, 0, 0, 0.85) 100%);
+	}
+	.bento__card:hover .bento__overlay--featured {
+		background: linear-gradient(135deg, rgba(6, 78, 59, 0.7) 0%, rgba(0, 0, 0, 0.92) 100%);
+	}
+
+	/* Sweep de luz reveal en hover — efecto de editorial */
+	.bento__card::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			115deg,
+			transparent 30%,
+			rgba(255, 255, 255, 0) 40%,
+			rgba(255, 255, 255, 0.12) 50%,
+			rgba(255, 255, 255, 0) 60%,
+			transparent 70%
+		);
+		transform: translateX(-100%);
+		transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+		pointer-events: none;
+		z-index: 3;
+	}
+	.bento__card:hover::after {
+		transform: translateX(100%);
 	}
 
 	.bento__content {
-		position: relative;
+		position: absolute;
+		inset: 0;
 		z-index: 2;
-		height: 100%;
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-end;
-		padding: 1.5rem;
+		padding: 1.25rem 1.25rem 1.5rem;
 		color: white;
+		pointer-events: none;
 	}
-	.bento__content--featured { padding: 2rem; }
+	.bento__content > * { pointer-events: auto; }
+	.bento__content--featured {
+		padding: 1.5rem 1.75rem;
+		justify-content: center;
+	}
 
 	.bento__num {
 		font-family: 'JetBrains Mono', monospace;
-		font-size: 0.75rem;
+		font-size: 0.6875rem;
 		letter-spacing: 0.1em;
 		color: var(--emerald-500);
-		margin-bottom: 0.75rem;
-		opacity: 0.9;
+		margin-bottom: 0.5rem;
+		opacity: 0.95;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		transition: gap 0.3s ease, color 0.3s ease;
+	}
+	.bento__num::before {
+		content: '';
+		display: block;
+		width: 0;
+		height: 1px;
+		background: var(--emerald-500);
+		transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+	.bento__card:hover .bento__num {
+		gap: 0.75rem;
+	}
+	.bento__card:hover .bento__num::before {
+		width: 1.5rem;
 	}
 
 	.bento__title {
 		font-family: 'Fraunces', serif;
-		font-size: clamp(1.25rem, 2vw, 1.5rem);
+		font-size: 1.25rem;
 		font-weight: 400;
 		line-height: 1.1;
 		letter-spacing: -0.015em;
-		margin: 0 0 0.5rem 0;
+		margin: 0 0 0.4rem 0;
 		color: white;
 		font-variation-settings: 'opsz' 144;
+		transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+	.bento__card:hover .bento__title {
+		transform: translateX(2px);
 	}
 	.bento__content--featured .bento__title {
 		font-size: clamp(1.75rem, 3vw, 2.25rem);
+		font-weight: 400;
 	}
 
 	.bento__desc {
 		font-family: 'Inter Tight', system-ui, sans-serif;
-		font-size: 0.875rem;
-		line-height: 1.55;
+		font-size: 0.8125rem;
+		line-height: 1.5;
 		color: rgba(255, 255, 255, 0.85);
 		margin: 0;
-		max-width: 420px;
+		max-width: 280px;
+		font-weight: 400;
+		opacity: 1;
+		transition: color 0.3s ease;
+	}
+	.bento__card:hover .bento__desc {
+		color: rgba(255, 255, 255, 0.95);
 	}
 	.bento__content--featured .bento__desc {
 		font-size: 1rem;
+		line-height: 1.6;
 		max-width: 520px;
+		opacity: 1;
 	}
 
 	/* ═══════════════ 02 COBERTURA (Leaflet) ═══════════════ */
@@ -1685,12 +1835,20 @@
 		background: #0F1F1A;
 	}
 	.srv-row__img {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		display: block;
+		z-index: 0;
+	}
+	.srv-row__visual :global(picture img) {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
 		transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 	}
-	.srv-row__visual:hover .srv-row__img { transform: scale(1.04); }
+	.srv-row__visual:hover :global(picture img) { transform: scale(1.04); }
 	.srv-row__visual-tag {
 		position: absolute;
 		top: 1.5rem;

@@ -10,11 +10,10 @@
 	let autoplayInterval: ReturnType<typeof setInterval> | undefined;
 
 	const images = [
-		'/images/flota/slide-1.jpg',
-		'/images/flota/slide-2.jpg',
-		'/images/flota/slide-3.png',
-		'/images/flota/slide-4.png',
-		'/images/flota/slide-5.png'
+		'/images/flota/slide-1.avif',
+		'/images/flota/slide-2.avif',
+		'/images/flota/slide-3.avif',
+		'/images/flota/slide-4.avif'
 	];
 
 	onMount(() => {
