@@ -16,8 +16,8 @@
 <svelte:head>
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<meta name="theme-color" content="#064e3b" />
-	<link rel="preconnect" href="https://fonts.googleapis.com" />
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+	<link rel="preconnect" href="https://basemaps.cartocdn.com" crossorigin />
+	<link rel="dns-prefetch" href="https://basemaps.cartocdn.com" />
 </svelte:head>
 
 {@render children?.()}

@@ -302,7 +302,15 @@
 <nav class="nav" class:nav--scrolled={scrolled}>
 	<div class="nav__inner">
 		<button class="nav__brand" onclick={() => scrollToSection('inicio')}>
-			<img src="/assets/logo_transmeralda.png" alt="Transmeralda" class="nav__logo" />
+			<img
+				src="/assets/logo_transmeralda-264.avif"
+				srcset="/assets/logo_transmeralda-132.avif 132w, /assets/logo_transmeralda-264.avif 264w, /assets/logo_transmeralda-528.avif 528w"
+				sizes="40px"
+				alt="Transmeralda"
+				width="132"
+				height="40"
+				class="nav__logo"
+			/>
 		</button>
 
 		<div class="nav__menu">
@@ -337,7 +345,15 @@
 
 <aside class="sidebar" class:sidebar--open={mobileMenuOpen}>
 	<div class="sidebar__header">
-		<img src="/assets/logo_transmeralda.png" alt="Transmeralda" class="sidebar__logo" />
+		<img
+			src="/assets/logo_transmeralda-264.avif"
+			srcset="/assets/logo_transmeralda-132.avif 132w, /assets/logo_transmeralda-264.avif 264w, /assets/logo_transmeralda-528.avif 528w"
+			sizes="40px"
+			alt="Transmeralda"
+			width="132"
+			height="40"
+			class="sidebar__logo"
+		/>
 		<button class="sidebar__close" onclick={() => (mobileMenuOpen = false)} aria-label="Cerrar">
 			<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 				<line x1="18" y1="6" x2="6" y2="18"></line>
@@ -407,8 +423,11 @@
 		<img
 			in:fly={{ y: 200, duration: 1000, easing: elasticOut, delay: 200 }}
 			class="hero-mascot"
-			src="/assets/codi.png"
+			src="/assets/codi-352.avif"
 			alt="Codi - Mascota de Transmeralda"
+			width="352"
+			height="286"
+			loading="lazy"
 		/>
 
 		<button class="scroll-indicator" onclick={() => scrollToSection('capacidades')} aria-label="Desplazar" in:fade={{ duration: 800, delay: 1500 }}>
@@ -443,8 +462,8 @@
 							<SmartImage
 								src={cap.img}
 								alt={cap.alt}
-								width="800"
-								height="600"
+								width={800}
+								height={600}
 								loading="lazy"
 								class="bento__img"
 							/>
@@ -638,8 +657,8 @@
 								<SmartImage
 									src={srv.img}
 									alt={srv.alt}
-									width="1200"
-									height="900"
+									width={1200}
+									height={900}
 									loading="lazy"
 									class="srv-row__img"
 								/>
@@ -870,7 +889,15 @@
 <footer class="footer">
 	<div class="footer__inner">
 		<div class="footer__col footer__col--brand">
-			<img src="/assets/logo_transmeralda_white.png" alt="Transmeralda" class="footer__logo" />
+			<img
+				src="/assets/logo_transmeralda_white-264.avif"
+				srcset="/assets/logo_transmeralda_white-132.avif 132w, /assets/logo_transmeralda_white-264.avif 264w, /assets/logo_transmeralda_white-528.avif 528w"
+				sizes="(min-width: 768px) 220px, 132px"
+				alt="Transmeralda"
+				width="132"
+				height="45"
+				class="footer__logo"
+			/>
 			<p class="footer__tagline">
 				Transporte terrestre automotor especial desde los llanos orientales.
 			</p>
@@ -1378,6 +1405,8 @@
 		z-index: 0;
 	}
 	.bento__card :global(picture img) {
+		position: absolute;
+		inset: 0;
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
@@ -1843,6 +1872,8 @@
 		z-index: 0;
 	}
 	.srv-row__visual :global(picture img) {
+		position: absolute;
+		inset: 0;
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
@@ -1926,7 +1957,6 @@
 		overflow: hidden;
 	}
 	.flo-hero__img { position: absolute; inset: 0; }
-	.flo-hero__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 	.flo-hero__caption {
 		position: absolute;
 		inset: 0;
@@ -1986,16 +2016,6 @@
 		padding: 0;
 		transition: border-color 0.3s;
 	}
-	.flo-thumb img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		opacity: 0.45;
-		transition: opacity 0.4s, transform 0.4s;
-	}
-	.flo-thumb:hover img { opacity: 0.7; }
-	.flo-thumb--active { border-color: var(--emerald-deep); }
-	.flo-thumb--active img { opacity: 1; }
 	.flo-thumb__label {
 		position: absolute;
 		bottom: 0;
