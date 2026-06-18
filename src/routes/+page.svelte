@@ -24,7 +24,7 @@
 		(Date.now() - FECHA_FUNDACION.getTime()) / (365.25 * 24 * 60 * 60 * 1000)
 	);
 
-	const sections = ['inicio', 'capacidades', 'cobertura', 'nosotros', 'servicios', 'contacto'];
+	const sections = ['inicio', 'capacidades', 'cobertura', 'nosotros', 'servicios', 'faq', 'contacto'];
 
 	function scrollToSection(id: string) {
 		document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -44,7 +44,7 @@
 
 	// Leaflet map
 	let mapContainer = $state<HTMLDivElement | undefined>(undefined);
-	let mapInstance: any = null;
+	 let mapInstance: any = null;
 	let mapInitialized = $state(false);
 
 	const municipios = [
@@ -207,66 +207,75 @@
 
 	const capacidades = [
 		{
-			title: 'Localización en tiempo real',
-			desc: 'GPS en cada unidad para trazabilidad completa y respuesta inmediata ante cualquier novedad operativa.',
-			img: '/images/capacidades/localizacion-tiempo-real.jpg',
+			title: 'Monitoreo GPS 24/7 y trazabilidad en tiempo real',
+			desc: 'Cada vehículo de nuestra flota cuenta con GPS rastreable desde nuestro centro de control. Disponibilidad de la información de rutas para clientes corporativos del sector petrolero en Casanare.',
+			img: '/images/flota/slide-1.jpg',
 			span: 'lg:col-span-2 lg:row-span-2',
-			featured: true
+			featured: true,
+			alt: 'Camioneta 4x4 Transmeralda con GPS rastreando ruta en tiempo real entre Yopal y Tauramena, Casanare'
 		},
 		{
-			title: 'Protocolos documentados',
-			desc: 'Estandarización operativa, seguridad vial y bioseguridad con manuales y auditorías internas.',
-			img: '/images/capacidades/protocolos-documentados.jpg',
-			span: ''
+			title: 'Protocolos HSEQ y bioseguridad',
+			desc: 'Estandarización operativa, seguridad vial y bioseguridad documentadas. Cumplimos con los protocolos HSEQ exigidos por empresas petroleras y de construcción en Casanare.',
+			img: '/images/flota/slide-3.png',
+			span: '',
+			alt: 'Documentación de protocolos HSEQ y bioseguridad para transporte especial en Casanare'
 		},
 		{
-			title: 'Planificación de rutas',
-			desc: 'Diseño, horarios y asignaciones optimizadas para puntualidad y menos tiempos muertos.',
-			img: '/images/capacidades/planificacion-de-rutas.jpg',
-			span: ''
+			title: 'Planificación de rutas empresariales',
+			desc: 'Diseño, horarios y asignaciones optimizadas para rutas de personal en Yopal, Tauramena, Villanueva y Aguazul. Menos tiempos muertos y mayor puntualidad.',
+			img: '/images/flota/slide-2.jpg',
+			span: '',
+			alt: 'Bus de Transmeralda planificando ruta empresarial en Casanare con conductor certificado'
 		},
 		{
-			title: 'Mantenimiento programado',
-			desc: 'Preventivo y correctivo con registros digitales y alertas tempranas por vehículo.',
-			img: '/images/capacidades/mantenimiento-programado.jpg',
-			span: ''
+			title: 'Mantenimiento programado y vehículos modelo reciente',
+			desc: 'Mantenimiento preventivo y correctivo con registros digitales, alertas tempranas y pólizas vigentes. Flota renovada modelo 2020 en adelante.',
+			img: '/images/flota/slide-4.png',
+			span: '',
+			alt: 'Vehículo de Transmeralda en taller de mantenimiento preventivo en Yopal, Casanare'
 		},
 		{
-			title: 'Conductores certificados',
-			desc: 'Licencia vigente, exámenes médicos, EPP y formación continua en atención al usuario.',
-			img: '/images/capacidades/conductores-certificados.jpg',
-			span: ''
+			title: 'Conductores certificados y verificados',
+			desc: 'Licencia vigente, exámenes médicos al día, EPP, verificación de antecedentes y formación continua en atención al cliente y seguridad vial.',
+			img: '/images/flota/slide-1.jpg',
+			span: '',
+			alt: 'Conductor certificado de Transmeralda uniformado frente a bus de transporte especial en Casanare'
 		},
 		{
-			title: 'Reportes y seguimiento',
-			desc: 'App propia para novedades, indicadores operativos y reportes exportables para auditorías.',
-			img: '/images/servicios/logistica-rutas.jpg',
-			span: 'lg:col-span-2'
+			title: 'Reportes digitales y app para clientes',
+			desc: 'Plataforma digital para seguimiento de rutas, novedades operativas y reportes exportables para auditorías corporativas. Visibilidad total del servicio.',
+			img: '/images/flota/slide-2.jpg',
+			span: 'lg:col-span-2',
+			alt: 'App de seguimiento de rutas y reportes digitales Transmeralda para empresas en Casanare'
 		}
 	];
 
 	const servicios = [
 		{
 			tag: '01',
-			title: 'Transporte de personal',
-			desc: 'Rutas empresariales, turnos rotativos y traslados punto a punto. Diseñamos cada operación según la ubicación de tus colaboradores y los horarios de tu operación, con puntualidad garantizada contractualmente.',
-			img: '/images/servicios/transporte-de-personal.jpg',
-			points: ['Rutas a medida', 'Punto a punto', 'Turnos rotativos', 'Recurrentes y esporádicos'],
+			title: 'Transporte de Personal Petrolero en Yopal',
+			desc: 'Rutas empresariales, turnos rotativos y traslados punto a punto para el sector petrolero en Casanare. Diseñamos cada operación según la ubicación de tus colaboradores y los horarios de tu operación, con puntualidad garantizada contractualmente y cumplimiento de protocolos HSEQ.',
+			img: '/images/flota/slide-1.jpg',
+			alt: 'Transporte de personal petrolero en Yopal, Casanare con buses de Transmeralda',
+			points: ['Rutas a medida', 'Punto a punto', 'Turnos rotativos', 'Cumplimiento HSEQ'],
 			imgPosition: 'right'
 		},
 		{
 			tag: '02',
-			title: 'Logística y rutas especiales',
-			desc: 'Diseñamos rutas optimizadas según la ubicación de tus colaboradores, reduciendo tiempos de desplazamiento y costos operativos. Te entregamos reportes mensuales de kilómetros, puntualidad y novedades.',
-			img: '/images/servicios/logistica-rutas.jpg',
-			points: ['Diseño de ruta', 'Optimización de tiempos', 'Tarifas por km', 'Reportes mensuales'],
+			title: 'Alquiler de Buses y Camionetas con Conductor',
+			desc: 'Alquiler de buses desde 19 hasta 40 pasajeros y camionetas 4x4 con conductor certificado en Yopal, Tauramena, Villanueva y toda Casanare. Servicio mensual o por evento con tarifas competitivas para empresas, gobierno y eventos.',
+			img: '/images/flota/slide-2.jpg',
+			alt: 'Alquiler de buses y camionetas con conductor en Casanare para empresas y eventos',
+			points: ['Buses 19-40 pax', 'Camionetas 4x4', 'Conductor incluido', 'Tarifa por km o mes'],
 			imgPosition: 'left'
 		},
 		{
 			tag: '03',
-			title: 'Seguridad y cumplimiento',
-			desc: 'Habilitación nacional vigente, SOAT y técnico-mecánica al día, protocolos de bioseguridad documentados y monitoreo GPS 24/7 desde nuestro centro de control. Cumplimos con los estándares más exigentes del sector petrolero.',
-			img: '/images/servicios/seguridad-y-cumplimiento.jpg',
+			title: 'Seguridad Vial y Cumplimiento',
+			desc: 'Habilitación nacional vigente del Ministerio de Transporte, SOAT y técnico-mecánica al día, protocolos de bioseguridad documentados y monitoreo GPS 24/7 desde nuestro centro de control. Cumplimos con los estándares más exigentes del sector petrolero y gubernamental.',
+			img: '/images/flota/slide-3.png',
+			alt: 'Centro de control con monitoreo GPS 24/7 de la flota Transmeralda en Casanare',
 			points: ['Habilitación nacional', 'SOAT y revisión al día', 'Bioseguridad', 'Monitoreo GPS 24/7'],
 			imgPosition: 'right'
 		}
@@ -274,7 +283,11 @@
 </script>
 
 <svelte:head>
-	<title>Transmeralda S.A.S. — Transporte Especial desde los llanos orientales</title>
+	<title>Transporte Especial en Casanare | Transmeralda Yopal</title>
+	<meta
+		name="description"
+		content="Empresa de transporte especial en Yopal, Casanare. Alquiler de buses y camionetas con conductor para empresas, petroleras y turismo. Habilitación nacional vigente."
+	/>
 </svelte:head>
 
 <!-- ═══════════════ NAVBAR ═══════════════ -->
@@ -340,8 +353,8 @@
 
 <main>
 	<!-- ═══════════════ HERO (CONSERVADO) ═══════════════ -->
-	<section id="inicio" class="section-hero">
-		<video autoplay muted loop playsinline preload="auto" poster="/images/servicios/transporte-de-personal.jpg" class="hero-video">
+	<section id="inicio" class="section-hero" aria-label="Transporte Especial en Yopal, Casanare">
+		<video autoplay muted loop playsinline preload="metadata" poster="/images/servicios/transporte-de-personal.jpg" class="hero-video" aria-label="Video de flota Transmeralda en operación en Casanare">
 			<source src="/videos/fondo_transmeralda.mp4" type="video/mp4" />
 		</video>
 		<div class="hero-overlay"></div>
@@ -349,7 +362,7 @@
 		<div class="hero-content" in:fly={{ y: 200, duration: 1000, easing: elasticOut }}>
 			<div class="hero-text">
 				<h1 class="hero-title">
-					Servicio de Transporte Especial en Casanare y toda Colombia
+					Transporte Especial en Yopal, Casanare — Para Empresas, Petroleras y Turismo
 				</h1>
 				<p class="hero-subtitle">
 					Transmeralda S.A.S. — Transporte terrestre automotor especial desde Yopal, Casanare. Movilidad inteligente, eficiencia real y seguridad para tu equipo.
@@ -403,10 +416,11 @@
 					<div class="section-number">
 						<span class="section-number__hash">N°</span> 01
 					</div>
-					<h2 class="section-title">Lo que nos respalda</h2>
+					<h2 class="section-title">Capacidades Diferenciales de Nuestra Flota</h2>
 					<p class="section-subtitle">
 						Tecnología, talento y procesos que sostienen un servicio de transporte
-						especial de primer nivel, todos los días del año.
+						especial y empresarial de primer nivel en Casanare y toda Colombia,
+						todos los días del año.
 					</p>
 				</header>
 
@@ -416,7 +430,7 @@
 							class="bento__card {cap.span}"
 							in:fly={{ y: 30, duration: 700, delay: 100 + i * 80, easing: quintOut }}
 						>
-							<img src={cap.img} alt={cap.title} class="bento__img" loading="lazy" />
+							<img src={cap.img} alt={cap.alt} width="800" height="600" class="bento__img" loading="lazy" />
 							<div class="bento__overlay" class:bento__overlay--featured={cap.featured}></div>
 							<div class="bento__content" class:bento__content--featured={cap.featured}>
 								<div class="bento__num">0{i + 1}</div>
@@ -438,10 +452,11 @@
 					<div class="section-number">
 						<span class="section-number__hash">N°</span> 02
 					</div>
-					<h2 class="section-title">Tres bases. Toda Colombia.</h2>
+					<h2 class="section-title">Sedes Operativas de Transmeralda en Casanare</h2>
 					<p class="section-subtitle">
-						Operamos desde Yopal, Tauramena y Villanueva, cubriendo Casanare y
-						todo el territorio nacional con habilitación vigente.
+						Bases principales en Yopal, Tauramena y Villanueva. Servicio disponible
+						en Aguazul, Paz de Ariporo, Monterrey, Orocué, Maní, Trinidad y Hato
+						Corozal. Cobertura nacional habilitada por el Ministerio de Transporte.
 					</p>
 				</header>
 
@@ -467,10 +482,10 @@
 						<p class="map-list__label">Bases operativas</p>
 						<ul>
 							{#each municipios as m, i}
-							<li class="map-list__item">
+							<li>
 								<button
 									type="button"
-									class="map-list__button"
+									class="map-list__item"
 									class:map-list__item--active={activeMunicipio === m.name}
 									onclick={() => flyToMunicipio(m.name)}
 								>
@@ -478,12 +493,10 @@
 										class="map-list__bullet"
 										style="opacity: {0.5 + m.size * 0.5}"
 									></span>
-							
 									<div class="map-list__text">
 										<div class="map-list__name">{m.name}</div>
 										<div class="map-list__tag">{m.tag}</div>
 									</div>
-							
 									<svg
 										class="map-list__arrow"
 										viewBox="0 0 24 24"
@@ -521,7 +534,7 @@
 						<span class="section-number__hash">N°</span> 03
 					</div>
 					<h2 class="section-title section-title--light">
-						Una empresa casanareña,<br />con alcance nacional
+						Empresa de Transporte Especial con Habilitación Nacional
 					</h2>
 				</header>
 
@@ -582,10 +595,12 @@
 				<div class="section-number">
 					<span class="section-number__hash">N°</span> 04
 				</div>
-				<h2 class="section-title">Servicios</h2>
+				<h2 class="section-title">Servicios de Transporte Empresarial en Casanare</h2>
 				<p class="section-subtitle">
-					Servicio Público de Transporte Terrestre Automotor Especial a nivel
-					local y nacional, con la calidez que nos caracteriza.
+					Alquiler de buses y camionetas con conductor para empresas del sector
+					petrolero, constructoras, agroindustria, turismo y gobierno en
+					Casanare y toda Colombia. Servicio Público de Transporte Terrestre
+					Automotor Especial con habilitación nacional vigente.
 				</p>
 			</header>
 
@@ -598,7 +613,7 @@
 							in:fly={{ y: 40, duration: 800, delay: 100 + i * 100, easing: quintOut }}
 						>
 							<div class="srv-row__visual">
-								<img src={srv.img} alt={srv.title} class="srv-row__img" loading="lazy" />
+								<img src={srv.img} alt={srv.alt} width="1200" height="900" class="srv-row__img" loading="lazy" />
 								<div class="srv-row__visual-tag">
 									<span>{srv.tag}</span>
 								</div>
@@ -622,12 +637,134 @@
 		</div>
 	</section>
 
-	<!-- ═══════════════ 06 CONTACTO (Dark) ═══════════════ -->
+	<!-- ═══════════════ 06 FAQ — Preguntas Frecuentes ═══════════════ -->
+	<section id="faq" class="section section--faq">
+		<div class="container">
+			<header class="section-header">
+				<div class="section-number">
+					<span class="section-number__hash">N°</span> 06
+				</div>
+				<h2 class="section-title">Preguntas Frecuentes sobre Nuestro Servicio de Transporte</h2>
+				<p class="section-subtitle">
+					Resolvemos las dudas más comunes sobre el servicio de transporte
+					especial, alquiler de buses y rutas empresariales en Casanare.
+				</p>
+			</header>
+
+			<div class="faq-list">
+				<details class="faq-item" name="faq">
+					<summary class="faq-item__q">
+						<span class="faq-item__num">01</span>
+						<span>¿Cuánto cuesta el transporte especial en Casanare?</span>
+						<svg class="faq-item__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+					</summary>
+					<div class="faq-item__a">
+						<p>
+							El costo del transporte especial en Casanare depende de la distancia, el tipo de vehículo y la duración del contrato. En Transmeralda cotizamos por kilómetro recorrido o por servicio mensual según tu necesidad. <strong>Solicita tu cotización gratuita por WhatsApp al +57 323 234 0117</strong> o por correo a operaciones.transmeraldasas@gmail.com.
+						</p>
+					</div>
+				</details>
+
+				<details class="faq-item" name="faq">
+					<summary class="faq-item__q">
+						<span class="faq-item__num">02</span>
+						<span>¿Qué documentos se necesitan para contratar transporte especial?</span>
+						<svg class="faq-item__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+					</summary>
+					<div class="faq-item__a">
+						<p>
+							Para contratar transporte especial con Transmeralda S.A.S. como persona jurídica necesitas: <strong>RUT, cámara de comercio vigente</strong> (no mayor a 30 días) y cédula del representante legal. Para personas naturales en servicios eventuales solo se requiere documento de identidad. Te enviamos la lista completa al solicitar la cotización.
+						</p>
+					</div>
+				</details>
+
+				<details class="faq-item" name="faq">
+					<summary class="faq-item__q">
+						<span class="faq-item__num">03</span>
+						<span>¿Atienden servicios fuera del departamento de Casanare?</span>
+						<svg class="faq-item__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+					</summary>
+					<div class="faq-item__a">
+						<p>
+							Sí. Transmeralda S.A.S. cuenta con <strong>habilitación nacional vigente del Ministerio de Transporte</strong>, lo que nos permite prestar servicios de transporte especial en cualquier municipio de Colombia. Tenemos experiencia con rutas a Bogotá, Villavicencio, Bucaramanga, Medellín y el resto del país.
+						</p>
+					</div>
+				</details>
+
+				<details class="faq-item" name="faq">
+					<summary class="faq-item__q">
+						<span class="faq-item__num">04</span>
+						<span>¿Tienen habilitación del Ministerio de Transporte?</span>
+						<svg class="faq-item__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+					</summary>
+					<div class="faq-item__a">
+						<p>
+							Sí. Transmeralda S.A.S. cuenta con habilitación vigente como empresa de Servicio Público de Transporte Terrestre Automotor Especial, según resolución del Ministerio de Transporte. Esto nos permite operar legalmente en todo el territorio nacional con nuestros vehículos, conductores y pólizas al día.
+						</p>
+					</div>
+				</details>
+
+				<details class="faq-item" name="faq">
+					<summary class="faq-item__q">
+						<span class="faq-item__num">05</span>
+						<span>¿Cómo solicito una cotización de transporte especial?</span>
+						<svg class="faq-item__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+					</summary>
+					<div class="faq-item__a">
+						<p>
+							Puedes solicitar tu cotización de tres formas: por <strong>WhatsApp al +57 323 234 0117</strong> (respuesta en menos de 1 hora en horario laboral), por correo a operaciones.transmeraldasas@gmail.com, o llamando al mismo número de lunes a sábado de 6:00 a.m. a 6:00 p.m. Te pedimos enviar origen, destino, número de pasajeros, fechas y tipo de vehículo deseado.
+						</p>
+					</div>
+				</details>
+
+				<details class="faq-item" name="faq">
+					<summary class="faq-item__q">
+						<span class="faq-item__num">06</span>
+						<span>¿Cuántos pasajeros pueden sus buses?</span>
+						<svg class="faq-item__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+					</summary>
+					<div class="faq-item__a">
+						<p>
+							Nuestra flota de buses incluye unidades <strong>desde 19 hasta 40 pasajeros</strong> según el modelo. Para grupos grandes, eventos corporativos o turnos industriales tenemos buses doble eje con capacidad ampliada. Todos los buses cuentan con aire acondicionado, cinturones de seguridad, GPS y seguro de pasajeros vigente.
+						</p>
+					</div>
+				</details>
+
+				<details class="faq-item" name="faq">
+					<summary class="faq-item__q">
+						<span class="faq-item__num">07</span>
+						<span>¿El servicio de transporte incluye conductor?</span>
+						<svg class="faq-item__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+					</summary>
+					<div class="faq-item__a">
+						<p>
+							Sí, todos nuestros servicios de transporte especial <strong>incluyen conductor certificado</strong>, con verificación de antecedentes, licencia vigente, exámenes médicos al día y capacitación continua en atención al cliente y seguridad vial. No subcontratamos conductores: todos son parte del equipo de Transmeralda.
+						</p>
+					</div>
+				</details>
+
+				<details class="faq-item" name="faq">
+					<summary class="faq-item__q">
+						<span class="faq-item__num">08</span>
+						<span>¿Tienen servicio de transporte para el sector petrolero en Casanare?</span>
+						<svg class="faq-item__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+					</summary>
+					<div class="faq-item__a">
+						<p>
+							Sí, somos especialistas en <strong>transporte de personal petrolero en Casanare</strong>. Atendemos empresas del sector de hidrocarburos con rutas a operaciones, campamentos y bases petroleras. Cumplimos con todos los protocolos HSEQ exigidos por el sector, incluyendo inducción de personal, manejo de zonas restringidas y reportes de novedades operativas.
+						</p>
+					</div>
+				</details>
+			</div>
+		</div>
+	</section>
+
+	<!-- ═══════════════ 07 CONTACTO (Dark) ═══════════════ -->
 	<section id="contacto" class="section section--contact">
 		<div class="container">
 			<header class="section-header section-header--dark">
 				<div class="section-number section-number--dark">
-					<span class="section-number__hash">N°</span> 06
+					<span class="section-number__hash">N°</span> 07
 				</div>
 				<h2 class="section-title section-title--dark">Conversemos</h2>
 				<p class="section-subtitle section-subtitle--dark">
@@ -1309,19 +1446,31 @@
 		color: var(--text-very-muted);
 		margin: 0 0 1rem 0;
 	}
-	.map-list ul { list-style: none; padding: 0; margin: 0; }
+	.map-list ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
 	.map-list__item {
 		display: flex;
 		align-items: center;
+		justify-content: flex-start;
 		gap: 0.875rem;
-		padding: 0.75rem 0.625rem;
+		padding: 0.75rem 0.875rem;
+		border: none;
 		border-top: 1px solid var(--rule);
+		background: none;
 		cursor: pointer;
 		border-radius: 0.5rem;
-		margin: 0 -0.5rem;
-		padding-left: 0.5rem;
-		padding-right: 0.5rem;
 		transition: background 0.25s, transform 0.25s;
+		width: 100%;
+		box-sizing: border-box;
+		text-align: left;
+		font: inherit;
+		color: inherit;
 	}
 	.map-list__item:hover { background: rgba(14, 107, 78, 0.05); }
 	.map-list__item:first-child { border-top: none; }
@@ -1717,7 +1866,79 @@
 		color: white;
 	}
 
-	/* ═══════════════ 06 CONTACTO (Dark) ═══════════════ */
+	/* ═══════════════ 06 FAQ (Preguntas Frecuentes) ═══════════════ */
+	.section--faq { background: var(--bg-base); }
+	.faq-list {
+		max-width: 820px;
+		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+	.faq-item {
+		border: 1px solid var(--border-subtle);
+		border-radius: 0.875rem;
+		background: var(--bg-surface);
+		overflow: hidden;
+		transition: border-color 0.25s, box-shadow 0.25s;
+	}
+	.faq-item[open] {
+		border-color: var(--emerald-deep);
+		box-shadow: 0 4px 20px rgba(14, 107, 78, 0.08);
+	}
+	.faq-item__q {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		padding: 1.25rem 1.5rem;
+		cursor: pointer;
+		font-family: 'Inter Tight', system-ui, sans-serif;
+		font-size: clamp(0.9375rem, 1.4vw, 1.0625rem);
+		font-weight: 500;
+		color: var(--text-primary);
+		list-style: none;
+		user-select: none;
+		transition: color 0.2s;
+	}
+	.faq-item__q::-webkit-details-marker { display: none; }
+	.faq-item__q:hover { color: var(--emerald-deep); }
+	.faq-item__q > span:nth-child(2) { flex: 1; }
+	.faq-item__num {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 0.75rem;
+		color: var(--emerald-deep);
+		letter-spacing: 0.05em;
+		min-width: 1.75rem;
+	}
+	.faq-item__chev {
+		width: 1rem;
+		height: 1rem;
+		color: var(--text-muted);
+		flex-shrink: 0;
+		transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+	.faq-item[open] .faq-item__chev {
+		transform: rotate(180deg);
+		color: var(--emerald-deep);
+	}
+	.faq-item__a {
+		padding: 0 1.5rem 1.5rem 1.5rem;
+		border-top: 1px solid var(--border-subtle);
+		padding-top: 1.25rem;
+	}
+	.faq-item__a p {
+		font-family: 'Inter Tight', system-ui, sans-serif;
+		font-size: 0.9375rem;
+		line-height: 1.65;
+		color: var(--text-muted);
+		margin: 0;
+	}
+	.faq-item__a strong {
+		color: var(--text-primary);
+		font-weight: 500;
+	}
+
+	/* ═══════════════ 07 CONTACTO (Dark) ═══════════════ */
 	.section--contact {
 		background: var(--bg-charcoal-deep);
 		color: var(--text-on-dark);

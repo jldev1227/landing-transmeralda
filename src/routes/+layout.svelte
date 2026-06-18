@@ -1,9 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { dev } from '$app/environment';
+	import { injectAnalytics } from '@vercel/analytics/sveltekit';
 	import '../app.css';
 
+	injectAnalytics({ mode: dev ? 'development' : 'production' });
+
 	let { children } = $props();
-	
+
 	onMount(() => {
 		// Inicializar el store de autenticación al cargar la app
 	});
