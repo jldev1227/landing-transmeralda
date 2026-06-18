@@ -24,7 +24,7 @@
 		(Date.now() - FECHA_FUNDACION.getTime()) / (365.25 * 24 * 60 * 60 * 1000)
 	);
 
-	const sections = ['inicio', 'capacidades', 'cobertura', 'nosotros', 'servicios', 'flota', 'contacto'];
+	const sections = ['inicio', 'capacidades', 'cobertura', 'nosotros', 'servicios', 'contacto'];
 
 	function scrollToSection(id: string) {
 		document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -43,7 +43,7 @@
 	}
 
 	// Leaflet map
-	let mapContainer: HTMLDivElement;
+	let mapContainer = $state<HTMLDivElement | undefined>(undefined);
 	let mapInstance: any = null;
 	let mapInitialized = $state(false);
 
@@ -271,34 +271,6 @@
 			imgPosition: 'right'
 		}
 	];
-
-	const flotaItems = [
-		{
-			img: '/images/servicios/transporte-de-personal.jpg',
-			title: 'Camionetas',
-			desc: 'Camionetas robustas y confiables para rutas exigentes en el piedemonte llanero.',
-			alt: 'Camioneta Transmeralda para transporte especial en Casanare'
-		},
-		{
-			img: '/images/servicios/logistica-rutas.jpg',
-			title: 'Buses',
-			desc: 'Buses cómodos y seguros para el transporte grupal de personal corporativo.',
-			alt: 'Bus Transmeralda - Transporte de personal en Casanare'
-		},
-		{
-			img: '/images/servicios/seguridad-y-cumplimiento.jpg',
-			title: 'Equipamiento completo',
-			desc: 'GPS, aire acondicionado, cinturones de seguridad y protocolos documentados en cada unidad.',
-			alt: 'Vehículo Transmeralda equipado con GPS y aire acondicionado'
-		},
-		{
-			img: '/images/flota/slide-4.png',
-			title: 'Transporte especial',
-			desc: 'Unidades habilitadas para Servicio Público de Transporte Terrestre Automotor Especial.',
-			alt: 'Transporte terrestre automotor especial - Transmeralda Yopal'
-		}
-	];
-
 </script>
 
 <svelte:head>
@@ -495,23 +467,38 @@
 						<p class="map-list__label">Bases operativas</p>
 						<ul>
 							{#each municipios as m, i}
-								<li
-									class="map-list__item"
+							<li class="map-list__item">
+								<button
+									type="button"
+									class="map-list__button"
 									class:map-list__item--active={activeMunicipio === m.name}
-									role="button"
-									tabindex="0"
 									onclick={() => flyToMunicipio(m.name)}
-									onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && flyToMunicipio(m.name)}
 								>
-									<span class="map-list__bullet" style="opacity: {0.5 + m.size * 0.5}"></span>
+									<span
+										class="map-list__bullet"
+										style="opacity: {0.5 + m.size * 0.5}"
+									></span>
+							
 									<div class="map-list__text">
 										<div class="map-list__name">{m.name}</div>
 										<div class="map-list__tag">{m.tag}</div>
 									</div>
-									<svg class="map-list__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-										<path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 5l7 7-7 7" />
+							
+									<svg
+										class="map-list__arrow"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											d="M5 12h14M13 5l7 7-7 7"
+										/>
 									</svg>
-								</li>
+								</button>
+							</li>
 							{/each}
 						</ul>
 					</aside>
@@ -1168,7 +1155,6 @@
 		min-height: 280px;
 	}
 	@media (min-width: 768px) { .bento__card { min-height: 0; } }
-	.bento__card.lg\:col-span-2 { }
 	@media (min-width: 1024px) {
 		.bento__card.lg\:col-span-2 { grid-column: span 2; }
 		.bento__card.lg\:row-span-2 { grid-row: span 2; }
@@ -1717,8 +1703,6 @@
 		transition: opacity 0.3s;
 		text-align: left;
 	}
-	.flo-thumb:hover .flo-thumb__label,
-	.flo-thumb--active .flo-thumb__label { opacity: 1; }
 	.flo-thumb__num {
 		font-family: 'JetBrains Mono', monospace;
 		font-size: 0.625rem;
