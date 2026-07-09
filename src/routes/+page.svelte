@@ -378,7 +378,7 @@
 
 <main>
 	<!-- ═══════════════ HERO (CONSERVADO) ═══════════════ -->
-	<section id="inicio" class="section-hero" aria-label="Transporte Especial en Yopal, Casanare">
+	<section id="inicio" class="section-hero" aria-label="Transporte Especial en Casanare">
 		<!-- Video poster como background-image para FCP instantáneo (el <video> bloquea render) -->
 		<div class="hero-poster" aria-hidden="true"></div>
 		<video autoplay muted loop playsinline preload="none" poster="/images/fallback-video-hero.avif" class="hero-video" aria-hidden="true">
@@ -389,7 +389,7 @@
 		<div class="hero-content" in:fly={{ y: 200, duration: 1000, easing: elasticOut }}>
 			<div class="hero-text">
 				<h1 class="hero-title">
-					Transporte Especial en Yopal, Casanare — Para Empresas, Petroleras y Privadas
+					Transporte Especial en Casanare — Para Empresas, Petroleras y Privadas
 				</h1>
 				<p class="hero-subtitle">
 					Transmeralda S.A.S. — Transporte terrestre automotor especial desde Yopal, Casanare. Movilidad inteligente, eficiencia real y seguridad para tu equipo.
