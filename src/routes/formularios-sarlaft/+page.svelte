@@ -3,7 +3,7 @@
   import { quintOut } from 'svelte/easing'
   import { goto } from '$app/navigation'
   import { onMount } from 'svelte'
-  import { sarlaftApi } from '$lib/sarlaft/api'
+  import { sarlaftApi, type ContactoPublicoAPI } from '$lib/sarlaft/api'
   import type { Formulario, Seccion, SubmitResult, TipoFormulario } from '$lib/sarlaft/types'
   import FormField from '$lib/sarlaft/FormField.svelte'
   import TablaRepetible from '$lib/sarlaft/TablaRepetible.svelte'
@@ -18,6 +18,7 @@
 
   let formulario = $state<Formulario | null>(data.formulario)
   let tipoActual = $state<TipoFormulario | null>(data.tipoSeleccionado as TipoFormulario | null)
+  let contacto = $state<ContactoPublicoAPI | null>(null)
 
   // Fases del flujo
   type Fase = 'intro' | 'wizard' | 'checklist' | 'done'
@@ -46,6 +47,14 @@
   let comoSeDiligenciaOpen = $state(false)
   let derechosOpen = $state(false)
 
+  /** Catálogo estático de contactos por tipo — usado en el selector para
+   * que el usuario vea el canal de atención antes de elegir formulario. */
+  const CONTACTOS: Record<TipoFormulario, { area: string; telefono: string; correo: string }> = {
+    cliente_proveedor: { area: 'Operaciones', telefono: '+57 323 2340117', correo: 'compraproveedorestransmeralda@gmail.com' },
+    accionistas: { area: 'Cumplimiento', telefono: '311 508 7120', correo: 'transmeraldasarlaft@gmail.com' },
+    personal: { area: 'Talento Humano', telefono: '+57 323 2340117', correo: 'transmeraldasarlaft@gmail.com' }
+  }
+
   $effect(() => {
     // Sincronizar con data cuando cambia la URL.
     // Importante: NO leer `formulario` aquí adentro para no crear
@@ -72,6 +81,8 @@
   function seleccionarTipo(tipo: string) {
     tipoActual = tipo as TipoFormulario
     goto(`/formularios-sarlaft?tipo=${tipo}`, { keepFocus: true, noScroll: true })
+    // Cargar contacto en paralelo con el formulario
+    sarlaftApi.obtenerContacto(tipo as TipoFormulario).then((c) => (contacto = c)).catch(() => (contacto = null))
     sarlaftApi.obtenerFormulario(
       data.formularios.find((f) => f.tipo === tipo)?.codigo ?? 'GC-FR-04'
     ).then((f) => {
@@ -98,6 +109,7 @@
   function cambiarTipo() {
     tipoActual = null
     formulario = null
+    contacto = null
     goto('/formularios-sarlaft', { keepFocus: true, noScroll: true })
   }
 
@@ -500,6 +512,11 @@
                 <span class="dot">·</span>
                 <span><strong>{f.total_preguntas}</strong> preguntas</span>
               </div>
+              <div class="card-contacto">
+                <span class="contacto-eyebrow">Notificación a</span>
+                <span class="contacto-line"><strong>{CONTACTOS[f.tipo as TipoFormulario].area}</strong></span>
+                <span class="contacto-line">{CONTACTOS[f.tipo as TipoFormulario].correo}</span>
+              </div>
             </div>
             <div class="card-cta">
               <span>Comenzar</span>
@@ -560,11 +577,47 @@
 
         <div class="confirm-next">
           <p>
-            <strong>No olvides:</strong> enviar los documentos de soporte al correo
-            <strong>operaciones.transmeraldasas@gmail.com</strong> con el número de radicado
-            <span class="radicado-inline">{submitResult.radicado}</span> en el asunto.
+            <strong>Notificación enviada a:</strong> el área de {contacto?.area_responsable ?? 'Cumplimiento'} recibió un correo con tu formulario, el PDF de respuestas y los archivos adjuntos. El número de radicado
+            <span class="radicado-inline">{submitResult.radicado}</span> te permite consultar el estado en cualquier momento.
           </p>
         </div>
+
+        {#if contacto}
+          <aside class="confirm-contacto">
+            <header>
+              <span class="eyebrow">¿Dudas o necesitas más información?</span>
+            </header>
+            <div class="contacto-grid">
+              <a class="contacto-chip" href={contacto.telefono_tel} aria-label="Llamar al área de {contacto.area_responsable}">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                </svg>
+                <div>
+                  <span class="chip-label">Teléfono</span>
+                  <span class="chip-value">{contacto.telefono_principal}</span>
+                </div>
+              </a>
+              <a class="contacto-chip" href={contacto.telefono_wa} target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M20.52 3.48A11.93 11.93 0 0012 0C5.37 0 0 5.37 0 12a11.94 11.94 0 001.64 6L0 24l6.18-1.62A11.93 11.93 0 0012 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.19-3.48-8.52zM12 22a9.94 9.94 0 01-5.07-1.39l-.36-.21-3.67.96.98-3.58-.23-.37A9.94 9.94 0 0112 22zm5.51-7.46c-.3-.15-1.78-.88-2.05-.98s-.47-.15-.67.15-.77.98-.95 1.18-.35.22-.65.07a8.18 8.18 0 01-2.41-1.49 9.06 9.06 0 01-1.67-2.08c-.17-.3 0-.46.13-.61s.3-.35.45-.52.2-.3.3-.5.05-.37-.02-.52-.67-1.62-.92-2.22-.49-.51-.67-.52H7.43a1.16 1.16 0 00-.85.4 3.55 3.55 0 00-1.1 2.64c0 1.55 1.13 3.05 1.29 3.27s2.22 3.4 5.4 4.77a18.5 18.5 0 001.8.67 4.34 4.34 0 002 .13 3.27 3.27 0 002.15-1.52 2.66 2.66 0 00.19-1.52c-.08-.13-.28-.21-.58-.36z" />
+                </svg>
+                <div>
+                  <span class="chip-label">WhatsApp</span>
+                  <span class="chip-value">{contacto.telefono_principal}</span>
+                </div>
+              </a>
+              <a class="contacto-chip" href={contacto.correo_mailto} aria-label="Enviar correo al área">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                </svg>
+                <div>
+                  <span class="chip-label">Correo</span>
+                  <span class="chip-value">{contacto.correo_publico}</span>
+                </div>
+              </a>
+            </div>
+          </aside>
+        {/if}
 
         <div class="confirm-actions">
           <button class="btn-secondary" onclick={cambiarTipo}>
@@ -1089,6 +1142,32 @@
     color: #0F1F1A;
     font-weight: 700;
   }
+  .card-contacto {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.7rem 0.85rem;
+    background: rgba(16, 185, 129, 0.06);
+    border: 1px solid rgba(16, 185, 129, 0.18);
+    border-radius: 10px;
+    margin-top: 0.5rem;
+    width: 100%;
+  }
+  .contacto-eyebrow {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #10B981;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .contacto-line {
+    font-size: 0.78rem;
+    color: #065F46;
+    line-height: 1.4;
+    word-break: break-all;
+  }
+  .contacto-line strong { color: #064E3B; }
   .dot {
     color: #9A9A9A;
   }
@@ -1375,6 +1454,82 @@
     flex-wrap: wrap;
     gap: 0.75rem;
     justify-content: center;
+  }
+
+  /* Confirm · canal de contacto */
+  .confirm-contacto {
+    background: #FAF7F2;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 14px;
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    text-align: left;
+  }
+  .confirm-contacto > header {
+    margin-bottom: 0.75rem;
+  }
+  .confirm-contacto .eyebrow {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #10B981;
+    background: rgba(16, 185, 129, 0.08);
+    padding: 0.2rem 0.55rem;
+    border-radius: 5px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .contacto-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  @media (min-width: 480px) {
+    .contacto-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  .contacto-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 0.85rem;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 10px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s;
+  }
+  .contacto-chip:hover {
+    border-color: rgba(16, 185, 129, 0.3);
+    background: rgba(16, 185, 129, 0.04);
+    transform: translateY(-1px);
+  }
+  .contacto-chip svg {
+    width: 22px;
+    height: 22px;
+    color: #10B981;
+    flex-shrink: 0;
+  }
+  .contacto-chip > div {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .chip-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6B6B6B;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .chip-value {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #0F1F1A;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   /* WIZARD */

@@ -1,5 +1,5 @@
 import { env } from '$env/dynamic/public'
-import type { Formulario, FormularioResumen, SubmitResult } from './types'
+import type { Formulario, FormularioResumen, SubmitResult, TipoFormulario } from './types'
 
 const BASE = env.PUBLIC_API_URL || 'http://localhost:4000/api'
 
@@ -14,6 +14,16 @@ export interface ConfigUploadAPI {
   max_bytes: number
   mimes_permitidos: string[]
   extensiones_permitidas: string[]
+}
+
+export interface ContactoPublicoAPI {
+  tipo: TipoFormulario
+  area_responsable: string
+  telefono_principal: string
+  telefono_wa: string
+  telefono_tel: string
+  correo_publico: string
+  correo_mailto: string
 }
 
 export const sarlaftApi = {
@@ -44,6 +54,13 @@ export const sarlaftApi = {
     const r = await fetch(`${BASE}/public/formularios-sarlaft/${codigo}/documentos${qs ? '?' + qs : ''}`)
     if (!r.ok) throw new Error('No se pudo obtener la lista de documentos')
     return r.json()
+  },
+
+  async obtenerContacto(tipo: TipoFormulario): Promise<ContactoPublicoAPI> {
+    const r = await fetch(`${BASE}/public/formularios-sarlaft/contacto?tipo=${encodeURIComponent(tipo)}`)
+    if (!r.ok) throw new Error('No se pudo obtener la configuración de contacto')
+    const data = await r.json()
+    return data.contacto as ContactoPublicoAPI
   },
 
   async submit(payload: {
