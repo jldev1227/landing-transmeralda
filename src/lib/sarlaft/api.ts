@@ -8,6 +8,9 @@ export interface DocumentoRequeridoAPI {
   nombre: string
   descripcion: string
   aplicaA: 'pn' | 'pj' | 'ambos'
+  /** true = el usuario DEBE adjuntar este archivo para poder enviar;
+   *  false = es opcional y el usuario puede omitirlo. */
+  obligatorio: boolean
 }
 
 export interface ConfigUploadAPI {

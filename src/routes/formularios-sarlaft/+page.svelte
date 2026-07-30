@@ -30,6 +30,10 @@
   let archivos = $state<Record<string, ArchivoSubido | null>>({})
   let archivosErrors = $state<Record<string, string | null>>({})
   let documentosRequeridos = $state<DocumentoRequeridoFE[]>([])
+  /** Indica si ya terminó la llamada al backend para cargar
+   *  documentosRequeridos. Permite distinguir el estado "cargando"
+   *  de "este formulario no requiere documentos" (caso Personal). */
+  let documentosCargados = $state(false)
   let fieldErrors = $state<Record<string, string>>({})
   /** Set reactivo de nombres de secciones que tienen al menos un error.
    *  Se usa para pintar en rojo el dot correspondiente en el wizard. */
@@ -119,6 +123,8 @@
   }
 
   function irAchecklist() {
+    // Reset estado de carga de documentos antes de entrar a la fase
+    documentosCargados = false
     // Cargar documentos requeridos al entrar a la fase de upload
     if (formulario) {
       const tipoCliente = respuestas['CLI-IG-01'] || null
@@ -128,12 +134,18 @@
           documentosRequeridos = data.documentos.map((d) => ({
             id: d.id,
             nombre: d.nombre,
-            descripcion: d.descripcion
+            descripcion: d.descripcion,
+            obligatorio: d.obligatorio
           }))
         })
         .catch((err) => {
           submitError = `Error cargando documentos: ${err.message}`
         })
+        .finally(() => {
+          documentosCargados = true
+        })
+    } else {
+      documentosCargados = true
     }
     fase = 'checklist'
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -315,8 +327,18 @@
   }
 
   function validarDocumentos(): boolean {
+    // Si el tipo de formulario no requiere documentos adjuntos,
+    // no hay nada que validar — el usuario puede enviar con solo
+    // sus respuestas.
+    if (documentosRequeridos.length === 0) return true
+    // Solo se bloquea el envío por documentos marcados como obligatorios.
+    // Los opcionales pueden omitirse sin problema.
+    const docsObligatorios = documentosRequeridos.filter(
+      (d) => d.obligatorio !== false
+    )
+    if (docsObligatorios.length === 0) return true
     const faltantes: string[] = []
-    for (const doc of documentosRequeridos) {
+    for (const doc of docsObligatorios) {
       if (!archivos[doc.id]) {
         faltantes.push(doc.nombre)
         continue
@@ -912,10 +934,54 @@
         </div>
       {/if}
 
-      {#if documentosRequeridos.length === 0}
+      {#if !documentosCargados}
         <div class="loading-state">
           <div class="loading-spinner"></div>
           <p>Cargando documentos requeridos...</p>
+        </div>
+      {:else if formulario.tipo === 'personal'}
+        <!-- Formulario de Vinculación de Personal: solo RUT y Cédula son
+             obligatorios; los demás se muestran como opcionales. -->
+        <aside class="no-docs-hint-panel">
+          <span class="no-docs-eyebrow">Vinculación de Personal</span>
+          <p>
+            Para este formulario solo es obligatorio adjuntar la
+            <strong>Cédula de ciudadanía</strong> y el <strong>RUT actualizado</strong>.
+            Los demás documentos (Certificado de existencia y Composición accionaria)
+            son opcionales — el Oficial de Cumplimiento podrá solicitarlos
+            después si los requiere.
+          </p>
+        </aside>
+
+        <DocumentosUpload
+          documentos={documentosRequeridos}
+          archivos={archivos}
+          errors={archivosErrors}
+          onChange={(a) => (archivos = a)}
+          onError={(e) => (archivosErrors = e)}
+        />
+
+        <div class="wizard-footer">
+          <button class="btn-secondary" onclick={volverAWizard}>
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            Volver
+          </button>
+          <button class="btn-primary" onclick={handleSubmit} disabled={submitting}>
+            {#if submitting}
+              <svg class="spin" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" opacity="0.25" />
+                <path d="M4 12a8 8 0 018-8v0" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+              </svg>
+              Enviando...
+            {:else}
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+              </svg>
+              Enviar formulario
+            {/if}
+          </button>
         </div>
       {:else}
         <DocumentosUpload
@@ -942,7 +1008,7 @@
               Enviando...
             {:else}
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
               </svg>
               Enviar formulario
             {/if}
@@ -1850,9 +1916,6 @@
     height: 16px;
     animation: spin 1s linear infinite;
   }
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
 
   .alert {
     display: flex;
@@ -1862,6 +1925,53 @@
     border-radius: 12px;
     margin-bottom: 1.5rem;
     font-size: 0.9rem;
+  }
+
+  /* ═══ HINT PANEL: aclaración sobre obligatorios (formulario Personal) ═══ */
+  .no-docs-hint-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.1rem 1.25rem;
+    background: linear-gradient(180deg, rgba(16, 185, 129, 0.05) 0%, rgba(16, 185, 129, 0.02) 100%);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 14px;
+    margin: 1rem 0 1rem;
+  }
+  .no-docs-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #047857;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .no-docs-hint-panel p {
+    font-size: 0.85rem;
+    line-height: 1.55;
+    color: #4A4A4A;
+    margin: 0;
+  }
+  .no-docs-hint-panel strong { color: #064E3B; }
+
+  /* ═══ LOADING STATE (spinner genérico) ═══ */
+  .loading-state {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 0.75rem;
+    padding: 2.5rem 1.5rem;
+    color: #6B6B6B;
+    font-size: 0.9rem;
+  }
+  .loading-spinner {
+    width: 28px; height: 28px;
+    border: 3px solid rgba(0, 0, 0, 0.08);
+    border-top-color: #10B981;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
   }
   .alert-error {
     background: rgba(239, 68, 68, 0.06);

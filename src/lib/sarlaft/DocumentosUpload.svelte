@@ -11,6 +11,9 @@
     id: string
     nombre: string
     descripcion: string
+    /** true = el usuario DEBE adjuntar este archivo para poder enviar;
+     *  false = opcional. Por defecto true si el backend no lo envía. */
+    obligatorio?: boolean
   }
 
   export interface ArchivoSubido {
@@ -123,7 +126,8 @@
       <h3>Documentos a anexar</h3>
       <p>
         Sube los siguientes documentos en formato <strong>PDF, JPG o PNG</strong> (máx. 10 MB cada uno).
-        Los campos marcados con <span class="req-inline">*</span> son obligatorios.
+        Los campos marcados con <span class="req-inline">*</span> son obligatorios;
+        los demás son opcionales.
       </p>
     </div>
   </header>
@@ -138,6 +142,7 @@
         class:has-file={!!archivo}
         class:has-error={!!error}
         class:dragging={dragOver === doc.id}
+        class:is-optional={doc.obligatorio === false}
         in:fly={{ y: 10, duration: 250, easing: quintOut }}
       >
         <div class="doc-info">
@@ -145,7 +150,11 @@
             <span class="doc-num">{doc.id.slice(0, 3).toUpperCase()}</span>
             <h4>
               {doc.nombre}
-              <span class="req-inline">*</span>
+              {#if doc.obligatorio === false}
+                <span class="opt-inline">opcional</span>
+              {:else}
+                <span class="req-inline">*</span>
+              {/if}
             </h4>
           </div>
           <p class="doc-desc">{doc.descripcion}</p>
@@ -285,6 +294,22 @@
   }
   .docs-header strong { color: #0F1F1A; }
   .req-inline { color: #B91C1C; font-weight: 700; }
+  .opt-inline {
+    display: inline-block;
+    margin-left: 0.4rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    background: rgba(107, 114, 128, 0.12);
+    color: #4B5563;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    vertical-align: middle;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .doc-slot.is-optional { border-style: dashed; }
+  .doc-slot.is-optional .doc-num { opacity: 0.6; }
 
   .docs-list {
     display: flex;
