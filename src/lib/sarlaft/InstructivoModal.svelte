@@ -5,17 +5,21 @@
    */
   import { fade, fly } from 'svelte/transition'
   import { quintOut } from 'svelte/easing'
-  import { INSTRUCTIVO, GLOSARIO, DOCUMENTOS_ANEXAR } from './instructivo'
+  import { getInstructivo, type InstructivoFormulario } from './instructivo'
 
   type Props = {
     open: boolean
     onClose: () => void
     seccionActiva?: string | null
+    /** Instructivo del formulario que se está diligenciando. Si no viene, se
+     *  usa el de los formularios de conocimiento SARLAFT. */
+    instructivo?: InstructivoFormulario
   }
 
-  let { open, onClose, seccionActiva = null }: Props = $props()
+  let { open, onClose, seccionActiva = null, instructivo }: Props = $props()
 
-  const glosarioEntries = Object.entries(GLOSARIO)
+  const ins = $derived(instructivo ?? getInstructivo())
+  const glosarioEntries = $derived(Object.entries(ins.glosario))
 
   function scrollToSection(id: string) {
     const el = document.getElementById(id)
@@ -89,7 +93,7 @@
           </p>
 
           <div class="secciones-grid">
-            {#each INSTRUCTIVO as item}
+            {#each ins.secciones as item}
               <article
                 class="instructivo-card"
                 class:highlight={seccionActiva === item.seccion}
@@ -99,7 +103,7 @@
                   <h4>{item.seccion}</h4>
                   <span
                     class="responsable-badge"
-                    class:cliente={item.responsable === 'Cliente'}
+                    class:cliente={item.responsable === 'Cliente' || item.responsable === 'Propietario'}
                     class:oficial={item.responsable === 'Oficial de Cumplimiento'}
                     class:ambos={item.responsable === 'Ambos'}
                   >
@@ -125,7 +129,7 @@
         <section id="instructivo-glosario">
           <h3>Glosario</h3>
           <p class="section-intro">
-            Términos técnicos utilizados en el formulario y en el marco normativo SARLAFT + PTEE.
+            Términos técnicos utilizados en este formulario y en el marco normativo aplicable.
           </p>
           <dl class="glosario">
             {#each glosarioEntries as [termino, definicion]}
@@ -140,36 +144,25 @@
         <!-- Documentos a anexar -->
         <section id="instructivo-documentos">
           <h3>Documentos a anexar</h3>
-          <p class="section-intro">
-            Una vez enviado el formulario, debes hacer llegar los siguientes documentos al correo
-            <strong>operaciones.transmeraldasas@gmail.com</strong> o entregarlos físicamente en las
-            instalaciones de TRANSMERALDA S.A.S.
-          </p>
 
           <div class="documentos-grid">
-            <article class="doc-block">
-              <h4><span class="badge-pj">PJ</span> Personas Jurídicas</h4>
-              <ol>
-                {#each DOCUMENTOS_ANEXAR.personas_juridicas as doc}
-                  <li>{doc.replace(/^\d+\.\s*/, '')}</li>
-                {/each}
-              </ol>
-            </article>
-            <article class="doc-block">
-              <h4><span class="badge-pn">PN</span> Personas Naturales</h4>
-              <ol>
-                {#each DOCUMENTOS_ANEXAR.personas_naturales as doc}
-                  <li>{doc.replace(/^\d+\.\s*/, '')}</li>
-                {/each}
-              </ol>
-            </article>
+            {#each ins.documentos.grupos as grupo}
+              <article class="doc-block">
+                <h4><span class="badge-grupo">{grupo.badge}</span> {grupo.titulo}</h4>
+                <ol>
+                  {#each grupo.items as doc}
+                    <li>{doc.replace(/^\d+\.\s*/, '')}</li>
+                  {/each}
+                </ol>
+              </article>
+            {/each}
           </div>
 
           <p class="doc-nota">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
             </svg>
-            {DOCUMENTOS_ANEXAR.nota}
+            {ins.documentos.nota}
           </p>
         </section>
 
@@ -177,10 +170,9 @@
         <section id="instructivo-marco">
           <h3>Marco normativo</h3>
           <ul class="marco">
-            <li><strong>Resolución 2328 de 2025</strong> — Superintendencia de Sociedades</li>
-            <li><strong>Resolución 14673 de 2025</strong> — Superintendencia de Sociedades</li>
-            <li><strong>Ley 1581 de 2012</strong> — Protección de datos personales</li>
-            <li><strong>Decreto 1377 de 2013</strong> — Reglamentación parcial sobre protección de datos</li>
+            {#each ins.marcoNormativo as n}
+              <li><strong>{n.norma}</strong> — {n.descripcion}</li>
+            {/each}
           </ul>
         </section>
       </div>
@@ -443,20 +435,24 @@
     color: #0F1F1A;
     margin: 0 0 0.75rem;
   }
-  .badge-pj, .badge-pn {
+  /* Etiqueta del grupo de documentos (PJ/PN en SARLAFT, OBL/OPC en los
+     formatos individuales). El ancho se adapta al texto del badge. */
+  .badge-grupo {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
+    min-width: 28px;
     height: 22px;
+    padding: 0 0.4rem;
     border-radius: 5px;
     font-size: 0.65rem;
     font-weight: 700;
     color: white;
+    background: #4338CA;
     font-family: 'JetBrains Mono', monospace;
   }
-  .badge-pj { background: #4338CA; }
-  .badge-pn { background: #0891B2; }
+  /* El segundo grupo (opcionales / personas naturales) se diferencia por color */
+  .doc-block:nth-child(2) .badge-grupo { background: #0891B2; }
   .doc-block ol {
     padding-left: 1.25rem;
     margin: 0;

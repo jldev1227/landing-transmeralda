@@ -29,19 +29,24 @@ export interface ContactoPublicoAPI {
   correo_mailto: string
 }
 
+/** Los `load` de SvelteKit deben usar su propio `fetch` (SSR, cookies,
+ *  deduplicación). Por eso cada método acepta uno opcional y cae al global
+ *  cuando se llama desde el navegador. */
+type FetchFn = typeof globalThis.fetch
+
 export const sarlaftApi = {
-  async listarFormularios(): Promise<{
+  async listarFormularios(fetchFn: FetchFn = fetch): Promise<{
     formularios: FormularioResumen[]
     marco_normativo: string[]
     empresa: string
   }> {
-    const r = await fetch(`${BASE}/public/formularios-sarlaft`)
+    const r = await fetchFn(`${BASE}/public/formularios-sarlaft`)
     if (!r.ok) throw new Error('No se pudo obtener la lista de formularios')
     return r.json()
   },
 
-  async obtenerFormulario(codigo: string): Promise<Formulario> {
-    const r = await fetch(`${BASE}/public/formularios-sarlaft/${codigo}`)
+  async obtenerFormulario(codigo: string, fetchFn: FetchFn = fetch): Promise<Formulario> {
+    const r = await fetchFn(`${BASE}/public/formularios-sarlaft/${codigo}`)
     if (!r.ok) throw new Error(`No se pudo obtener el formulario ${codigo}`)
     const data = await r.json()
     return data.formulario as Formulario
@@ -59,8 +64,8 @@ export const sarlaftApi = {
     return r.json()
   },
 
-  async obtenerContacto(tipo: TipoFormulario): Promise<ContactoPublicoAPI> {
-    const r = await fetch(`${BASE}/public/formularios-sarlaft/contacto?tipo=${encodeURIComponent(tipo)}`)
+  async obtenerContacto(tipo: TipoFormulario, fetchFn: FetchFn = fetch): Promise<ContactoPublicoAPI> {
+    const r = await fetchFn(`${BASE}/public/formularios-sarlaft/contacto?tipo=${encodeURIComponent(tipo)}`)
     if (!r.ok) throw new Error('No se pudo obtener la configuración de contacto')
     const data = await r.json()
     return data.contacto as ContactoPublicoAPI

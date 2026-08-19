@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Pregunta } from './types'
+  import { inputModeDe, sanearFormato, type Pregunta } from './types'
   import FirmaPad from './FirmaPad.svelte'
 
   type Props = {
@@ -12,6 +12,33 @@
   let { pregunta, value, onChange, error }: Props = $props()
 
   const id = $derived(`field-${pregunta.id}`)
+
+  /** Las respuestas de `seleccion_multiple` viajan como arreglo de strings. */
+  const seleccionadas = $derived(Array.isArray(value) ? (value as string[]) : [])
+
+  function alternarOpcion(opcion: string) {
+    onChange(
+      seleccionadas.includes(opcion)
+        ? seleccionadas.filter((o) => o !== opcion)
+        : [...seleccionadas, opcion]
+    )
+  }
+
+  /**
+   * En los campos con `formato` (cédula, NIT, teléfono, número de cuenta) se
+   * descartan los caracteres no admitidos mientras se escribe. Se reescribe el
+   * valor del input para que el usuario vea de inmediato que no se aceptó.
+   */
+  function onInputTexto(e: Event) {
+    const el = e.currentTarget as HTMLInputElement
+    const limpio = sanearFormato(el.value, pregunta.formato)
+    if (limpio !== el.value) {
+      const pos = (el.selectionStart ?? limpio.length) - (el.value.length - limpio.length)
+      el.value = limpio
+      el.setSelectionRange(pos, pos)
+    }
+    onChange(limpio)
+  }
 </script>
 
 <div class="form-field" class:has-error={!!error}>
@@ -54,6 +81,27 @@
           </button>
         {/each}
       </div>
+    {:else if pregunta.tipo_respuesta === 'seleccion_multiple' && pregunta.opciones}
+      <div class="opciones opciones--multiple">
+        {#each pregunta.opciones as opcion}
+          <button
+            type="button"
+            class="opcion"
+            class:selected={seleccionadas.includes(opcion)}
+            aria-pressed={seleccionadas.includes(opcion)}
+            onclick={() => alternarOpcion(opcion)}
+          >
+            <span class="check" class:on={seleccionadas.includes(opcion)}>
+              {#if seleccionadas.includes(opcion)}
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
+              {/if}
+            </span>
+            <span>{opcion}</span>
+          </button>
+        {/each}
+      </div>
     {:else if pregunta.tipo_respuesta === 'texto_largo'}
       <textarea
         {id}
@@ -81,8 +129,9 @@
       <input
         {id}
         type="text"
+        inputmode={inputModeDe(pregunta.formato)}
         value={value ?? ''}
-        oninput={(e) => onChange((e.currentTarget as HTMLInputElement).value)}
+        oninput={onInputTexto}
       />
     {/if}
 
@@ -203,6 +252,40 @@
     inset: 3px;
     border-radius: 50%;
     background: white;
+  }
+  /* Selección múltiple: las opciones suelen ser frases largas, así que se
+     apilan en columna y ocupan todo el ancho. */
+  .opciones--multiple {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.4rem;
+  }
+  .opciones--multiple .opcion {
+    justify-content: flex-start;
+    text-align: left;
+    align-items: flex-start;
+    line-height: 1.45;
+  }
+  .check {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    transition: all 0.2s;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+  }
+  .check.on {
+    border-color: #10B981;
+    background: #10B981;
+    color: white;
+  }
+  .check svg {
+    width: 11px;
+    height: 11px;
   }
   .declaracion {
     display: flex;

@@ -2,14 +2,28 @@
   import { fade, fly } from 'svelte/transition'
   import { quintOut } from 'svelte/easing'
   import type { Formulario } from './types'
+  import { getInstructivo, type InstructivoFormulario } from './instructivo'
 
   type Props = {
     open: boolean
     onClose: () => void
     formulario: Formulario | null
+    /** Instructivo del formulario; aporta el ejemplo de radicado y de anexos. */
+    instructivo?: InstructivoFormulario
   }
 
-  let { open, onClose, formulario }: Props = $props()
+  let { open, onClose, formulario, instructivo }: Props = $props()
+
+  const ins = $derived(instructivo ?? getInstructivo(formulario?.codigo))
+  /** Preguntas de tipo firma: define si el paso 2 habla de una o de dos firmas. */
+  const totalFirmas = $derived(
+    formulario
+      ? formulario.secciones.reduce(
+          (acc, s) => acc + s.preguntas.filter((p) => p.tipo_respuesta === 'firma').length,
+          0
+        )
+      : 1
+  )
 </script>
 
 {#if open}
@@ -70,10 +84,18 @@
             <li>
               <div class="step-num">2</div>
               <div class="step-body">
-                <h4>Firma digital</h4>
+                <h4>{totalFirmas > 1 ? 'Firmas digitales' : 'Firma digital'}</h4>
                 <p>
-                  Al final encontrarás un espacio para firmar digitalmente con el mouse o el touch
-                  de tu celular. La firma tiene la misma validez que una firma manuscrita.
+                  {#if totalFirmas > 1}
+                    En la última sección hay <strong>{totalFirmas} firmas</strong>: la del propietario
+                    del vehículo y la del tercero autorizado, en señal de aceptación. Puedes firmar
+                    con el mouse, con el dedo en el celular, o subir una imagen de tu firma. Si
+                    diligencian desde un solo dispositivo, firma tú primero y luego pásaselo al
+                    tercero. Sin ambas firmas no se puede enviar.
+                  {:else}
+                    Al final encontrarás un espacio para firmar digitalmente con el mouse o el touch
+                    de tu celular. La firma tiene la misma validez que una firma manuscrita.
+                  {/if}
                 </p>
               </div>
             </li>
@@ -83,8 +105,7 @@
                 <h4>Checklist de documentos</h4>
                 <p>
                   Antes de enviar, verás una pantalla con la lista de documentos que debes
-                  anexar (cédula, RUT, certificado de existencia, etc.). Marca los que vas a
-                  entregar y envía el formulario.
+                  anexar ({ins.ejemploDocumentos}). Adjunta los obligatorios y envía el formulario.
                 </p>
               </div>
             </li>
@@ -93,9 +114,8 @@
               <div class="step-body">
                 <h4>Recibirás un radicado</h4>
                 <p>
-                  Al enviar te mostraremos un número de radicado único (ej. SARLAFT-2026-CLI-00001).
-                  Guárdalo: lo necesitarás para enviar los documentos por correo y para
-                  cualquier seguimiento.
+                  Al enviar te mostraremos un número de radicado único (ej. {ins.ejemploRadicado}).
+                  Guárdalo: lo necesitarás para cualquier seguimiento.
                 </p>
               </div>
             </li>
@@ -129,8 +149,8 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               <div>
-                <strong>Ten a la mano tus documentos</strong> de identidad y los datos financieros
-                antes de empezar.
+                <strong>Ten a la mano los documentos</strong> que vas a anexar
+                ({ins.ejemploDocumentos}) antes de empezar.
               </div>
             </li>
             <li>

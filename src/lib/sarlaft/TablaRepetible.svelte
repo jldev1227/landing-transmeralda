@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Pregunta, Seccion } from './types'
+  import { inputModeDe, sanearFormato, type Pregunta, type Seccion } from './types'
   import FirmaPad from './FirmaPad.svelte'
 
   type Props = {
@@ -30,6 +30,21 @@
   function updateCell(rowIndex: number, pregunta: Pregunta, value: any) {
     const copia = rows.map((r, i) => (i === rowIndex ? { ...r, [pregunta.id]: value } : r))
     onChange(copia)
+  }
+
+  /**
+   * En las celdas con `formato` (cédula/NIT, teléfono) se descartan los
+   * caracteres no admitidos mientras se escribe, igual que en FormField.
+   */
+  function onInputTexto(e: Event, rowIndex: number, pregunta: Pregunta) {
+    const el = e.currentTarget as HTMLInputElement
+    const limpio = sanearFormato(el.value, pregunta.formato)
+    if (limpio !== el.value) {
+      const pos = (el.selectionStart ?? limpio.length) - (el.value.length - limpio.length)
+      el.value = limpio
+      el.setSelectionRange(pos, pos)
+    }
+    updateCell(rowIndex, pregunta, limpio)
   }
 </script>
 
@@ -100,8 +115,9 @@
                   <input
                     id="{seccion.seccion}-{i}-{pregunta.id}"
                     type="text"
+                    inputmode={inputModeDe(pregunta.formato)}
                     value={fila[pregunta.id] ?? ''}
-                    oninput={(e) => updateCell(i, pregunta, (e.currentTarget as HTMLInputElement).value)}
+                    oninput={(e) => onInputTexto(e, i, pregunta)}
                   />
                 {/if}
               </div>
