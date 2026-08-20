@@ -4,7 +4,7 @@
   let { data } = $props()
 </script>
 
-<!-- Índice completo: las tres tarjetas y los enlaces de vuelta al sitio.
-     No cambia respecto de la versión original para no romper los links
-     que ya se compartieron. -->
+<!-- Índice histórico: conserva los enlaces de vuelta al sitio para no romper el
+     link ya compartido, pero solo con los formularios internos. Cliente /
+     Proveedor se atiende desde `clientes-proveedores`. -->
 <FormularioSarlaftApp {data} basePath="/formularios-sarlaft" />
