@@ -52,12 +52,25 @@ export const sarlaftApi = {
     return data.formulario as Formulario
   },
 
-  async obtenerDocumentosRequeridos(codigo: string, tipoCliente?: string | null): Promise<{
+  /**
+   * Lista de anexos del formato.
+   *
+   * `alertas` solo aplica a la declaración de empresa de transporte: en ese
+   * formato la obligatoriedad del anexo depende de una respuesta condicional
+   * y no del tipo de cliente, así que el backend necesita conocerla para
+   * devolver la lista ya resuelta.
+   */
+  async obtenerDocumentosRequeridos(
+    codigo: string,
+    tipoCliente?: string | null,
+    alertas?: string | null
+  ): Promise<{
     documentos: DocumentoRequeridoAPI[]
     config: ConfigUploadAPI
   }> {
     const params = new URLSearchParams()
     if (tipoCliente) params.set('tipo_cliente', tipoCliente)
+    if (alertas) params.set('alertas', alertas)
     const qs = params.toString()
     const r = await fetch(`${BASE}/public/formularios-sarlaft/${codigo}/documentos${qs ? '?' + qs : ''}`)
     if (!r.ok) throw new Error('No se pudo obtener la lista de documentos')
@@ -75,6 +88,10 @@ export const sarlaftApi = {
     codigo_formulario: string
     fecha_diligenciamiento?: string
     respuestas: Record<string, unknown>
+    /** Doble digitación del correo de entrega. Viaja FUERA de `respuestas`
+     *  porque es un control de captura, no una respuesta del formato: el
+     *  backend la compara y la descarta antes de archivar el snapshot. */
+    correo_confirmacion?: string
     archivos: Record<string, File> // { docId: File }
   }): Promise<SubmitResult> {
     const fd = new FormData()

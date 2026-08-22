@@ -71,6 +71,19 @@
   let submitErrorDetails = $state<string[] | null>(null)
   let currentStep = $state(0)
 
+  // ── Declaración de empresa de transporte ───────────────────────────────
+  // Este formato entrega al declarante una copia del PDF por correo, así que
+  // la dirección se pide dos veces. La confirmación NO es una respuesta del
+  // formato: viaja aparte y el backend la descarta después de compararla.
+  let correoConfirmacion = $state('')
+  /** El resumen previo al envío tiene que aceptarse explícitamente: es la
+   *  última oportunidad de corregir el correo al que se entrega el documento. */
+  let resumenConfirmado = $state(false)
+
+  const esDeclaracionTransporte = $derived(
+    formulario?.tipo === 'declaracion_empresa_transporte'
+  )
+
   // Modales
   let instructivoOpen = $state(false)
   let instructivoSeccionActiva = $state<string | null>(null)
@@ -83,7 +96,8 @@
     cliente_proveedor: { area: 'Operaciones', telefono: '+57 323 2340117', correo: 'compraproveedorestransmeralda@gmail.com' },
     accionistas: { area: 'Cumplimiento', telefono: '311 508 7120', correo: 'transmeraldasarlaft@gmail.com' },
     personal: { area: 'Talento Humano', telefono: '+57 323 2340117', correo: 'transmeraldasarlaft@gmail.com' },
-    autorizacion_propietario: { area: 'Cumplimiento', telefono: '311 508 7120', correo: 'transmeraldasarlaft@gmail.com' }
+    autorizacion_propietario: { area: 'Cumplimiento', telefono: '311 508 7120', correo: 'transmeraldasarlaft@gmail.com' },
+    declaracion_empresa_transporte: { area: 'Cumplimiento', telefono: '311 508 7120', correo: 'transmeraldasarlaft@gmail.com' }
   }
 
   /** Con `tipoUnico` no hay pantalla selectora: esta instancia sirve un solo
@@ -138,6 +152,8 @@
     submitError = null
     submitErrorDetails = null
     currentStep = 0
+    correoConfirmacion = ''
+    resumenConfirmado = false
   }
 
   function seleccionarTipo(tipo: string) {
@@ -181,8 +197,11 @@
     // Cargar documentos requeridos al entrar a la fase de upload
     if (formulario) {
       const tipoCliente = respuestas['CLI-IG-01'] || null
+      // En la declaración de empresa de transporte la obligatoriedad del anexo
+      // depende de esta respuesta, no del tipo de cliente.
+      const alertas = esDeclaracionTransporte ? String(respuestas['DET-CNF-02'] ?? '') : null
       sarlaftApi
-        .obtenerDocumentosRequeridos(formulario.codigo, tipoCliente)
+        .obtenerDocumentosRequeridos(formulario.codigo, tipoCliente, alertas)
         .then((data) => {
           documentosRequeridos = data.documentos.map((d) => ({
             id: d.id,
@@ -294,7 +313,48 @@
       }
     }
 
+    errores.push(...validarReglasDeclaracion(seccion))
     return errores
+  }
+
+  /**
+   * Reglas propias de la declaración de empresa de transporte que la
+   * definición no puede expresar de forma declarativa.
+   *
+   * Son un espejo de las del backend, que sigue siendo la autoridad: aquí
+   * existen para que el usuario las vea mientras diligencia y no descubra el
+   * problema al enviar.
+   */
+  function validarReglasDeclaracion(seccion: Seccion): string[] {
+    if (!esDeclaracionTransporte) return []
+    const errores: string[] = []
+    const ids = seccion.preguntas.map((p) => p.id)
+
+    // Doble digitación del correo de entrega.
+    if (ids.includes('DET-REP-04')) {
+      const correoValor = String(respuestas['DET-REP-04'] ?? '').trim().toLowerCase()
+      const confirmacion = correoConfirmacion.trim().toLowerCase()
+      if (correoValor && (!confirmacion || confirmacion !== correoValor)) {
+        errores.push('DET-REP-05')
+      }
+    }
+
+    // Las observaciones dejan de ser opcionales cuando el declarante reporta
+    // algo que la empresa necesita entender.
+    if (ids.includes('DET-OBS-01') && requiereObservaciones() && estaVacio(respuestas['DET-OBS-01'])) {
+      errores.push('DET-OBS-01')
+    }
+
+    return errores
+  }
+
+  /** `true` si el declarante marcó que existen alertas informadas en anexo. */
+  function hayAlertas(): boolean {
+    return respuestas['DET-CNF-02'] === 'Existen alertas informadas en documento anexo'
+  }
+
+  function requiereObservaciones(): boolean {
+    return hayAlertas() || respuestas['DET-CNF-01'] === 'No' || respuestas['DET-CNF-03'] === 'No'
   }
 
   /**
@@ -447,6 +507,13 @@
     submitError = null
     submitErrorDetails = null
 
+    // El resumen se acepta antes de enviar: el PDF se entrega al correo que
+    // aparece ahí y una vez radicado no se puede cambiar el destinatario.
+    if (esDeclaracionTransporte && !resumenConfirmado) {
+      submitError = 'Revisa y confirma el resumen antes de enviar la declaración.'
+      return
+    }
+
     // Validar documentos subidos
     if (!validarDocumentos()) {
       submitError = 'Faltan documentos obligatorios o algún archivo tiene un formato no permitido.'
@@ -481,6 +548,9 @@
         codigo_formulario: formulario.codigo,
         fecha_diligenciamiento: obtenerFechaDiligenciamiento(),
         respuestas: payload,
+        ...(esDeclaracionTransporte
+          ? { correo_confirmacion: correoConfirmacion.trim() }
+          : {}),
         archivos: archivosMap
       })
       submitResult = result
@@ -705,9 +775,79 @@
           {/if}
         </dl>
 
+        {#if submitResult.documento}
+          <!-- Descarga temporal del documento generado. El enlace lleva un
+               token de un solo propósito y vence; el PDF también viaja adjunto
+               al correo, que es la copia que conserva el declarante. -->
+          <div class="documento-generado">
+            <span class="doc-eyebrow">Tu documento</span>
+            <p class="doc-aviso">
+              <strong>Descarga tu copia ahora.</strong> La declaración no se envía
+              por correo: este enlace es la forma de conservarla.
+            </p>
+            <a
+              class="btn-descargar"
+              href={submitResult.documento.download_url}
+              download={submitResult.documento.nombre_archivo}
+              rel="noopener"
+            >
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+              Descargar copia
+            </a>
+            <p class="doc-vence">
+              El enlace vence el
+              {new Date(submitResult.documento.expires_at).toLocaleString('es-CO', {
+                timeZone: 'America/Bogota',
+                dateStyle: 'long',
+                timeStyle: 'short'
+              })}.
+            </p>
+            <dl class="doc-meta">
+              <div>
+                <dt>Archivo</dt>
+                <dd>{submitResult.documento.nombre_archivo}</dd>
+              </div>
+              <div>
+                <dt>Huella SHA-256</dt>
+                <dd class="doc-hash">{submitResult.documento.sha256}</dd>
+              </div>
+            </dl>
+            <p class="doc-hash-nota">
+              La huella te permite verificar que el PDF que descargues es
+              exactamente el que quedó archivado.
+            </p>
+          </div>
+        {/if}
+
+        {#if submitResult.entrega_email}
+          <div
+            class="entrega-email"
+            class:entrega-ok={submitResult.entrega_email.estado === 'enviado'}
+            class:entrega-pendiente={submitResult.entrega_email.estado !== 'enviado'}
+          >
+            {#if submitResult.entrega_email.estado === 'enviado'}
+              <strong>Copia enviada</strong>
+              <p>
+                Enviamos tu copia a {submitResult.entrega_email.destinatario_enmascarado}.
+                Revisa también la carpeta de correo no deseado.
+              </p>
+            {:else}
+              <strong>Copia pendiente de envío</strong>
+              <p>
+                Tu declaración quedó radicada correctamente, pero el correo a
+                {submitResult.entrega_email.destinatario_enmascarado} no pudo entregarse
+                todavía. Descarga tu copia desde el botón de arriba y conserva el
+                número de radicado; volveremos a intentar el envío.
+              </p>
+            {/if}
+          </div>
+        {/if}
+
         <div class="confirm-next">
           <p>
-            <strong>Notificación enviada a:</strong> el área de {contacto?.area_responsable ?? 'Cumplimiento'} recibió un correo con tu formulario, el PDF de respuestas y los archivos adjuntos. El número de radicado
+            <strong>Notificación enviada a:</strong> el área de {contacto?.area_responsable ?? 'Cumplimiento'} recibió un correo con tu formulario, el PDF de respuestas y los archivos adjuntos. Ellos revisan y resuelven el trámite. El número de radicado
             <span class="radicado-inline">{submitResult.radicado}</span> te permite consultar el estado en cualquier momento.
           </p>
         </div>
@@ -979,6 +1119,41 @@
                         error={fieldErrors[pregunta.id]}
                       />
                     </div>
+                    {#if esDeclaracionTransporte && pregunta.id === 'DET-REP-04'}
+                      <!-- Confirmación del correo de entrega. No es una
+                           pregunta del formato: no se envía dentro de
+                           `respuestas` ni queda en el documento archivado.
+                           Se pide porque a esa dirección se entrega el PDF. -->
+                      <div>
+                        <label class="confirm-correo-field">
+                          <span class="confirm-correo-label">
+                            Confirma tu correo electrónico
+                            <span class="confirm-correo-req">*</span>
+                          </span>
+                          <input
+                            type="email"
+                            inputmode="email"
+                            autocomplete="off"
+                            spellcheck="false"
+                            class="confirm-correo-input"
+                            class:has-error={!!fieldErrors['DET-REP-05']}
+                            placeholder="Vuelve a escribir el correo"
+                            bind:value={correoConfirmacion}
+                            onpaste={(e) => e.preventDefault()}
+                          />
+                          <span class="confirm-correo-hint">
+                            Escríbelo de nuevo, sin copiar y pegar. Este correo queda
+                            impreso en la declaración y es por donde te contactaremos
+                            si hay que aclarar algo.
+                          </span>
+                          {#if fieldErrors['DET-REP-05']}
+                            <span class="confirm-correo-error">
+                              El correo y su confirmación no coinciden.
+                            </span>
+                          {/if}
+                        </label>
+                      </div>
+                    {/if}
                   {/if}
                 {/each}
               </div>
@@ -1059,6 +1234,42 @@
             <strong>{submitError}</strong>
           </div>
         </div>
+      {/if}
+
+      {#if esDeclaracionTransporte}
+        <!-- Resumen previo al envío. Una vez radicada, la declaración no
+             cambia de destinatario ni de datos: esta es la última revisión. -->
+        <aside class="resumen-envio">
+          <span class="resumen-eyebrow">Revisa antes de enviar</span>
+          <dl class="resumen-grid">
+            <div>
+              <dt>Razón social del proveedor</dt>
+              <dd>{respuestas['DET-EMP-01'] || '—'}</dd>
+            </div>
+            <div>
+              <dt>NIT</dt>
+              <dd>{respuestas['DET-EMP-02'] || '—'}</dd>
+            </div>
+            <div>
+              <dt>Representante legal</dt>
+              <dd>{respuestas['DET-REP-01'] || '—'}</dd>
+            </div>
+            <div>
+              <dt>Correo de contacto</dt>
+              <dd class="resumen-correo">{respuestas['DET-REP-04'] || '—'}</dd>
+            </div>
+          </dl>
+          <p class="resumen-nota">
+            Estos datos quedan impresos en la declaración. Al enviarla podrás
+            descargar tu copia de inmediato; guárdala, porque no se envía por
+            correo. Si algo no está bien, vuelve al formulario y corrígelo antes
+            de enviar.
+          </p>
+          <label class="resumen-check">
+            <input type="checkbox" bind:checked={resumenConfirmado} />
+            <span>Confirmo que los datos y el correo de contacto son correctos.</span>
+          </label>
+        </aside>
       {/if}
 
       {#if !documentosCargados}
@@ -1179,6 +1390,205 @@
 />
 
 <style>
+  /* ── Declaración de empresa de transporte ─────────────────────────────
+     Estilos propios del quinto formato. Usan las mismas variables de color
+     que el resto de la pantalla, así que no introducen paleta nueva. */
+  .confirm-correo-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .confirm-correo-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  .confirm-correo-req {
+    color: #dc2626;
+  }
+  .confirm-correo-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d4d4d8;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-family: inherit;
+  }
+  .confirm-correo-input:focus {
+    outline: 2px solid currentColor;
+    outline-offset: 1px;
+  }
+  .confirm-correo-input.has-error {
+    border-color: #dc2626;
+  }
+  .confirm-correo-hint {
+    font-size: 0.78rem;
+    color: #6b7280;
+  }
+  .confirm-correo-error {
+    font-size: 0.78rem;
+    color: #dc2626;
+    font-weight: 600;
+  }
+
+  .resumen-envio {
+    border: 1px solid #d4d4d8;
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    background: #ffffff;
+  }
+  .resumen-eyebrow {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6b7280;
+    margin-bottom: 12px;
+  }
+  .resumen-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px 20px;
+    margin: 0;
+  }
+  .resumen-grid dt {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-bottom: 2px;
+  }
+  .resumen-grid dd {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    word-break: break-word;
+  }
+  .resumen-correo {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 0.88rem !important;
+  }
+  .resumen-nota {
+    font-size: 0.82rem;
+    color: #6b7280;
+    margin: 14px 0 10px;
+  }
+  .resumen-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .resumen-check input {
+    margin-top: 2px;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  .documento-generado {
+    border: 1px solid #d4d4d8;
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin: 20px 0;
+    text-align: left;
+  }
+  .doc-eyebrow {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6b7280;
+    margin-bottom: 12px;
+  }
+  /* Mismo acento que `.btn-primary` de esta marca; no se comparte paleta
+     con la otra empresa. */
+  .btn-descargar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    background: linear-gradient(135deg, #10B981, #059669);
+    color: #ffffff;
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+  }
+  .btn-descargar:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  }
+  .btn-descargar svg {
+    width: 18px;
+    height: 18px;
+  }
+  .doc-aviso {
+    font-size: 0.85rem;
+    margin: 0 0 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    color: #92400e;
+  }
+  .doc-vence {
+    font-size: 0.78rem;
+    color: #6b7280;
+    margin: 8px 0 14px;
+  }
+  .doc-meta {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+  }
+  .doc-meta dt {
+    font-size: 0.75rem;
+    color: #6b7280;
+  }
+  .doc-meta dd {
+    margin: 0;
+    font-size: 0.85rem;
+    word-break: break-all;
+  }
+  .doc-hash {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 0.75rem !important;
+  }
+  .doc-hash-nota {
+    font-size: 0.78rem;
+    color: #6b7280;
+    margin-top: 10px;
+  }
+
+  .entrega-email {
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    text-align: left;
+    font-size: 0.88rem;
+  }
+  .entrega-email strong {
+    display: block;
+    margin-bottom: 4px;
+  }
+  .entrega-email p {
+    margin: 0;
+    font-size: 0.82rem;
+  }
+  .entrega-ok {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+  }
+  .entrega-pendiente {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    color: #92400e;
+  }
   .sarlaft-page {
     min-height: 100vh;
     background: #FAF7F2;

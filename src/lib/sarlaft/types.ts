@@ -16,6 +16,7 @@ export type TipoFormulario =
   | 'accionistas'
   | 'personal'
   | 'autorizacion_propietario'
+  | 'declaracion_empresa_transporte'
 
 /** Regla declarativa de visibilidad de una pregunta según otra.
  *  - `igual_a`: la pregunta origen debe valer exactamente ese texto.
@@ -79,7 +80,12 @@ export interface Seccion {
   preguntas: Pregunta[]
 }
 
-export type CodigoFormulario = 'GC-FR-04' | 'GC-FR-05' | 'GC-FR-06' | 'SLFT-PTEE-FR-12'
+export type CodigoFormulario =
+  | 'GC-FR-04'
+  | 'GC-FR-05'
+  | 'GC-FR-06'
+  | 'SLFT-PTEE-FR-12'
+  | 'SLFT-PTEE-FR-13'
 
 export interface Formulario {
   codigo: CodigoFormulario
@@ -106,6 +112,29 @@ export interface FormularioResumen {
   total_preguntas: number
 }
 
+/** Documento generado que el backend devuelve al enviar. Solo lo produce el
+ *  formato que se dibuja sobre el PDF controlado de la marca. */
+export interface DocumentoGeneradoResult {
+  id: string
+  nombre_archivo: string
+  /** Huella del PDF entregado. Permite al declarante verificar que el archivo
+   *  que recibió es el mismo que quedó archivado. */
+  sha256: string
+  version_documento: number
+  /** Enlace temporal de un solo documento. Lleva un token aleatorio: el
+   *  radicado por sí solo no sirve como credencial. */
+  download_url: string
+  expires_at: string
+}
+
+/** Estado del correo con la copia para el declarante. */
+export interface EntregaEmailResult {
+  /** El backend nunca devuelve la dirección completa. */
+  destinatario_enmascarado: string
+  estado: 'enviado' | 'pendiente' | 'fallido'
+  provider_message_id?: string | null
+}
+
 export interface SubmitResult {
   success: boolean
   radicado: string
@@ -114,4 +143,6 @@ export interface SubmitResult {
   codigo_formulario: string
   nombre_completo: string | null
   mensaje: string
+  documento?: DocumentoGeneradoResult
+  entrega_email?: EntregaEmailResult
 }

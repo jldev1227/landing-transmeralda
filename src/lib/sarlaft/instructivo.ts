@@ -444,11 +444,151 @@ const INSTRUCTIVO_AUTORIZACION: InstructivoFormulario = {
 }
 
 // ──────────────────────────────────────────────────────────
+// SLFT-PTEE-FR-13 — Declaración SARLAFT y PTEE para empresa de transporte
+// ──────────────────────────────────────────────────────────
+
+const SECCIONES_DECLARACION_TRANSPORTE: InstructivoSeccion[] = [
+  {
+    seccion: 'DATOS DEL DOCUMENTO',
+    responsable: 'Cliente',
+    indicaciones: [
+      'Fecha en la que diligencias y firmas la declaración.',
+      'Es la fecha que queda impresa en el formato SLFT-PTEE-FR-13 que recibirás por correo.'
+    ]
+  },
+  {
+    seccion: 'IDENTIFICACIÓN DEL PROVEEDOR',
+    responsable: 'Cliente',
+    indicaciones: [
+      'Razón social tal como aparece en el certificado de existencia y representación legal.',
+      'El formato tiene una celda de ancho fijo: si la razón social supera los 55 caracteres no cabe de forma legible y el envío se rechaza.',
+      'El NIT debe incluir el dígito de verificación.'
+    ]
+  },
+  {
+    seccion: 'DATOS DE QUIEN DECLARA',
+    responsable: 'Cliente',
+    indicaciones: [
+      'Debe diligenciarla el representante legal de la empresa de transporte, no un intermediario.',
+      'El nombre y la cédula se imprimen dos veces en el formato: en la sección 1 y en la tabla de firma. Se capturan una sola vez.',
+      'El correo se pide dos veces y no se puede pegar: queda impreso en la declaración y es por donde la empresa te contacta si hay que aclarar algo.'
+    ]
+  },
+  {
+    seccion: 'DECLARACIÓN Y COMPROMISO',
+    responsable: 'Cliente',
+    indicaciones: [
+      'El texto completo de la declaración y de los ocho compromisos está impreso en el formato controlado que se genera al enviar.',
+      'Aceptar aquí equivale a suscribir ese texto: léelo antes de continuar.',
+      'Entre otras cosas, te comprometes a verificar propietario, proveedor y conductor antes de asignar cada vehículo, y a informar de inmediato cualquier alerta.'
+    ]
+  },
+  {
+    seccion: 'CONFIRMACIÓN RÁPIDA',
+    responsable: 'Cliente',
+    indicaciones: [
+      'Son tres confirmaciones y todas son obligatorias.',
+      'El estado de alertas admite una sola opción: o no existen alertas pendientes, o existen y van en documento anexo. No se pueden marcar las dos.',
+      'Si respondes que los vehículos no fueron revisados, o que los soportes no están vigentes, tendrás que explicarlo en las observaciones.'
+    ]
+  },
+  {
+    seccion: 'ALERTAS U OBSERVACIONES',
+    responsable: 'Cliente',
+    indicaciones: [
+      'Obligatorio si declaraste alertas, si los vehículos no fueron revisados o si los soportes no están vigentes.',
+      'El formato tiene dos renglones (máximo 260 caracteres). Para el detalle extenso usa el documento anexo.',
+      'Si declaraste que existen alertas, el documento anexo es obligatorio para poder enviar.'
+    ]
+  },
+  {
+    seccion: 'FIRMA Y VALIDACIÓN',
+    responsable: 'Cliente',
+    indicaciones: [
+      'Firma el representante legal identificado en la sección 1.',
+      'Puedes firmar con el mouse, con el dedo en el celular, o subir una imagen de tu firma.',
+      'La firma se incrusta dentro de la celda del formato, sin deformarse.',
+      'Al enviar podrás descargar tu copia del documento firmado desde la pantalla de confirmación. Guárdala: la declaración no se envía por correo.'
+    ]
+  },
+  {
+    seccion: 'RESULTADO',
+    responsable: 'Oficial de Cumplimiento',
+    indicaciones: [
+      'El campo Resultado NO lo diligencias tú: es la decisión interna de TRANSMERALDA S.A.S..',
+      'La copia que recibes al enviar sale con el Resultado en blanco, porque en ese momento la evaluación todavía no ha ocurrido.',
+      'Cuando se emita la decisión (Aprobado, Condicionado o No aprobado) se genera una versión nueva del documento; la que recibiste no se modifica.'
+    ]
+  }
+]
+
+const GLOSARIO_DECLARACION_TRANSPORTE: Record<string, string> = {
+  'Empresa tercerizada':
+    'Empresa de transporte que presta el servicio con sus propios vehículos, propietarios y conductores, incorporándolos a la operación contratada.',
+  'Señal de alerta':
+    'Hecho o comportamiento inusual que puede indicar un riesgo de LA/FT/FP, corrupción o soborno y que obliga a un análisis adicional.',
+  'Beneficiario Final':
+    'Persona natural que finalmente recibe o controla los recursos de una operación, aunque no aparezca formalmente en el contrato.',
+  PEP:
+    'Persona Expuesta Políticamente. Individuos que cumplen funciones públicas relevantes. Incluye sus familiares y asociados cercanos.',
+  'Tarjeta de operación':
+    'Documento que autoriza a un vehículo a prestar el servicio público de transporte dentro de una empresa habilitada.',
+  'LA/FT/FP':
+    'Lavado de Activos, Financiación del Terrorismo y Financiación de la Proliferación de Armas de Destrucción Masiva.',
+  'SARLAFT / PTEE':
+    'Sistemas de administración de riesgo de lavado de activos y de transparencia y ética empresarial que aplica la empresa.',
+  'Huella SHA-256':
+    'Identificador único calculado a partir del contenido del PDF. Si el archivo cambia, aunque sea un carácter, la huella cambia. Sirve para verificar que el documento que recibiste es el que quedó archivado.'
+}
+
+const DOCUMENTOS_DECLARACION_TRANSPORTE = {
+  grupos: [
+    {
+      badge: 'COND',
+      titulo: 'Obligatorio si declaraste alertas',
+      items: [
+        'Documento anexo con el detalle de las alertas informadas y sus soportes.'
+      ]
+    },
+    {
+      badge: 'OPC',
+      titulo: 'Opcional',
+      items: [
+        'Relación de vehículos cubiertos por la declaración (placas, propietarios y conductores).'
+      ]
+    }
+  ],
+  nota:
+    'Si no anexas la relación de vehículos, la declaración cubre los vehículos relacionados en el proceso contractual. ' +
+    'El anexo de alertas solo es obligatorio cuando marcas que existen alertas informadas en documento anexo. ' +
+    'Formatos aceptados: PDF, JPG, PNG, WebP o HEIC, máximo 10 MB por archivo.'
+}
+
+const INSTRUCTIVO_DECLARACION_TRANSPORTE: InstructivoFormulario = {
+  secciones: SECCIONES_DECLARACION_TRANSPORTE,
+  glosario: GLOSARIO_DECLARACION_TRANSPORTE,
+  documentos: DOCUMENTOS_DECLARACION_TRANSPORTE,
+  marcoNormativo: MARCO_SARLAFT,
+  mapaSecciones: {
+    'Datos del documento': ['DATOS DEL DOCUMENTO'],
+    'Identificación del proveedor': ['IDENTIFICACIÓN DEL PROVEEDOR'],
+    '1. Datos de quien declara': ['DATOS DE QUIEN DECLARA'],
+    '2. Declaración y compromiso': ['DECLARACIÓN Y COMPROMISO'],
+    '3. Confirmación rápida': ['CONFIRMACIÓN RÁPIDA'],
+    '4. Alertas u observaciones': ['ALERTAS U OBSERVACIONES'],
+    '5. Firma y validación': ['FIRMA Y VALIDACIÓN', 'RESULTADO']
+  },
+  ejemploRadicado: 'DECL-TRA-2026-00001',
+  ejemploDocumentos: 'documento anexo de alertas y relación de vehículos, cuando apliquen.'
+}
+
+// ──────────────────────────────────────────────────────────
 // Registry
 // ──────────────────────────────────────────────────────────
 
 const POR_CODIGO: Record<string, InstructivoFormulario> = {
-  'SLFT-PTEE-FR-12': INSTRUCTIVO_AUTORIZACION
+  'SLFT-PTEE-FR-12': INSTRUCTIVO_AUTORIZACION,
+  'SLFT-PTEE-FR-13': INSTRUCTIVO_DECLARACION_TRANSPORTE
 }
 
 /** Instructivo correspondiente al formulario. Por defecto, el de SARLAFT. */
