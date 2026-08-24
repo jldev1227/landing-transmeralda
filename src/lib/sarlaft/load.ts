@@ -18,6 +18,14 @@ export interface DatosFormularios {
   loadError?: string
 }
 
+/** Formato que el backend NO devuelve en el listado público (`categoria:
+ *  'individual'`) pero que igual queremos mostrar como tarjeta del selector.
+ *  Se diligencia en su propia ruta, así que la tarjeta solo navega ahí. */
+export interface FormatoEnlazado {
+  codigo: string
+  ruta: string
+}
+
 export interface OpcionesCarga {
   /** Restringe las tarjetas del selector a estos tipos. Si se omite, se
    *  muestran todos los formularios que devuelva el backend. */
@@ -25,6 +33,44 @@ export interface OpcionesCarga {
   /** Fuerza un único tipo: se carga su formulario de una vez y la pantalla
    *  selectora nunca se muestra. Tiene prioridad sobre `?tipo=` de la URL. */
   tipoUnico?: TipoFormulario
+  /** Tarjetas extra de formatos individuales, en el orden en que deben
+   *  aparecer después de las del listado público. */
+  formatosEnlazados?: FormatoEnlazado[]
+}
+
+/**
+ * Arma las tarjetas de los formatos individuales pedidos por código. Sus datos
+ * (título, versión, totales) salen de la definición del backend para no
+ * duplicarlos aquí: el detalle del formato es la única fuente.
+ *
+ * Un formato que no se pueda traer simplemente no muestra tarjeta: el selector
+ * tiene que seguir sirviendo los demás formularios.
+ */
+async function cargarFormatosEnlazados(
+  fetchFn: typeof globalThis.fetch,
+  formatos: FormatoEnlazado[]
+): Promise<FormularioResumen[]> {
+  const resumenes = await Promise.all(
+    formatos.map(async ({ codigo, ruta }): Promise<FormularioResumen | null> => {
+      try {
+        const f = await sarlaftApi.obtenerFormulario(codigo, fetchFn)
+        return {
+          codigo: f.codigo,
+          tipo: f.tipo,
+          titulo: f.titulo,
+          version: f.version,
+          fecha_documento: f.fecha_documento,
+          total_secciones: f.total_secciones ?? f.secciones.length,
+          total_preguntas:
+            f.total_preguntas ?? f.secciones.reduce((acc, s) => acc + s.preguntas.length, 0),
+          ruta
+        }
+      } catch {
+        return null
+      }
+    })
+  )
+  return resumenes.filter((f): f is FormularioResumen => f !== null)
 }
 
 /**
@@ -41,15 +87,21 @@ export async function cargarFormularios(
   opts: OpcionesCarga = {}
 ): Promise<DatosFormularios> {
   try {
-    const { formularios, marco_normativo, empresa } = await sarlaftApi.listarFormularios(fetchFn)
+    const [{ formularios, marco_normativo, empresa }, enlazados] = await Promise.all([
+      sarlaftApi.listarFormularios(fetchFn),
+      cargarFormatosEnlazados(fetchFn, opts.formatosEnlazados ?? [])
+    ])
 
-    const visibles = opts.tiposPermitidos
+    // Los formatos enlazados solo aportan tarjeta: no se abren dentro de esta
+    // ruta, así que quedan fuera de la resolución de `?tipo=`.
+    const inline = opts.tiposPermitidos
       ? formularios.filter((f) => opts.tiposPermitidos!.includes(f.tipo))
       : formularios
+    const visibles = inline.concat(enlazados)
 
     const tipoUrl = url.searchParams.get('tipo') as TipoFormulario | null
     const tipo =
-      opts.tipoUnico ?? (tipoUrl && visibles.some((f) => f.tipo === tipoUrl) ? tipoUrl : null)
+      opts.tipoUnico ?? (tipoUrl && inline.some((f) => f.tipo === tipoUrl) ? tipoUrl : null)
 
     let formulario: Formulario | null = null
     if (tipo) {

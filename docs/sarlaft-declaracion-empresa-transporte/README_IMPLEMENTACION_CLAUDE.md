@@ -188,8 +188,8 @@ Archivos principales en las dos landings:
 Crear:
 
 ```text
-src/routes/declaracion-empresa-transporte/+page.ts
-src/routes/declaracion-empresa-transporte/+page.svelte
+src/routes/formularios-sarlaft/declaracion-empresa-transporte/+page.ts
+src/routes/formularios-sarlaft/declaracion-empresa-transporte/+page.svelte
 ```
 
 La ruta debe ser `standalone` y cargar por código propio de la marca. El renderer dinámico existente soporta los tipos necesarios, pero requiere:

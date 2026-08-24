@@ -73,7 +73,7 @@ No se debe homogeneizar el código documental entre marcas: el código `GC-FOR-1
 
 ## Flujo funcional objetivo
 
-1. El usuario abre `/declaracion-empresa-transporte` en la landing de la marca correcta.
+1. El usuario abre `/formularios-sarlaft/declaracion-empresa-transporte` en la landing de la marca correcta — directo, o desde la tarjeta del formato en el selector de `/formularios-sarlaft`. La ruta anterior `/declaracion-empresa-transporte` redirige (308) a la nueva.
 2. La landing obtiene la definición desde `GET /api/public/formularios-sarlaft/:codigo`.
 3. El usuario diligencia datos, confirma los compromisos, registra observaciones, adjunta el anexo de alertas cuando aplique y firma.
 4. Antes del envío se presenta un resumen con razón social, NIT, representante y correo de entrega.

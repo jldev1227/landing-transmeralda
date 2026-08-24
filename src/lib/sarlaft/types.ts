@@ -110,6 +110,10 @@ export interface FormularioResumen {
   fecha_documento: string
   total_secciones: number
   total_preguntas: number
+  /** Solo en las tarjetas de formatos que se diligencian en su propia ruta
+   *  (los `categoria: 'individual'` del backend). Cuando viene, la tarjeta
+   *  navega ahí en vez de abrir el formulario dentro del selector. */
+  ruta?: string
 }
 
 /** Documento generado que el backend devuelve al enviar. Solo lo produce el

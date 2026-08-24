@@ -13,7 +13,7 @@
      firmado, que además le llega por correo. -->
 <FormularioSarlaftApp
   {data}
-  basePath="/declaracion-empresa-transporte"
+  basePath="/formularios-sarlaft/declaracion-empresa-transporte"
   standalone
   tipoUnico="declaracion_empresa_transporte"
   tituloSelector="Declaración SARLAFT y PTEE para empresa de transporte"
