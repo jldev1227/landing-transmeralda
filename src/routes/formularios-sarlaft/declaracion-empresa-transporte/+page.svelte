@@ -10,7 +10,7 @@
 
      A diferencia de los demás formatos, aquí la confirmación NO es el fin del
      trámite para el declarante: desde ella descarga su copia del documento
-     firmado, que además le llega por correo. -->
+     firmado. Es la única forma de conservarla — no se envía por correo. -->
 <FormularioSarlaftApp
   {data}
   basePath="/formularios-sarlaft/declaracion-empresa-transporte"

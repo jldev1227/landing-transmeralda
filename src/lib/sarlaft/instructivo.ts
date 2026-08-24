@@ -453,7 +453,7 @@ const SECCIONES_DECLARACION_TRANSPORTE: InstructivoSeccion[] = [
     responsable: 'Cliente',
     indicaciones: [
       'Fecha en la que diligencias y firmas la declaración.',
-      'Es la fecha que queda impresa en el formato SLFT-PTEE-FR-13 que recibirás por correo.'
+      'Es la fecha que queda impresa en el formato SLFT-PTEE-FR-13 que podrás descargar al enviar.'
     ]
   },
   {
@@ -477,10 +477,19 @@ const SECCIONES_DECLARACION_TRANSPORTE: InstructivoSeccion[] = [
   {
     seccion: 'DECLARACIÓN Y COMPROMISO',
     responsable: 'Cliente',
+    // Los ocho compromisos van completos aquí, no resumidos: el formato
+    // controlado solo se puede descargar DESPUÉS de enviar, así que remitir a
+    // él dejaba al declarante aceptando un texto que aún no podía leer.
     indicaciones: [
-      'El texto completo de la declaración y de los ocho compromisos está impreso en el formato controlado que se genera al enviar.',
-      'Aceptar aquí equivale a suscribir ese texto: léelo antes de continuar.',
-      'Entre otras cosas, te comprometes a verificar propietario, proveedor y conductor antes de asignar cada vehículo, y a informar de inmediato cualquier alerta.'
+      'Aceptar equivale a suscribir el texto completo del formato. Dice: «En mi calidad de representante legal, declaro que la empresa…»',
+      'Se encuentra legalmente constituida y habilitada para prestar el servicio contratado.',
+      'Antes de asignar cada vehículo, identifica y verifica al propietario, proveedor y conductor.',
+      'Realiza consultas SARLAFT y PTEE, verifica beneficiarios finales cuando aplique y analiza coincidencias, PEP, noticias adversas, conflictos de interés y demás señales de alerta.',
+      'Comprueba la vigencia y coherencia de tarjeta de propiedad, SOAT, revisión técnico-mecánica, pólizas, tarjeta de operación, licencia del conductor y demás documentos exigibles.',
+      'No solicitará pagos a cuentas o personas diferentes de las previamente identificadas y autorizadas.',
+      'No incorporará ni sustituirá vehículos o conductores sin realizar previamente estas validaciones.',
+      'Informará de inmediato a la empresa contratante cualquier alerta, sanción, falsedad o situación que pueda afectar la relación comercial.',
+      'Conservará las evidencias y las entregará cuando sean requeridas.'
     ]
   },
   {
