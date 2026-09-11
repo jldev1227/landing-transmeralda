@@ -547,7 +547,13 @@
     const payload: Record<string, any> = { ...respuestas }
     for (const seccion of formulario.secciones) {
       if (seccion.tipo_bloque === 'tabla_repetible_multiple') {
-        const filas = tablasRepetibles[seccion.seccion] ?? []
+        // Una fila totalmente en blanco no se envía: en las tablas cuyas
+        // preguntas son todas opcionales (p. ej. Composición accionaria del
+        // formato Cliente/Proveedor) basta un clic en "Agregar fila" para
+        // dejar una, y archivarla solo ensucia el snapshot y el PDF.
+        const filas = (tablasRepetibles[seccion.seccion] ?? []).filter((fila) =>
+          seccion.preguntas.some((p) => !estaVacio(fila[p.id]))
+        )
         const key = seccion.key_tabla ?? `${seccion.preguntas[0]?.id.split('-').slice(0, -1).join('-')}__rows`
         payload[key] = filas
       }
