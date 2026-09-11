@@ -13,6 +13,11 @@
 
   const preguntas = $derived(seccion.preguntas)
 
+  /** Una tabla repetible sin ninguna pregunta obligatoria admite cero filas:
+   *  ni `validarSeccion` ni el backend la exigen. Se anuncia como tal para
+   *  que nadie invente una fila vacía creyendo que el paso está trancado. */
+  const esOpcional = $derived(!seccion.preguntas.some((p) => p.obligatorio))
+
   function addRow() {
     const nuevaFila: Record<string, any> = {}
     for (const p of preguntas) {
@@ -51,7 +56,10 @@
 <div class="tabla-repetible">
   <div class="tabla-header">
     <div class="tabla-title">
-      <h4>{seccion.seccion}</h4>
+      <h4>
+        {seccion.seccion}
+        {#if esOpcional}<span class="badge-opcional">Opcional</span>{/if}
+      </h4>
       {#if seccion.nota}
         <p class="nota">{seccion.nota}</p>
       {/if}
@@ -69,7 +77,11 @@
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
         <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
       </svg>
-      <p>Aún no hay registros. Haz clic en "Agregar fila" para comenzar.</p>
+      {#if esOpcional}
+        <p>Sin registros. Esta sección es opcional: puedes continuar sin agregar filas.</p>
+      {:else}
+        <p>Aún no hay registros. Haz clic en "Agregar fila" para comenzar.</p>
+      {/if}
     </div>
   {:else}
     <div class="filas">
@@ -150,6 +162,20 @@
     color: #1A1A1A;
     margin: 0;
     font-family: 'Inter Tight', system-ui, sans-serif;
+  }
+  .badge-opcional {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    background: #F3F4F6;
+    color: #6B6B6B;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    vertical-align: middle;
   }
   .nota {
     font-size: 0.75rem;
