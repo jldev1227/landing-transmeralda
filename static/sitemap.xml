@@ -8,12 +8,12 @@
 		<changefreq>weekly</changefreq>
 		<priority>1.0</priority>
 		<image:image>
-			<image:loc>https://transmeralda.com/images/flota/slide-1-1920.avif</image:loc>
+			<image:loc>https://transmeralda.com/og-image.jpg</image:loc>
 			<image:title>Flota de vehículos Transmeralda — Transporte Especial en Casanare</image:title>
 			<image:caption>Camioneta y bus de Transmeralda prestando servicio de transporte especial en Yopal, Casanare</image:caption>
 		</image:image>
 		<image:image>
-			<image:loc>https://transmeralda.com/images/servicios/transporte-de-personal-1920.avif</image:loc>
+			<image:loc>https://transmeralda.com/images/servicios/transporte-de-personal.avif</image:loc>
 			<image:title>Servicio de transporte de personal petrolero en Yopal</image:title>
 			<image:caption>Bus de Transmeralda para transporte de personal petrolero en Casanare</image:caption>
 		</image:image>

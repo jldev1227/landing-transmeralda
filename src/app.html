@@ -50,9 +50,14 @@
 			content="Empresa de transporte especial en Yopal, Casanare. Alquiler de buses y camionetas con conductor para empresas, petroleras y turismo. Habilitación nacional vigente."
 		/>
 		<meta property="og:url" content="https://transmeralda.com/" />
-		<meta property="og:image" content="https://transmeralda.com/images/flota/slide-1-1920.avif" />
-		<meta property="og:image:width" content="1920" />
-		<meta property="og:image:height" content="1280" />
+		<!-- JPG y no AVIF a propósito: los rastreadores de WhatsApp, Facebook y
+		     LinkedIn no renderizan AVIF, así que un og:image .avif sale en blanco
+		     aunque el archivo exista. -->
+		<meta property="og:image" content="https://transmeralda.com/og-image.jpg" />
+		<meta property="og:image:secure_url" content="https://transmeralda.com/og-image.jpg" />
+		<meta property="og:image:type" content="image/jpeg" />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
 		<meta
 			property="og:image:alt"
 			content="Flota de vehículos Transmeralda S.A.S. - Transporte Especial en Yopal, Casanare"
@@ -70,7 +75,7 @@
 			name="twitter:description"
 			content="Alquiler de buses y camionetas con conductor en Yopal, Casanare. Servicio para empresas, petroleras y turismo. Habilitación nacional vigente. Cotiza por WhatsApp."
 		/>
-		<meta name="twitter:image" content="https://transmeralda.com/images/flota/slide-1-1920.avif" />
+		<meta name="twitter:image" content="https://transmeralda.com/og-image.jpg" />
 		<meta
 			name="twitter:image:alt"
 			content="Flota de vehículos Transmeralda S.A.S. - Transporte Especial en Casanare"
@@ -91,7 +96,7 @@
 					"description": "Empresa de Servicio Público de Transporte Terrestre Automotor Especial con sede principal en Yopal, Casanare. Alquiler de buses y camionetas con conductor para empresas, sector petrolero, constructoras, agroindustria, turismo y gobierno. Bases operativas en Yopal, Tauramena y Villanueva. Cobertura en todo el territorio nacional colombiano con habilitación vigente del Ministerio de Transporte.",
 					"url": "https://transmeralda.com",
 					"logo": "https://transmeralda.com/assets/logo_transmeralda.avif",
-					"image": "https://transmeralda.com/images/flota/slide-1-1920.avif",
+					"image": "https://transmeralda.com/og-image.jpg",
 					"telephone": "+57-323-234-0117",
 					"email": "operaciones.transmeraldasas@gmail.com",
 					"priceRange": "$$",
@@ -346,7 +351,7 @@
 		<!-- ====== CRITICAL RESOURCE HINTS ====== -->
 		<link rel="preload" href="/fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
 		<link rel="preload" href="/fonts/intertight-latin.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
-		<link rel="preload" href="/images/flota/slide-1-1920.avif" as="image" fetchpriority="high" type="image/avif" />
+		<link rel="preload" href="/images/fallback-video-hero.avif" as="image" fetchpriority="high" type="image/avif" />
 		<link rel="preconnect" href="https://basemaps.cartocdn.com" crossorigin />
 		<link rel="dns-prefetch" href="https://basemaps.cartocdn.com" />
 
