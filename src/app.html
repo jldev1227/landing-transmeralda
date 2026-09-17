@@ -63,7 +63,6 @@
 			content="Flota de vehículos Transmeralda S.A.S. - Transporte Especial en Yopal, Casanare"
 		/>
 		<meta property="og:locale" content="es_CO" />
-		<meta property="og:type" content="business.business" />
 
 		<!-- ====== TWITTER CARDS ====== -->
 		<meta name="twitter:card" content="summary_large_image" />
@@ -80,8 +79,6 @@
 			name="twitter:image:alt"
 			content="Flota de vehículos Transmeralda S.A.S. - Transporte Especial en Casanare"
 		/>
-		<meta name="twitter:site" content="@transmeralda" />
-		<meta name="twitter:creator" content="@transmeralda" />
 
 		<!-- ====== STRUCTURED DATA: LocalBusiness + TransportationService ====== -->
 		<script type="application/ld+json">
@@ -121,8 +118,7 @@
 							"telephone": "+57-323-234-0117",
 							"contactType": "customer service",
 							"areaServed": ["CO", "Casanare", "Yopal", "Tauramena", "Villanueva"],
-							"availableLanguage": ["Spanish"],
-							"contactOption": ["TollFree", "HearingImpairedSupported"]
+							"availableLanguage": ["Spanish"]
 						}
 					],
 					"openingHoursSpecification": [
@@ -227,14 +223,6 @@
 							}
 						]
 					},
-					"aggregateRating": {
-						"@type": "AggregateRating",
-						"ratingValue": "4.9",
-						"reviewCount": "47",
-						"bestRating": "5",
-						"worstRating": "1",
-						"description": "PLACEHOLDER: Reemplazar ratingValue, reviewCount y reseñas con datos reales de clientes verificables. Google penaliza aggregate ratings con reseñas falsas o no verificables."
-					},
 					"knowsAbout": [
 						"Transporte terrestre automotor especial",
 						"Logística corporativa",
@@ -242,12 +230,6 @@
 						"Habilitación Ministerio de Transporte Colombia",
 						"Servicio público de transporte",
 						"Gestión de flotas con GPS"
-					],
-					"sameAs": [
-						"https://wa.me/573232340117",
-						"https://www.facebook.com/transmeralda",
-						"https://www.instagram.com/transmeralda",
-						"https://www.linkedin.com/company/transmeralda-sas"
 					]
 				},
 				{
@@ -355,15 +337,21 @@
 		<link rel="preconnect" href="https://basemaps.cartocdn.com" crossorigin />
 		<link rel="dns-prefetch" href="https://basemaps.cartocdn.com" />
 
-		<!-- ====== GOOGLE ANALYTICS (GA4) ====== -->
-		<!-- Reemplaza G-XXXXXXXXXX con tu ID real de GA4 antes de producción -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+		<!-- ====== GOOGLE ANALYTICS (GA4) ======
+		     Desactivado: estaba en producción con el ID de ejemplo
+		     G-XXXXXXXXXX, así que descargaba gtag.js en cada visita y no medía
+		     nada. Para activarlo, reemplaza las DOS apariciones del ID por el
+		     real (formato G-XXXXXXXXXX, lo da la propiedad en analytics.google.com)
+		     y descomenta el bloque.
+
+		<script async src="https://www.googletagmanager.com/gtag/js?id=TU-ID-GA4"></script>
 		<script>
 			window.dataLayer = window.dataLayer || [];
 			function gtag(){dataLayer.push(arguments);}
 			gtag('js', new Date());
-			gtag('config', 'G-XXXXXXXXXX');
+			gtag('config', 'TU-ID-GA4');
 		</script>
+		-->
 	</head>
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents">%sveltekit.body%</div>
