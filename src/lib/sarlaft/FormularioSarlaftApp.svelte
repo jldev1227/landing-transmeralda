@@ -12,6 +12,7 @@
     SubmitResult,
     TipoFormulario
   } from '$lib/sarlaft/types'
+  import { errorPorcentaje } from '$lib/sarlaft/types'
   import FormField from '$lib/sarlaft/FormField.svelte'
   import TablaRepetible from '$lib/sarlaft/TablaRepetible.svelte'
   import SeccionCard from '$lib/sarlaft/SeccionCard.svelte'
@@ -298,39 +299,52 @@
     return false
   }
 
+  /** Un campo con error y el motivo que se le muestra al usuario. */
+  type ErrorCampo = { id: string; mensaje: string }
+
+  const OBLIGATORIO = 'Este campo es obligatorio.'
+
   /**
-   * Valida una sección específica y devuelve la lista de campos con error
-   * (sin tocar el state global). Usado por la validación inline al cambiar
-   * de paso y por la validación final antes de enviar.
+   * Valida una sección específica y devuelve los campos con error junto con su
+   * motivo (sin tocar el state global). Usado por la validación inline al
+   * cambiar de paso y por la validación final antes de enviar.
    */
-  function validarSeccion(seccion: Seccion): string[] {
-    const errores: string[] = []
+  function validarSeccion(seccion: Seccion): ErrorCampo[] {
+    const errores: ErrorCampo[] = []
 
     if (seccion.tipo_bloque === 'tabla_repetible_multiple') {
       const filas = tablasRepetibles[seccion.seccion] ?? []
       const tieneObligatorios = seccion.preguntas.some((p) => p.obligatorio)
       if (filas.length === 0 && tieneObligatorios) {
-        errores.push(`tabla-${seccion.seccion}`)
+        errores.push({ id: `tabla-${seccion.seccion}`, mensaje: 'Agrega al menos un registro.' })
       }
       for (let i = 0; i < filas.length; i++) {
         for (const p of seccion.preguntas) {
+          const id = `${seccion.seccion}-${i}-${p.id}`
           if (p.obligatorio && estaVacio(filas[i][p.id])) {
-            errores.push(`${seccion.seccion}-${i}-${p.id}`)
+            errores.push({ id, mensaje: OBLIGATORIO })
+            continue
           }
+          const mensaje = errorPorcentaje(p, filas[i][p.id])
+          if (mensaje) errores.push({ id, mensaje })
         }
       }
     } else {
       for (const p of seccion.preguntas) {
-        if (!p.obligatorio) continue
         if (p.tipo_respuesta === 'declaracion_informativa') continue
         if (!esPreguntaVisible(p)) continue
-        if (estaVacio(respuestas[p.id])) {
-          errores.push(p.id)
+        if (p.obligatorio && estaVacio(respuestas[p.id])) {
+          errores.push({ id: p.id, mensaje: OBLIGATORIO })
+          continue
         }
+        const mensaje = errorPorcentaje(p, respuestas[p.id])
+        if (mensaje) errores.push({ id: p.id, mensaje })
       }
     }
 
-    errores.push(...validarReglasDeclaracion(seccion))
+    errores.push(
+      ...validarReglasDeclaracion(seccion).map((id) => ({ id, mensaje: OBLIGATORIO }))
+    )
     return errores
   }
 
@@ -386,7 +400,7 @@
     for (const seccion of formulario.secciones) {
       if (!esSeccionVisible(seccion)) continue
       const errores = validarSeccion(seccion)
-      for (const id of errores) newErrors[id] = 'Este campo es obligatorio.'
+      for (const { id, mensaje } of errores) newErrors[id] = mensaje
       if (errores.length > 0) seccionesConError.add(seccion.seccion)
     }
 
@@ -424,11 +438,11 @@
     }
     // Mostrar errores solo de esta sección
     const newErrors: Record<string, string> = { ...fieldErrors }
-    for (const id of errores) newErrors[id] = 'Este campo es obligatorio.'
+    for (const { id, mensaje } of errores) newErrors[id] = mensaje
     fieldErrors = newErrors
     seccionesConError.add(seccionActual.seccion)
     seccionesConErrorSet = new Set(seccionesConError)
-    submitError = `Completa los ${errores.length} campo${errores.length === 1 ? '' : 's'} obligatorio${errores.length === 1 ? '' : 's'} de esta sección para continuar.`
+    submitError = `Corrige ${errores.length} campo${errores.length === 1 ? '' : 's'} de esta sección para continuar.`
     // Scroll al primer error después de que el DOM se actualice
     setTimeout(() => {
       const firstError = document.querySelector('.has-error, .tabla-repetible .fila')
@@ -452,7 +466,7 @@
     const { ok, seccionesConError: set } = validateAll()
     seccionesConErrorSet = new Set(set)
     if (!ok) {
-      submitError = 'Por favor completa todos los campos obligatorios antes de enviar.'
+      submitError = 'Revisa los campos marcados antes de enviar: hay obligatorios pendientes o datos fuera de rango.'
       // Saltar a la primera sección con error
       if (formulario) {
         const firstErrSection = formulario.secciones.find(
@@ -1078,7 +1092,7 @@
               </svg>
               <div>
                 <strong>
-                  Tienes {erroresActualesSeccion.size} campo{erroresActualesSeccion.size === 1 ? '' : 's'} obligatorio{erroresActualesSeccion.size === 1 ? '' : 's'} pendiente{erroresActualesSeccion.size === 1 ? '' : 's'} en esta sección.
+                  Tienes {erroresActualesSeccion.size} campo{erroresActualesSeccion.size === 1 ? '' : 's'} por corregir en esta sección.
                 </strong>
                 <p>Complétalos para pasar a la siguiente sección.</p>
               </div>

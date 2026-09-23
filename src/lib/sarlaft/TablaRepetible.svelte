@@ -97,7 +97,8 @@
           </div>
           <div class="fila-grid">
             {#each preguntas as pregunta (pregunta.id)}
-              <div class="campo">
+              {@const errorCampo = errors[`${seccion.seccion}-${i}-${pregunta.id}`]}
+              <div class="campo" class:has-error={!!errorCampo}>
                 <label for="{seccion.seccion}-{i}-{pregunta.id}">
                   {pregunta.pregunta}
                   {#if pregunta.obligatorio}<span class="req">*</span>{/if}
@@ -131,6 +132,10 @@
                     value={fila[pregunta.id] ?? ''}
                     oninput={(e) => onInputTexto(e, i, pregunta)}
                   />
+                {/if}
+
+                {#if errorCampo}
+                  <p class="error">{errorCampo}</p>
                 {/if}
               </div>
             {/each}
@@ -296,6 +301,15 @@
   .req {
     color: #B91C1C;
     margin-left: 2px;
+  }
+  .campo.has-error :is(input, select) {
+    border-color: #FCA5A5;
+  }
+  .campo .error {
+    font-size: 0.7rem;
+    color: #B91C1C;
+    margin: 0;
+    font-family: 'Inter Tight', system-ui, sans-serif;
   }
   .campo input,
   .campo select {

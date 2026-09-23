@@ -56,6 +56,27 @@ export function inputModeDe(formato?: FormatoCampo): 'numeric' | 'tel' | undefin
   return undefined
 }
 
+/**
+ * Acota los campos `modo_respuesta: 'Porcentaje'` (los % de participación de
+ * accionistas y beneficiarios finales). El decimal sí se admite —22,5 y 22.5
+ * son válidos, el navegador entrega ambos como "22.5"— pero el rango no:
+ * sin esta regla un 150 o un -20 llegaba al PDF radicado.
+ *
+ * Espejo de la validación del backend, que sigue siendo la autoridad: aquí
+ * existe para que el usuario lo vea mientras diligencia y no al enviar.
+ *
+ * Devuelve el mensaje de error, o `null` si el valor es aceptable. Un campo
+ * vacío no es asunto de esta regla: lo cubre la validación de obligatorios.
+ */
+export function errorPorcentaje(pregunta: Pregunta, valor: unknown): string | null {
+  if (pregunta.modo_respuesta !== 'Porcentaje') return null
+  if (valor == null || (typeof valor === 'string' && valor.trim() === '')) return null
+  const n = typeof valor === 'number' ? valor : Number(String(valor).trim().replace(',', '.'))
+  if (!Number.isFinite(n)) return 'Escribe un número, por ejemplo 22,5.'
+  if (n < 0 || n > 100) return 'El porcentaje debe estar entre 0 y 100.'
+  return null
+}
+
 export interface Pregunta {
   id: string
   pregunta: string
