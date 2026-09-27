@@ -49,7 +49,7 @@
 				'Cola de envío con reintento automático',
 				'Campos obligatorios señalados antes de enviar'
 			],
-			imagen: '/app/formato.png',
+			imagen: '/app/formato',
 			alt: 'Formato preoperacional abierto en la aplicación, con la tarjeta de contexto obligatorio para seleccionar la placa'
 		},
 		{
@@ -62,7 +62,7 @@
 				'Selectores nativos de fecha y hora',
 				'Cálculo automático de horas conducidas'
 			],
-			imagen: '/app/jornada.png',
+			imagen: '/app/jornada',
 			alt: 'Pantalla de registro de jornada con selección de vehículo, cliente y horas de inicio y fin'
 		},
 		{
@@ -75,7 +75,7 @@
 				'Recorrido dibujado sobre el mapa',
 				'Búsqueda por ciudad, cliente o placa'
 			],
-			imagen: '/app/servicios.png',
+			imagen: '/app/servicios',
 			alt: 'Listado de servicios asignados con origen, destino, cliente y placa'
 		},
 		{
@@ -88,7 +88,7 @@
 				'Indicador de registros pendientes por sincronizar',
 				'Desprendibles y primas descargables'
 			],
-			imagen: '/app/dias.png',
+			imagen: '/app/dias',
 			alt: 'Historial mensual de días laborados con métricas del mes'
 		}
 	];
@@ -192,7 +192,18 @@
 				</div>
 				<div class="bloque-device">
 					<div class="pc-device">
-						<img src={bloque.imagen} alt={bloque.alt} loading="lazy" />
+						<picture>
+							<source srcset={bloque.imagen + '.avif'} type="image/avif" />
+							<source srcset={bloque.imagen + '.webp'} type="image/webp" />
+							<img
+								src={bloque.imagen + '.png'}
+								alt={bloque.alt}
+								width="520"
+								height="1129"
+								loading="lazy"
+								decoding="async"
+							/>
+						</picture>
 					</div>
 				</div>
 			</section>
@@ -243,7 +254,7 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 0.35rem;
-		color: var(--pc-primary);
+		color: var(--pc-primary-text);
 		text-decoration: none;
 		font-size: 0.9rem;
 		font-weight: 700;
@@ -367,7 +378,7 @@
 	}
 
 	.bloque-eyebrow {
-		color: var(--pc-primary);
+		color: var(--pc-primary-text);
 		margin-bottom: 0.4rem;
 	}
 

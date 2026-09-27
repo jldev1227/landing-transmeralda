@@ -22,6 +22,8 @@
 
 	/* Semánticos, con los mismos nombres que usa la app */
 	--pc-primary: var(--pc-brand-600);
+	/* Solo para texto sobre fondo claro: brand-600 da 3.78:1 y brand-700 da 5.34:1. */
+	--pc-primary-text: var(--pc-brand-700);
 	--pc-primary-dark: var(--pc-brand-900);
 	--pc-primary-soft: var(--pc-brand-50);
 	--pc-primary-tint: var(--pc-brand-100);
