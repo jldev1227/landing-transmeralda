@@ -37,6 +37,8 @@
 :root {
   /* Paleta emerald (acento) */
   --emerald-500: #10B981;
+  /* Solo para texto sobre fondo claro: emerald-500 da 2.37:1 y emerald-700 da 5.13:1. */
+  --emerald-text: #047857;
   --emerald-600: #059669;
   --emerald-700: #047857;
   --emerald-800: #065F46;
@@ -52,7 +54,8 @@
   --text-primary: #1A1A1A;
   --text-secondary: #4A4A4A;
   --text-muted: #6B6B6B;
-  --text-very-muted: #9A9A9A;
+  /* #9A9A9A daba 2.4:1 sobre el fondo crema; #6E6E6E alcanza 4.9:1. */
+  --text-very-muted: #6E6E6E;
   --text-on-dark: #F0EDE6;
   --text-on-dark-muted: rgba(240, 237, 230, 0.65);
 

@@ -65,9 +65,11 @@
 			attributionControl: true
 		}).setView([5.0, -72.65], 9);
 
-		L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-			attribution: '© OpenStreetMap, © CARTO',
-			subdomains: 'abcd',
+		// CARTO empezó a exigir API key: sus tiles responden HTTP 200 con un PNG
+		// de 2 KB que dice "API KEY REQUIRED", así que no hay error que capturar
+		// y el mapa se veía con marca de agua. OpenStreetMap no pide credenciales.
+		L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			maxZoom: 19
 		}).addTo(mapInstance);
 
@@ -106,7 +108,14 @@
 
 		// Add markers for each municipio
 		municipios.forEach((m) => {
-			const marker = L.marker(m.coords as [number, number], { icon: emeraldIcon(m.size) }).addTo(mapInstance);
+			const marker = L.marker(m.coords as [number, number], {
+				icon: emeraldIcon(m.size),
+				// Leaflet marca el icono como role="button" y enfocable; sin nombre
+				// accesible un lector de pantalla solo anuncia "botón".
+				alt: `${m.name}, ${m.tag}`,
+				title: m.name
+			}).addTo(mapInstance);
+			marker.getElement()?.setAttribute('aria-label', `Ver ${m.name} en el mapa`);
 			marker.bindPopup(`
 				<div style="font-family: 'Inter Tight', sans-serif; min-width: 140px;">
 					<div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #6B6B6B; margin-bottom: 4px;">${m.tag}</div>
@@ -142,7 +151,15 @@
 		}, 1450);
 	}
 
+	// El <video> con autoplay descarga el archivo aunque tenga preload="none".
+	// En movil eso son 3 MB que no aportan: el poster ya muestra la escena.
+	let mostrarVideo = $state(false);
+
 	onMount(() => {
+		mostrarVideo =
+			window.matchMedia('(min-width: 768px)').matches &&
+			!window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 		const video = document.querySelector('.hero-video') as HTMLVideoElement | null;
 		if (video) {
 			const markReady = () => video.classList.add('is-ready');
@@ -297,6 +314,41 @@
 		name="description"
 		content="Empresa de transporte especial en Yopal, Casanare. Alquiler de buses y camionetas con conductor para empresas, petroleras y turismo. Habilitación nacional vigente."
 	/>
+	<link rel="canonical" href="https://transmeralda.com/" />
+
+	<link rel="preload" href="/fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+	<link rel="preload" href="/fonts/intertight-latin.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+	<link rel="preload" href="/images/fallback-video-hero.avif" as="image" fetchpriority="high" type="image/avif" />
+
+	<meta property="og:title" content="Transporte Especial en Casanare | Transmeralda Yopal" />
+	<meta
+		property="og:description"
+		content="Empresa de transporte especial en Yopal, Casanare. Alquiler de buses y camionetas con conductor para empresas, petroleras y turismo. Habilitación nacional vigente."
+	/>
+	<meta property="og:url" content="https://transmeralda.com/" />
+	<!-- JPG y no AVIF a propósito: los rastreadores de WhatsApp, Facebook y
+	     LinkedIn no renderizan AVIF, así que un og:image .avif sale en blanco
+	     aunque el archivo exista. -->
+	<meta property="og:image" content="https://transmeralda.com/og-image.jpg" />
+	<meta property="og:image:secure_url" content="https://transmeralda.com/og-image.jpg" />
+	<meta property="og:image:type" content="image/jpeg" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta
+		property="og:image:alt"
+		content="Flota de vehículos Transmeralda S.A.S. - Transporte Especial en Yopal, Casanare"
+	/>
+
+	<meta name="twitter:title" content="Transporte Especial en Casanare | Transmeralda Yopal" />
+	<meta
+		name="twitter:description"
+		content="Alquiler de buses y camionetas con conductor en Yopal, Casanare. Servicio para empresas, petroleras y turismo. Habilitación nacional vigente. Cotiza por WhatsApp."
+	/>
+	<meta name="twitter:image" content="https://transmeralda.com/og-image.jpg" />
+	<meta
+		name="twitter:image:alt"
+		content="Flota de vehículos Transmeralda S.A.S. - Transporte Especial en Casanare"
+	/>
 </svelte:head>
 
 <!-- ═══════════════ NAVBAR ═══════════════ -->
@@ -381,9 +433,11 @@
 	<section id="inicio" class="section-hero" aria-label="Transporte Especial en Casanare">
 		<!-- Video poster como background-image para FCP instantáneo (el <video> bloquea render) -->
 		<div class="hero-poster" aria-hidden="true"></div>
-		<video autoplay muted loop playsinline preload="none" poster="/images/fallback-video-hero.avif" class="hero-video" aria-hidden="true">
-			<source src="/videos/fondo_transmeralda.mp4" type="video/mp4" />
-		</video>
+		{#if mostrarVideo}
+			<video autoplay muted loop playsinline preload="none" poster="/images/fallback-video-hero.avif" class="hero-video" aria-hidden="true">
+				<source src="/videos/fondo_transmeralda.mp4" type="video/mp4" />
+			</video>
+		{/if}
 		<div class="hero-overlay"></div>
 
 		<div class="hero-content" in:fly={{ y: 200, duration: 1000, easing: elasticOut }}>
@@ -893,11 +947,11 @@
 		<div class="footer__col footer__col--brand">
 			<img
 				src="/assets/logo_transmeralda_white-264.avif"
-				srcset="/assets/logo_transmeralda_white-132.avif 132w, /assets/logo_transmeralda_white-264.avif 264w, /assets/logo_transmeralda_white-528.avif 528w"
+				srcset="/assets/logo_transmeralda_white-132.avif 132w, /assets/logo_transmeralda_white-264.avif 264w"
 				sizes="(min-width: 768px) 220px, 132px"
 				alt="Transmeralda"
-				width="132"
-				height="45"
+				width="264"
+				height="89"
 				class="footer__logo"
 			/>
 			<p class="footer__tagline">
@@ -1232,8 +1286,8 @@
 		white-space: nowrap;
 		text-decoration: none;
 	}
-	.hero-cta--primary { background: #25d366; box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4); }
-	.hero-cta--primary:hover { background: #20bd5a; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(37, 211, 102, 0.5); }
+	.hero-cta--primary { background: #0d7268; box-shadow: 0 4px 20px rgba(13, 114, 104, 0.4); }
+	.hero-cta--primary:hover { background: #0e7a6d; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(37, 211, 102, 0.5); }
 	.hero-cta--secondary { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
 	.hero-cta--secondary:hover { background: rgba(255, 255, 255, 0.25); transform: translateY(-2px); }
 	.hero-buttons { display: flex; flex-direction: column; gap: 0.75rem; align-items: center; }
@@ -1312,9 +1366,11 @@
 		letter-spacing: 0.05em;
 		margin-bottom: 1.25rem;
 	}
-	.section-number__hash { font-size: 0.625rem; opacity: 0.6; }
-	.section-number--light { color: var(--emerald-500); }
-	.section-number--dark { color: var(--emerald-500); }
+	/* Sin `opacity`: al 0.6 el verde se mezclaba con el fondo y caia a 2.7:1. */
+	.section-number__hash { font-size: 0.625rem; }
+	/* --light va sobre fondo claro; --dark sobre seccion oscura. */
+	.section-number--light { color: var(--emerald-text); }
+	.section-number--dark { color: #6ee7b7; }
 
 	.section-title {
 		font-family: 'Fraunces', serif;
@@ -2208,7 +2264,7 @@
 		.footer__inner { grid-template-columns: 1.5fr repeat(3, 1fr); gap: 3rem; }
 	}
 	.footer__col--brand { display: flex; flex-direction: column; gap: 1rem; }
-	.footer__logo { height: 6.5rem; width: auto; opacity: 0.9; }
+	.footer__logo { height: 6.5rem; width: auto; object-fit: contain; opacity: 0.9; }
 	.footer__tagline {
 		font-family: 'Inter Tight', system-ui, sans-serif;
 		font-size: 0.875rem;

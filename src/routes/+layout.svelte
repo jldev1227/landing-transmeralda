@@ -16,8 +16,8 @@
 <svelte:head>
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<meta name="theme-color" content="#064e3b" />
-	<link rel="preconnect" href="https://basemaps.cartocdn.com" crossorigin />
-	<link rel="dns-prefetch" href="https://basemaps.cartocdn.com" />
+	<link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin />
+	<link rel="dns-prefetch" href="https://tile.openstreetmap.org" />
 </svelte:head>
 
 {@render children?.()}

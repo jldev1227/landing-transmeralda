@@ -1,0 +1,195 @@
+/**
+ * Tokens del Portal del Conductor, replicados desde `src/theme/palette.ts`
+ * de la aplicación móvil. Mantener ambos archivos en paralelo: si cambia la
+ * paleta de la app, cambia aquí.
+ */
+.pc {
+	/* Marca */
+	--pc-brand-900: #014339;
+	--pc-brand-800: #075c49;
+	--pc-brand-700: #087a57;
+	--pc-brand-600: #079665;
+	--pc-brand-100: #ddf7ea;
+	--pc-brand-50: #effbf5;
+
+	/* Neutros */
+	--pc-neutral-950: #17201d;
+	--pc-neutral-800: #33423d;
+	--pc-neutral-600: #66756f;
+	--pc-neutral-200: #dee7e3;
+	--pc-neutral-50: #f7faf8;
+	--pc-white: #ffffff;
+
+	/* Semánticos, con los mismos nombres que usa la app */
+	--pc-primary: var(--pc-brand-600);
+	/* Solo para texto sobre fondo claro: brand-600 da 3.78:1 y brand-700 da 5.34:1. */
+	--pc-primary-text: var(--pc-brand-700);
+	--pc-primary-dark: var(--pc-brand-900);
+	--pc-primary-soft: var(--pc-brand-50);
+	--pc-primary-tint: var(--pc-brand-100);
+	--pc-border: var(--pc-neutral-200);
+	--pc-text: var(--pc-neutral-950);
+	--pc-muted: var(--pc-neutral-600);
+	--pc-background: var(--pc-neutral-50);
+
+	/* Acentos del hero, tomados de `ui.tsx` */
+	--pc-hero-eyebrow: #a9efcb;
+	--pc-hero-subtitle: #d4f3e5;
+
+	/* Radios */
+	--pc-radius-small: 12px;
+	--pc-radius-medium: 16px;
+	--pc-radius-large: 22px;
+	--pc-radius-hero: 28px;
+	--pc-radius-pill: 999px;
+
+	/* Sombra de tarjeta: mismo tono verde oscuro que en el móvil */
+	--pc-shadow-card: 0 6px 14px rgba(1, 67, 57, 0.065);
+	--pc-shadow-raised: 0 9px 20px rgba(1, 67, 57, 0.14);
+	--pc-shadow-hero: 0 24px 60px rgba(1, 67, 57, 0.28);
+
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+		sans-serif;
+	background: var(--pc-primary-soft);
+	color: var(--pc-text);
+}
+
+/* ---- Tipografía: escala `theme.type` de la app ---- */
+
+.pc-hero-title {
+	font-size: clamp(1.75rem, 5vw, 2.6rem);
+	line-height: 1.12;
+	font-weight: 900;
+	letter-spacing: -0.02em;
+}
+
+.pc-title {
+	font-size: 1.31rem; /* 21px */
+	line-height: 1.24;
+	font-weight: 800;
+	letter-spacing: -0.3px;
+}
+
+.pc-card-title {
+	font-size: 1rem;
+	line-height: 1.31;
+	font-weight: 800;
+}
+
+.pc-body {
+	font-size: 0.95rem;
+	line-height: 1.7;
+	color: var(--pc-muted);
+}
+
+.pc-eyebrow {
+	display: inline-block;
+	font-size: 0.625rem;
+	font-weight: 900;
+	letter-spacing: 1.25px;
+	text-transform: uppercase;
+}
+
+/* ---- Componentes replicados de la app ---- */
+
+/* `PortalHero` de ui.tsx: verde oscuro, esquinas 28 y orbes translúcidos. */
+.pc-hero {
+	position: relative;
+	overflow: hidden;
+	background: var(--pc-primary-dark);
+	border-radius: var(--pc-radius-hero);
+	box-shadow: var(--pc-shadow-hero);
+}
+
+.pc-hero::before,
+.pc-hero::after {
+	content: '';
+	position: absolute;
+	border-radius: var(--pc-radius-pill);
+	background: rgba(255, 255, 255, 0.06);
+	pointer-events: none;
+}
+
+.pc-hero::before {
+	width: 380px;
+	height: 380px;
+	right: -120px;
+	top: -150px;
+}
+
+.pc-hero::after {
+	width: 180px;
+	height: 180px;
+	left: -60px;
+	bottom: -80px;
+}
+
+/* `Card` de ui.tsx */
+.pc-card {
+	background: var(--pc-white);
+	border-radius: var(--pc-radius-large);
+	box-shadow: var(--pc-shadow-card);
+	padding: 1.15rem 1.2rem;
+}
+
+/* `uiStyles.chip` */
+.pc-chip {
+	display: inline-block;
+	background: var(--pc-primary-soft);
+	color: var(--pc-primary-dark);
+	border-radius: var(--pc-radius-pill);
+	padding: 0.28rem 0.65rem;
+	font-size: 0.75rem;
+	font-weight: 700;
+}
+
+/* `uiStyles.button` */
+.pc-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 52px;
+	padding: 0 1.15rem;
+	border-radius: var(--pc-radius-medium);
+	background: var(--pc-primary);
+	color: var(--pc-white);
+	font-size: 1rem;
+	font-weight: 700;
+	text-decoration: none;
+	transition: background 0.2s ease;
+}
+
+.pc-button:hover {
+	background: var(--pc-brand-700);
+}
+
+/* `styles.sectionHeader` */
+.pc-section-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-end;
+	gap: 1rem;
+	margin-bottom: 0.9rem;
+}
+
+.pc-section-detail {
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: var(--pc-muted);
+}
+
+/* Marco de dispositivo para las capturas */
+.pc-device {
+	border-radius: 30px;
+	border: 7px solid var(--pc-primary-dark);
+	background: var(--pc-primary-dark);
+	overflow: hidden;
+	line-height: 0;
+	box-shadow: var(--pc-shadow-hero);
+}
+
+.pc-device img {
+	width: 100%;
+	height: auto;
+	display: block;
+}

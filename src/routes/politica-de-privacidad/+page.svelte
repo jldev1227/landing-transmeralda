@@ -33,7 +33,13 @@
 		</section>
 
 		<section>
-			<h2>2. Datos Recopilados</h2>
+			<h2>2. Alcance de esta política</h2>
+			<p>Este documento cubre el tratamiento de datos realizado a través de <strong>este sitio web</strong>. La aplicación móvil <strong>Portal del Conductor</strong>, de uso interno para el personal de conducción, trata datos distintos y se rige por su propia política.</p>
+			<p><a href="/app/politica-de-privacidad">Ver política de privacidad de la aplicación móvil</a></p>
+		</section>
+
+		<section>
+			<h2>3. Datos Recopilados</h2>
 			<p>A través de este sitio web podemos recopilar la siguiente información:</p>
 			<ul>
 				<li>Nombre completo</li>
@@ -44,7 +50,7 @@
 		</section>
 
 		<section>
-			<h2>3. Finalidad del Tratamiento</h2>
+			<h2>4. Finalidad del Tratamiento</h2>
 			<p>Los datos personales recopilados serán utilizados para:</p>
 			<ul>
 				<li>Responder solicitudes de cotización de servicios de transporte.</li>
@@ -55,7 +61,7 @@
 		</section>
 
 		<section>
-			<h2>4. Derechos del Titular</h2>
+			<h2>5. Derechos del Titular</h2>
 			<p>De conformidad con la Ley 1581 de 2012 y el Decreto 1377 de 2013, usted tiene derecho a:</p>
 			<ul>
 				<li>Conocer, actualizar y rectificar sus datos personales.</li>
@@ -67,12 +73,12 @@
 		</section>
 
 		<section>
-			<h2>5. Seguridad</h2>
+			<h2>6. Seguridad</h2>
 			<p>Transmeralda S.A.S. implementa medidas de seguridad técnicas, administrativas y físicas para proteger los datos personales contra acceso no autorizado, alteración, divulgación o destrucción.</p>
 		</section>
 
 		<section>
-			<h2>6. Contacto</h2>
+			<h2>7. Contacto</h2>
 			<p>Para ejercer sus derechos o realizar consultas sobre esta política, puede contactarnos a través de:</p>
 			<ul>
 				<li><strong>Email:</strong> operaciones.transmeraldasas@gmail.com</li>
