@@ -8,8 +8,27 @@
 	<title>Política de Privacidad de la App | Portal del Conductor Transmeralda</title>
 	<meta
 		name="description"
-		content="Política de privacidad y tratamiento de datos personales de la aplicación móvil Portal del Conductor de Transmeralda S.A.S."
+		content="Qué datos recopila la app Portal del Conductor de Transmeralda S.A.S., con qué finalidad, con quién se comparten y cómo ejercer sus derechos bajo la Ley 1581 de 2012."
 	/>
+	<link rel="canonical" href="https://transmeralda.com/app/politica-de-privacidad" />
+
+	<meta property="og:title" content="Política de Privacidad | Portal del Conductor Transmeralda" />
+	<meta
+		property="og:description"
+		content="Tratamiento de datos personales de la aplicación móvil Portal del Conductor de Transmeralda S.A.S."
+	/>
+	<meta property="og:url" content="https://transmeralda.com/app/politica-de-privacidad" />
+	<meta property="og:image" content="https://transmeralda.com/app/og-app.jpg" />
+	<meta property="og:image:type" content="image/jpeg" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+
+	<meta name="twitter:title" content="Política de Privacidad | Portal del Conductor Transmeralda" />
+	<meta
+		name="twitter:description"
+		content="Tratamiento de datos personales de la aplicación móvil Portal del Conductor de Transmeralda S.A.S."
+	/>
+	<meta name="twitter:image" content="https://transmeralda.com/app/og-app.jpg" />
 </svelte:head>
 
 <div class="pc policy-page" in:fade={{ duration: 400 }}>

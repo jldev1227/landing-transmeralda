@@ -38,47 +38,15 @@
 		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 		<link rel="manifest" href="/manifest.json" />
 
-		<!-- ====== OPEN GRAPH (Facebook, WhatsApp, LinkedIn) ====== -->
+		<!-- ====== OPEN GRAPH: solo lo que NO cambia entre rutas ======
+		     og:title, og:description, og:url, og:image y las tarjetas de Twitter
+		     los define cada página en su <svelte:head>. Si se declaran aquí,
+		     quedan ANTES de %sveltekit.head% y los rastreadores toman la primera
+		     ocurrencia, de modo que toda ruta se compartiría como la portada. -->
 		<meta property="og:type" content="website" />
 		<meta property="og:site_name" content="Transmeralda S.A.S." />
-		<meta
-			property="og:title"
-			content="Transporte Especial en Casanare | Transmeralda Yopal"
-		/>
-		<meta
-			property="og:description"
-			content="Empresa de transporte especial en Yopal, Casanare. Alquiler de buses y camionetas con conductor para empresas, petroleras y turismo. Habilitación nacional vigente."
-		/>
-		<meta property="og:url" content="https://transmeralda.com/" />
-		<!-- JPG y no AVIF a propósito: los rastreadores de WhatsApp, Facebook y
-		     LinkedIn no renderizan AVIF, así que un og:image .avif sale en blanco
-		     aunque el archivo exista. -->
-		<meta property="og:image" content="https://transmeralda.com/og-image.jpg" />
-		<meta property="og:image:secure_url" content="https://transmeralda.com/og-image.jpg" />
-		<meta property="og:image:type" content="image/jpeg" />
-		<meta property="og:image:width" content="1200" />
-		<meta property="og:image:height" content="630" />
-		<meta
-			property="og:image:alt"
-			content="Flota de vehículos Transmeralda S.A.S. - Transporte Especial en Yopal, Casanare"
-		/>
 		<meta property="og:locale" content="es_CO" />
-
-		<!-- ====== TWITTER CARDS ====== -->
 		<meta name="twitter:card" content="summary_large_image" />
-		<meta
-			name="twitter:title"
-			content="Transporte Especial en Casanare | Transmeralda Yopal"
-		/>
-		<meta
-			name="twitter:description"
-			content="Alquiler de buses y camionetas con conductor en Yopal, Casanare. Servicio para empresas, petroleras y turismo. Habilitación nacional vigente. Cotiza por WhatsApp."
-		/>
-		<meta name="twitter:image" content="https://transmeralda.com/og-image.jpg" />
-		<meta
-			name="twitter:image:alt"
-			content="Flota de vehículos Transmeralda S.A.S. - Transporte Especial en Casanare"
-		/>
 
 		<!-- ====== STRUCTURED DATA: LocalBusiness + TransportationService ====== -->
 		<script type="application/ld+json">

@@ -3,6 +3,35 @@
 	import { cubicOut } from 'svelte/easing';
 	import '$lib/styles/app-theme.css';
 
+	const datosEstructurados = {
+		'@context': 'https://schema.org',
+		'@type': 'MobileApplication',
+		name: 'Portal del Conductor',
+		alternateName: 'Portal del Conductor Transmeralda',
+		applicationCategory: 'BusinessApplication',
+		operatingSystem: 'Android, iOS',
+		url: 'https://transmeralda.com/app',
+		image: 'https://transmeralda.com/app/og-app.jpg',
+		inLanguage: 'es-CO',
+		description:
+			'Aplicación móvil interna de Transmeralda S.A.S. para que sus conductores diligencien formatos HSEQ sin conexión, registren su jornada laboral y consulten servicios asignados y desprendibles de pago.',
+		privacyPolicy: 'https://transmeralda.com/app/politica-de-privacidad',
+		// Sin `offers`: es una herramienta interna, no se distribuye al público.
+		author: {
+			'@type': 'Organization',
+			name: 'Transmeralda S.A.S.',
+			'@id': 'https://transmeralda.com/#organization',
+			url: 'https://transmeralda.com'
+		},
+		featureList: [
+			'Diligenciamiento de formatos HSEQ sin conexión',
+			'Registro de jornada laboral con tramos, horas y kilometraje',
+			'Consulta de servicios asignados con mapa y navegación',
+			'Descarga de desprendibles de pago y primas',
+			'Captura de evidencias fotográficas y firma digital'
+		]
+	};
+
 	const metricas = [
 		{ valor: 'Offline', etiqueta: 'Diligencia sin señal' },
 		{ valor: 'Android', etiqueta: 'y iOS' },
@@ -66,11 +95,41 @@
 </script>
 
 <svelte:head>
-	<title>Portal del Conductor | Transmeralda S.A.S.</title>
+	<title>Portal del Conductor — App para conductores | Transmeralda S.A.S.</title>
 	<meta
 		name="description"
-		content="Aplicación móvil de Transmeralda S.A.S. para que sus conductores diligencien formatos HSEQ, registren su jornada y consulten servicios y desprendibles, incluso sin conexión."
+		content="Portal del Conductor es la app móvil de Transmeralda S.A.S.: diligencia formatos HSEQ sin conexión, registra tu jornada laboral y consulta servicios y desprendibles desde el teléfono."
 	/>
+	<link rel="canonical" href="https://transmeralda.com/app" />
+
+	<meta property="og:title" content="Portal del Conductor | App móvil de Transmeralda S.A.S." />
+	<meta
+		property="og:description"
+		content="Formatos HSEQ, registro de jornada y servicios asignados desde el teléfono. Funciona sin conexión y sincroniza al recuperar internet."
+	/>
+	<meta property="og:url" content="https://transmeralda.com/app" />
+	<meta property="og:image" content="https://transmeralda.com/app/og-app.jpg" />
+	<meta property="og:image:secure_url" content="https://transmeralda.com/app/og-app.jpg" />
+	<meta property="og:image:type" content="image/jpeg" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta
+		property="og:image:alt"
+		content="Pantalla principal de la app Portal del Conductor de Transmeralda, con los formatos asignados"
+	/>
+
+	<meta name="twitter:title" content="Portal del Conductor | App móvil de Transmeralda S.A.S." />
+	<meta
+		name="twitter:description"
+		content="Formatos HSEQ, registro de jornada y servicios asignados desde el teléfono. Funciona sin conexión."
+	/>
+	<meta name="twitter:image" content="https://transmeralda.com/app/og-app.jpg" />
+	<meta
+		name="twitter:image:alt"
+		content="Pantalla principal de la app Portal del Conductor de Transmeralda"
+	/>
+
+	{@html `<script type="application/ld+json">${JSON.stringify(datosEstructurados)}<` + `/script>`}
 </svelte:head>
 
 <div class="pc page" in:fade={{ duration: 400 }}>

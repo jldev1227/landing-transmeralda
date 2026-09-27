@@ -65,11 +65,27 @@
 			attributionControl: true
 		}).setView([5.0, -72.65], 9);
 
-		L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-			attribution: '© OpenStreetMap, © CARTO',
-			subdomains: 'abcd',
-			maxZoom: 19
-		}).addTo(mapInstance);
+		// CARTO no exige API key para este uso, pero si alguna vez empieza a
+		// pedirla (o limita por volumen) los tiles fallarían en silencio y el
+		// mapa quedaría gris. Ante varios errores seguidos pasamos a
+		// OpenStreetMap, que no requiere credenciales.
+		const baseCarto = L.tileLayer(
+			'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+			{ attribution: '© OpenStreetMap, © CARTO', subdomains: 'abcd', maxZoom: 19 }
+		).addTo(mapInstance);
+
+		let tilesFallidos = 0;
+		baseCarto.on('tileerror', () => {
+			tilesFallidos += 1;
+			if (tilesFallidos < 4) return;
+			baseCarto.off('tileerror');
+			mapInstance.removeLayer(baseCarto);
+			L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				attribution: '© OpenStreetMap',
+				maxZoom: 19
+			}).addTo(mapInstance);
+			console.warn('[mapa] Los tiles de CARTO fallaron; se usa OpenStreetMap.');
+		});
 
 		L.control.zoom({ position: 'bottomright' }).addTo(mapInstance);
 
@@ -296,6 +312,37 @@
 	<meta
 		name="description"
 		content="Empresa de transporte especial en Yopal, Casanare. Alquiler de buses y camionetas con conductor para empresas, petroleras y turismo. Habilitación nacional vigente."
+	/>
+	<link rel="canonical" href="https://transmeralda.com/" />
+
+	<meta property="og:title" content="Transporte Especial en Casanare | Transmeralda Yopal" />
+	<meta
+		property="og:description"
+		content="Empresa de transporte especial en Yopal, Casanare. Alquiler de buses y camionetas con conductor para empresas, petroleras y turismo. Habilitación nacional vigente."
+	/>
+	<meta property="og:url" content="https://transmeralda.com/" />
+	<!-- JPG y no AVIF a propósito: los rastreadores de WhatsApp, Facebook y
+	     LinkedIn no renderizan AVIF, así que un og:image .avif sale en blanco
+	     aunque el archivo exista. -->
+	<meta property="og:image" content="https://transmeralda.com/og-image.jpg" />
+	<meta property="og:image:secure_url" content="https://transmeralda.com/og-image.jpg" />
+	<meta property="og:image:type" content="image/jpeg" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta
+		property="og:image:alt"
+		content="Flota de vehículos Transmeralda S.A.S. - Transporte Especial en Yopal, Casanare"
+	/>
+
+	<meta name="twitter:title" content="Transporte Especial en Casanare | Transmeralda Yopal" />
+	<meta
+		name="twitter:description"
+		content="Alquiler de buses y camionetas con conductor en Yopal, Casanare. Servicio para empresas, petroleras y turismo. Habilitación nacional vigente. Cotiza por WhatsApp."
+	/>
+	<meta name="twitter:image" content="https://transmeralda.com/og-image.jpg" />
+	<meta
+		name="twitter:image:alt"
+		content="Flota de vehículos Transmeralda S.A.S. - Transporte Especial en Casanare"
 	/>
 </svelte:head>
 
