@@ -1286,8 +1286,8 @@
 		white-space: nowrap;
 		text-decoration: none;
 	}
-	.hero-cta--primary { background: #0d7268; box-shadow: 0 4px 20px rgba(13, 114, 104, 0.4); }
-	.hero-cta--primary:hover { background: #0e7a6d; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(37, 211, 102, 0.5); }
+	.hero-cta--primary { background: #25d366; box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4); }
+	.hero-cta--primary:hover { background: #20bd5a; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(37, 211, 102, 0.5); }
 	.hero-cta--secondary { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
 	.hero-cta--secondary:hover { background: rgba(255, 255, 255, 0.25); transform: translateY(-2px); }
 	.hero-buttons { display: flex; flex-direction: column; gap: 0.75rem; align-items: center; }
