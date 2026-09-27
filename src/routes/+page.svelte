@@ -65,27 +65,13 @@
 			attributionControl: true
 		}).setView([5.0, -72.65], 9);
 
-		// CARTO no exige API key para este uso, pero si alguna vez empieza a
-		// pedirla (o limita por volumen) los tiles fallarían en silencio y el
-		// mapa quedaría gris. Ante varios errores seguidos pasamos a
-		// OpenStreetMap, que no requiere credenciales.
-		const baseCarto = L.tileLayer(
-			'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-			{ attribution: '© OpenStreetMap, © CARTO', subdomains: 'abcd', maxZoom: 19 }
-		).addTo(mapInstance);
-
-		let tilesFallidos = 0;
-		baseCarto.on('tileerror', () => {
-			tilesFallidos += 1;
-			if (tilesFallidos < 4) return;
-			baseCarto.off('tileerror');
-			mapInstance.removeLayer(baseCarto);
-			L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-				attribution: '© OpenStreetMap',
-				maxZoom: 19
-			}).addTo(mapInstance);
-			console.warn('[mapa] Los tiles de CARTO fallaron; se usa OpenStreetMap.');
-		});
+		// CARTO empezó a exigir API key: sus tiles responden HTTP 200 con un PNG
+		// de 2 KB que dice "API KEY REQUIRED", así que no hay error que capturar
+		// y el mapa se veía con marca de agua. OpenStreetMap no pide credenciales.
+		L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+			maxZoom: 19
+		}).addTo(mapInstance);
 
 		L.control.zoom({ position: 'bottomright' }).addTo(mapInstance);
 
