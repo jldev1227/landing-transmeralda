@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { fly, fade } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
+	import '$lib/styles/app-theme.css';
 </script>
 
 <svelte:head>
@@ -11,7 +12,7 @@
 	/>
 </svelte:head>
 
-<div class="policy-page" in:fade={{ duration: 400 }}>
+<div class="pc policy-page" in:fade={{ duration: 400 }}>
 	<nav class="policy-nav">
 		<a href="/app" class="policy-back">
 			<svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -22,7 +23,7 @@
 	</nav>
 
 	<article class="policy-content" in:fly={{ y: 30, duration: 600, easing: cubicOut }}>
-		<h1>Política de Privacidad de la Aplicación</h1>
+		<h1 class="pc-hero-title">Política de Privacidad de la Aplicación</h1>
 		<p class="policy-subtitle">Portal del Conductor — Transmeralda S.A.S.</p>
 		<p class="policy-updated">
 			Última actualización: {new Date().toLocaleDateString('es-CO', {
@@ -239,14 +240,12 @@
 <style>
 	.policy-page {
 		min-height: 100vh;
-		background: #f8fafb;
-		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 	}
 
 	.policy-nav {
 		padding: 1rem 1.5rem;
-		border-bottom: 1px solid #e2e8f0;
-		background: white;
+		border-bottom: 1px solid var(--pc-border);
+		background: var(--pc-white);
 		position: sticky;
 		top: 0;
 		z-index: 10;
@@ -256,100 +255,108 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 0.35rem;
-		color: #059669;
+		color: var(--pc-primary);
 		text-decoration: none;
 		font-size: 0.9rem;
-		font-weight: 500;
+		font-weight: 700;
 		transition: color 0.2s ease;
 	}
 
 	.policy-back:hover {
-		color: #047857;
+		color: var(--pc-primary-dark);
 	}
 
+	/* Documento montado sobre una tarjeta, como las `Card` del móvil. */
 	.policy-content {
-		max-width: 720px;
-		margin: 0 auto;
-		padding: 3rem 1.5rem 4rem;
+		max-width: 760px;
+		margin: 1.5rem auto;
+		background: var(--pc-white);
+		border-radius: var(--pc-radius-large);
+		box-shadow: var(--pc-shadow-card);
+		padding: 2.25rem 1.5rem 3rem;
 	}
 
 	.policy-content h1 {
-		font-size: clamp(1.75rem, 4vw, 2.5rem);
-		font-weight: 700;
-		color: #064e3b;
-		margin-bottom: 0.25rem;
+		color: var(--pc-primary-dark);
+		margin-bottom: 0.3rem;
 	}
 
 	.policy-subtitle {
-		font-size: 1rem;
-		font-weight: 600;
-		color: #059669;
-		margin-bottom: 0.5rem;
+		font-size: 0.95rem;
+		font-weight: 800;
+		color: var(--pc-primary);
+		margin-bottom: 0.4rem;
 	}
 
 	.policy-updated {
-		font-size: 0.85rem;
-		color: #94a3b8;
+		font-size: 0.8rem;
+		font-weight: 600;
+		color: var(--pc-muted);
 		margin-bottom: 1.5rem;
 	}
 
 	.policy-note {
-		background: #ecfdf5;
-		border: 1px solid #a7f3d0;
-		border-radius: 12px;
-		padding: 0.9rem 1.1rem;
+		background: var(--pc-primary-soft);
+		border: 1px solid var(--pc-primary-tint);
+		border-radius: var(--pc-radius-medium);
+		padding: 0.95rem 1.1rem;
 		font-size: 0.9rem;
-		color: #065f46;
-		line-height: 1.6;
-		margin-bottom: 2.5rem;
+		color: var(--pc-primary-dark);
+		line-height: 1.65;
+		margin-bottom: 2.25rem;
 	}
 
 	.policy-note code {
-		background: #d1fae5;
-		border-radius: 5px;
+		background: var(--pc-primary-tint);
+		border-radius: 6px;
 		padding: 0.1rem 0.35rem;
 		font-size: 0.85em;
 	}
 
 	.policy-note a {
-		color: #047857;
-		font-weight: 600;
+		color: var(--pc-brand-700);
+		font-weight: 800;
 	}
 
 	.policy-content section {
-		margin-bottom: 2rem;
+		margin-bottom: 1.9rem;
 	}
 
 	.policy-content h2 {
-		font-size: 1.2rem;
-		font-weight: 600;
-		color: #1e293b;
-		margin-bottom: 0.75rem;
+		font-size: 1.05rem;
+		font-weight: 800;
+		color: var(--pc-text);
+		letter-spacing: -0.2px;
+		margin-bottom: 0.6rem;
 	}
 
 	.policy-content h3 {
-		font-size: 0.95rem;
-		font-weight: 700;
-		color: #064e3b;
+		font-size: 0.9rem;
+		font-weight: 800;
+		color: var(--pc-primary-dark);
 		margin: 1.1rem 0 0.4rem;
 	}
 
 	.policy-content p {
 		font-size: 0.95rem;
-		color: #475569;
+		color: var(--pc-muted);
 		line-height: 1.7;
-		margin-bottom: 0.75rem;
+		margin-bottom: 0.7rem;
 	}
 
 	.policy-content ul {
 		padding-left: 1.25rem;
-		margin-bottom: 0.75rem;
+		margin-bottom: 0.7rem;
 	}
 
 	.policy-content li {
 		font-size: 0.95rem;
-		color: #475569;
+		color: var(--pc-muted);
 		line-height: 1.7;
 		margin-bottom: 0.35rem;
+	}
+
+	.policy-content strong {
+		color: var(--pc-text);
 	}
 </style>
