@@ -4,12 +4,11 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-		<!-- ====== SEO PRIMARIO ====== -->
-		<title>Transporte Especial en Casanare | Transmeralda Yopal</title>
-		<meta
-			name="description"
-			content="Empresa de transporte especial en Yopal, Casanare. Alquiler de buses y camionetas con conductor para empresas, petroleras y turismo. Cotiza por WhatsApp. Habilitación nacional vigente."
-		/>
+		<!-- ====== SEO PRIMARIO: solo lo que NO cambia entre rutas ======
+		     title, description y canonical los declara cada página en su
+		     <svelte:head>, incluida la portada. Aquí quedarían antes del head
+		     de SvelteKit y ganarían por ser la primera aparición: /app serviría
+		     el título de la portada y dos canonical en conflicto. -->
 		<meta
 			name="keywords"
 			content="transporte especial Casanare, transporte empresarial Yopal, alquiler de buses Yopal, alquiler de camionetas Casanare, transporte petrolero Casanare, transporte corporativo Casanare, rutas empresariales Yopal, transporte para empresas Casanare, servicio de transporte especial, transporte de personal Yopal, transporte ejecutivo Casanare, transporte turístico Casanare, transporte habilitado Ministerio de Transporte, Transmeralda"
@@ -23,7 +22,6 @@
 			name="robots"
 			content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
 		/>
-		<link rel="canonical" href="https://transmeralda.com/" />
 
 		<!-- ====== GEO / UBICACIÓN ====== -->
 		<meta name="geo.region" content="CO-CAS" />
@@ -41,8 +39,11 @@
 		<!-- ====== OPEN GRAPH: solo lo que NO cambia entre rutas ======
 		     og:title, og:description, og:url, og:image y las tarjetas de Twitter
 		     los define cada página en su <svelte:head>. Si se declaran aquí,
-		     quedan ANTES de %sveltekit.head% y los rastreadores toman la primera
-		     ocurrencia, de modo que toda ruta se compartiría como la portada. -->
+		     quedan ANTES del marcador de head de SvelteKit y los rastreadores
+		     toman la primera ocurrencia, de modo que toda ruta se compartiría
+		     como la portada. (No escribas el token del marcador dentro de un
+		     comentario: SvelteKit sustituye la primera aparición del archivo y
+		     el head acabaría inyectado aquí dentro.) -->
 		<meta property="og:type" content="website" />
 		<meta property="og:site_name" content="Transmeralda S.A.S." />
 		<meta property="og:locale" content="es_CO" />
