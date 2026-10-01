@@ -34,6 +34,9 @@
 		]
 	};
 
+	// Programa de prueba en Google Play: solo instala quien esté inscrito como probador.
+	const enlacePrueba = 'https://play.google.com/apps/testing/com.transmeralda.conductores';
+
 	const metricas = [
 		{ valor: 'Offline', etiqueta: 'Diligencia sin señal' },
 		{ valor: 'Android', etiqueta: 'y iOS' },
@@ -186,6 +189,13 @@
 					La operación de transporte especial exige diligenciar formatos antes de cada recorrido y
 					dejar constancia de la jornada. En carretera eso rara vez ocurre con buena señal.
 				</p>
+				<a class="hero-cta" href={enlacePrueba} target="_blank" rel="noopener noreferrer">
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+						<path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11.04-6.86a1 1 0 0 0 0-1.72L9.5 4.28A1 1 0 0 0 8 5.14z" />
+					</svg>
+					Unirse a la prueba en Google Play
+				</a>
+				<span class="hero-nota">Solo conductores inscritos como probadores.</span>
 			</div>
 			<img class="hero-mascot" src="/app/saludando.png" alt="" aria-hidden="true" />
 		</header>
@@ -374,6 +384,40 @@
 		font-size: 0.95rem;
 		line-height: 1.65;
 		margin: 0;
+	}
+
+	.hero-cta {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		min-height: 48px;
+		margin-top: 1.25rem;
+		padding: 0 1.1rem;
+		border-radius: var(--pc-radius-medium);
+		background: var(--pc-white);
+		color: var(--pc-primary-dark);
+		font-size: 0.95rem;
+		font-weight: 800;
+		text-decoration: none;
+		box-shadow: var(--pc-shadow-raised);
+		transition: transform 0.2s ease;
+	}
+
+	.hero-cta:hover {
+		transform: translateY(-2px);
+	}
+
+	.hero-cta:focus-visible {
+		outline: 2px solid var(--pc-white);
+		outline-offset: 3px;
+	}
+
+	.hero-nota {
+		display: block;
+		margin-top: 0.6rem;
+		color: var(--pc-hero-subtitle);
+		font-size: 0.75rem;
+		opacity: 0.85;
 	}
 
 	.hero-mascot {
