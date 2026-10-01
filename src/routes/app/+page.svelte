@@ -25,8 +25,10 @@
 		},
 		featureList: [
 			'Diligenciamiento de formatos HSEQ sin conexión',
-			'Registro de jornada laboral con tramos, horas y kilometraje',
-			'Consulta de servicios asignados con mapa y navegación',
+			'Formularios preoperacionales por etapas con autoguardado',
+			'Calendario de días laborados por tipo de jornada',
+			'Consulta de servicios asignados con mapa, tráfico y riesgo de la vía',
+			'Guía de navegación giro a giro hasta el destino',
 			'Descarga de desprendibles de pago y primas',
 			'Captura de evidencias fotográficas y firma digital'
 		]
@@ -38,58 +40,91 @@
 		{ valor: 'Interno', etiqueta: 'Solo conductores' }
 	];
 
+	// Una entrada por captura de tienda (static/app/capturas), en el orden del recorrido.
 	const bloques = [
 		{
-			eyebrow: 'FORMATOS HSEQ',
+			eyebrow: 'CENTRO DE OPERACIONES',
+			corto: 'Formularios',
+			titulo: 'Lo pendiente de hoy, de un vistazo',
+			detalle:
+				'Al abrir la app el conductor ve los formatos HSEQ que tiene asignados, cuántos le faltan por diligenciar, cuántos esperan en la cola local y cuántos ya envió. Cada formato muestra su código y si está listo para iniciar.',
+			puntos: [
+				'Buscador por nombre o código del formato',
+				'Contadores de pendientes, en cola y completados',
+				'Inspecciones, actas y reportes en la misma lista'
+			],
+			imagen: '/app/capturas/formularios',
+			alt: 'Pantalla de formularios con el saludo al conductor, el buscador, los contadores y la lista de formatos asignados'
+		},
+		{
+			eyebrow: 'FORMULARIO OFFLINE',
+			corto: 'Por etapas',
 			titulo: 'Diligencia sin depender de la señal',
 			detalle:
-				'Inspecciones preoperacionales, actas de entrega y reportes se llenan aunque no haya cobertura. Cada cambio queda guardado en el teléfono y el envío entra en una cola que se sincroniza sola al recuperar internet, sin duplicar registros.',
+				'Los preoperacionales se llenan por etapas, con el avance siempre visible. Cada respuesta queda guardada en el teléfono aunque se cierre la app, y el envío entra en una cola que se sincroniza sola al recuperar internet, sin duplicar registros.',
 			puntos: [
-				'Autoguardado permanente en el dispositivo',
-				'Cola de envío con reintento automático',
-				'Campos obligatorios señalados antes de enviar'
+				'Etapas con barra de progreso',
+				'Contexto obligatorio: la placa del vehículo antes de empezar',
+				'Autoguardado local y cola de envío con reintento'
 			],
-			imagen: '/app/formato',
-			alt: 'Formato preoperacional abierto en la aplicación, con la tarjeta de contexto obligatorio para seleccionar la placa'
+			imagen: '/app/capturas/formulario-etapas',
+			alt: 'Formulario preoperacional por etapas, en la etapa 1 de 3 con 90% de avance y la placa seleccionada'
 		},
 		{
-			eyebrow: 'JORNADA LABORAL',
-			titulo: 'El día reportado en un minuto',
-			detalle:
-				'El conductor registra su jornada con uno o varios tramos: vehículo, cliente, horas, kilometraje y descripción del servicio. Las horas se calculan solas y la app avisa cuando la jornada cruzó la medianoche.',
-			puntos: [
-				'Buscador de placas y clientes, sin escribir a mano',
-				'Selectores nativos de fecha y hora',
-				'Cálculo automático de horas conducidas'
-			],
-			imagen: '/app/jornada',
-			alt: 'Pantalla de registro de jornada con selección de vehículo, cliente y horas de inicio y fin'
-		},
-		{
-			eyebrow: 'SERVICIOS',
+			eyebrow: 'MIS RECORRIDOS',
+			corto: 'Servicios',
 			titulo: 'Saber a dónde antes de salir',
 			detalle:
-				'Cada asignación muestra origen, destino, cliente y vehículo. Desde el detalle se abre el recorrido sobre el mapa y la navegación hasta el punto de encuentro.',
+				'Cada asignación muestra origen, destino, fecha, cliente y placa, con su estado. Arriba están los servicios activos, los finalizados y el total, para que el conductor sepa qué le queda por delante.',
 			puntos: [
 				'Origen y destino con estado del servicio',
-				'Recorrido dibujado sobre el mapa',
+				'Cliente y placa en cada tarjeta',
 				'Búsqueda por ciudad, cliente o placa'
 			],
-			imagen: '/app/servicios',
-			alt: 'Listado de servicios asignados con origen, destino, cliente y placa'
+			imagen: '/app/capturas/servicios',
+			alt: 'Listado de servicios con contadores de activos, finalizados y total, y tarjetas de origen, destino, cliente y placa'
 		},
 		{
-			eyebrow: 'HISTORIAL',
-			titulo: 'Todo lo reportado, a la mano',
+			eyebrow: 'DETALLE DEL SERVICIO',
+			corto: 'Ruta',
+			titulo: 'El recorrido sobre el mapa',
 			detalle:
-				'El conductor consulta sus días laborados del mes, cuántos quedan por sincronizar y el detalle de cada jornada. También accede a sus desprendibles de pago y primas, con descarga en PDF.',
+				'El detalle dibuja la ruta entre origen y destino y permite activar las capas de tráfico y de riesgo de la vía. Debajo queda la programación del servicio: cuándo se solicitó, cuándo se realiza y cuándo se registró.',
 			puntos: [
-				'Historial mensual navegable',
-				'Indicador de registros pendientes por sincronizar',
+				'Ruta trazada entre origen y destino',
+				'Capas de tráfico y riesgo',
+				'Fechas de solicitud, realización y registro'
+			],
+			imagen: '/app/capturas/detalle-ruta',
+			alt: 'Detalle de un servicio con el mapa del recorrido, botones de tráfico y riesgo, y la sección de programación'
+		},
+		{
+			eyebrow: 'GUÍA EN CARRETERA',
+			corto: 'Navegación',
+			titulo: 'Indicaciones giro a giro',
+			detalle:
+				'La guía de navegación acompaña al conductor hasta el destino del servicio con instrucciones de giro, la distancia que falta y el tiempo estimado de llegada. Usa la ubicación solo mientras la app está abierta.',
+			puntos: [
+				'Instrucción de la siguiente maniobra con su distancia',
+				'Kilómetros restantes y tiempo estimado',
+				'Vista de la ruta completa o centrada en el vehículo'
+			],
+			imagen: '/app/capturas/navegacion',
+			alt: 'Guía de navegación en carretera con la instrucción de giro, el mapa en perspectiva y el destino con kilómetros y tiempo restantes'
+		},
+		{
+			eyebrow: 'CONTROL DE JORNADA',
+			corto: 'Días laborados',
+			titulo: 'El mes entero en un calendario',
+			detalle:
+				'El conductor registra la jornada de hoy con un toque o completa cualquier día desde el calendario. Cada día se pinta según el tipo de jornada y el avance del mes muestra cuántos faltan por registrar. En los días de mantenimiento se adjuntan las facturas como soporte. También consulta sus desprendibles de pago y primas, con descarga en PDF.',
+			puntos: [
+				'Tipo de jornada: laborado, disponible, descanso o mantenimiento',
+				'Avance del mes y días pendientes por registrar',
 				'Desprendibles y primas descargables'
 			],
-			imagen: '/app/dias',
-			alt: 'Historial mensual de días laborados con métricas del mes'
+			imagen: '/app/capturas/dias-laborados',
+			alt: 'Calendario de días laborados del mes con el botón para registrar la jornada de hoy y el avance del mes'
 		}
 	];
 </script>
@@ -174,12 +209,46 @@
 		</section>
 
 		<div class="pc-section-header">
+			<h2 class="pc-title">Un recorrido por la app</h2>
+			<span class="pc-section-detail">{bloques.length} pantallas</span>
+		</div>
+
+		<ol class="recorrido" aria-label="Pantallas de la aplicación">
+			{#each bloques as bloque, i (bloque.imagen)}
+				<li>
+					<a href={'#' + bloque.imagen.split('/').pop()} class="recorrido-item">
+						<div class="pc-device">
+							<picture>
+								<source srcset={bloque.imagen + '.avif'} type="image/avif" />
+								<source srcset={bloque.imagen + '.webp'} type="image/webp" />
+								<img
+									src={bloque.imagen + '.png'}
+									alt=""
+									width="520"
+									height="1129"
+									loading={i < 3 ? 'eager' : 'lazy'}
+									decoding="async"
+								/>
+							</picture>
+						</div>
+						<span class="recorrido-paso">{String(i + 1).padStart(2, '0')}</span>
+						<span class="recorrido-nombre">{bloque.corto}</span>
+					</a>
+				</li>
+			{/each}
+		</ol>
+
+		<div class="pc-section-header">
 			<h2 class="pc-title">Qué hace la aplicación</h2>
 			<span class="pc-section-detail">{bloques.length} módulos</span>
 		</div>
 
 		{#each bloques as bloque, i (bloque.titulo)}
-			<section class="bloque" class:invertido={i % 2 === 1}>
+			<section
+				id={bloque.imagen.split('/').pop()}
+				class="bloque"
+				class:invertido={i % 2 === 1}
+			>
 				<div class="bloque-copy">
 					<span class="pc-eyebrow bloque-eyebrow">{bloque.eyebrow}</span>
 					<h3 class="pc-title">{bloque.titulo}</h3>
@@ -366,7 +435,71 @@
 	}
 
 	/* Bloques de funcionalidad */
+	/* Tira horizontal con las seis capturas; en escritorio caben todas sin desplazar. */
+	.recorrido {
+		list-style: none;
+		margin: 0 -1rem;
+		padding: 0.4rem 1rem 1.2rem;
+		display: grid;
+		grid-auto-flow: column;
+		grid-auto-columns: 132px;
+		gap: 0.9rem;
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+		scroll-padding-inline: 1rem;
+		scrollbar-width: none;
+	}
+
+	.recorrido::-webkit-scrollbar {
+		display: none;
+	}
+
+	.recorrido li {
+		scroll-snap-align: start;
+	}
+
+	.recorrido-item {
+		display: flex;
+		flex-direction: column;
+		gap: 0.15rem;
+		text-decoration: none;
+	}
+
+	.recorrido-item .pc-device {
+		border-width: 4px;
+		border-radius: 20px;
+		box-shadow: var(--pc-shadow-raised);
+		margin-bottom: 0.55rem;
+		transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	.recorrido-paso {
+		color: var(--pc-primary-text);
+		font-size: 0.7rem;
+		font-weight: 800;
+		letter-spacing: 1.2px;
+	}
+
+	.recorrido-nombre {
+		color: var(--pc-text);
+		font-size: 0.9rem;
+		font-weight: 700;
+	}
+
+	@media (hover: hover) {
+		.recorrido-item:hover .pc-device {
+			transform: translateY(-4px);
+		}
+	}
+
+	.recorrido-item:focus-visible {
+		outline: 2px solid var(--pc-primary);
+		outline-offset: 4px;
+		border-radius: 20px;
+	}
+
 	.bloque {
+		scroll-margin-top: 5rem;
 		display: grid;
 		grid-template-columns: 1fr;
 		gap: 1.5rem;
@@ -490,6 +623,13 @@
 		.hero-mascot {
 			width: 220px;
 			height: 220px;
+		}
+
+		.recorrido {
+			margin: 0;
+			padding: 0.4rem 0 1.2rem;
+			grid-auto-columns: minmax(0, 1fr);
+			overflow: visible;
 		}
 
 		.bloque {
