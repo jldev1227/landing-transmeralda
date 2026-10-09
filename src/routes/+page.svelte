@@ -3,11 +3,12 @@
 	import { fly, fade } from 'svelte/transition';
 	import { elasticOut, quintOut } from 'svelte/easing';
 	import SmartImage from '$lib/components/SmartImage.svelte';
+	import SolicitudForm from '$lib/components/SolicitudForm.svelte';
 
 	let scrolled = $state(false);
 	let mobileMenuOpen = $state(false);
 	let activeSection = $state('inicio');
-	let showWhatsappFab = $state(false);
+	let showFab = $state(false);
 
 	let capVisible = $state(false);
 	let coberturaVisible = $state(false);
@@ -173,7 +174,7 @@
 
 		const handleScroll = () => {
 			scrolled = window.scrollY > 50;
-			showWhatsappFab = window.scrollY > 400;
+			showFab = window.scrollY > 400;
 
 			const pos = window.scrollY + 120;
 			for (const id of sections) {
@@ -342,7 +343,7 @@
 	<meta name="twitter:title" content="Transporte Especial en Casanare | Transmeralda Yopal" />
 	<meta
 		name="twitter:description"
-		content="Alquiler de buses y camionetas con conductor en Yopal, Casanare. Servicio para empresas, petroleras y turismo. Habilitación nacional vigente. Cotiza por WhatsApp."
+		content="Alquiler de buses y camionetas con conductor en Yopal, Casanare. Servicio para empresas, petroleras y turismo. Habilitación nacional vigente. Solicita tu cotización en línea."
 	/>
 	<meta name="twitter:image" content="https://transmeralda.com/og-image.jpg" />
 	<meta
@@ -449,18 +450,16 @@
 					Transmeralda S.A.S. — Transporte terrestre automotor especial desde Yopal, Casanare. Movilidad inteligente, eficiencia real y seguridad para tu equipo.
 				</p>
 				<div class="hero-buttons">
-					<a
-						href="https://wa.me/573232340117?text=Hola%20Transmeralda%2C%20estoy%20interesado%20en%20cotizar%20un%20servicio%20de%20transporte%20especial.%20%C2%BFPodr%C3%ADan%20brindarme%20informaci%C3%B3n%3F"
-						target="_blank"
-						rel="noopener noreferrer"
+					<button
+						onclick={() => scrollToSection('contacto')}
 						in:fly={{ y: 200, duration: 1000, easing: elasticOut }}
 						class="hero-cta hero-cta--primary"
 					>
-						<svg class="hero-cta-icon" fill="currentColor" viewBox="0 0 24 24">
-							<path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+						<svg class="hero-cta-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6M7 4h7l5 5v11a1 1 0 01-1 1H7a1 1 0 01-1-1V5a1 1 0 011-1z" />
 						</svg>
-						Cotizar ahora
-					</a>
+						Solicitar cotización
+					</button>
 					<button
 						in:fly={{ y: 200, duration: 1000, easing: elasticOut, delay: 100 }}
 						onclick={() => scrollToSection('servicios')}
@@ -764,7 +763,7 @@
 					</summary>
 					<div class="faq-item__a">
 						<p>
-							El costo del transporte especial en Casanare depende de la distancia, el tipo de vehículo y la duración del contrato. En Transmeralda cotizamos por kilómetro recorrido o por servicio mensual según tu necesidad. <strong>Solicita tu cotización gratuita por WhatsApp al +57 323 234 0117</strong> o por correo a operaciones.transmeraldasas@gmail.com.
+							El costo del transporte especial en Casanare depende de la distancia, el tipo de vehículo y la duración del contrato. En Transmeralda cotizamos por kilómetro recorrido o por servicio mensual según tu necesidad. <strong>Solicita tu cotización gratuita con el formulario de contacto</strong> de esta página: te respondemos por correo o teléfono una vez verifiquemos la solicitud.
 						</p>
 					</div>
 				</details>
@@ -816,7 +815,7 @@
 					</summary>
 					<div class="faq-item__a">
 						<p>
-							Puedes solicitar tu cotización de tres formas: por <strong>WhatsApp al +57 323 234 0117</strong> (respuesta en menos de 1 hora en horario laboral), por correo a operaciones.transmeraldasas@gmail.com, o llamando al mismo número de lunes a sábado de 6:00 a.m. a 6:00 p.m. Te pedimos enviar origen, destino, número de pasajeros, fechas y tipo de vehículo deseado.
+							Diligencia el <strong>formulario de solicitud</strong> al final de esta página con origen, destino, número de pasajeros, fechas y tipo de vehículo. Recibirás un número de radicado y nuestro equipo de operaciones te contactará de lunes a sábado, de 6:00 a. m. a 6:00 p. m., después de verificar los datos. Por seguridad no programamos servicios por llamadas o mensajes sin verificar.
 						</p>
 					</div>
 				</details>
@@ -870,62 +869,29 @@
 				<div class="section-number section-number--dark">
 					<span class="section-number__hash">N°</span> 07
 				</div>
-				<h2 class="section-title section-title--dark">Conversemos</h2>
+				<h2 class="section-title section-title--dark">Solicita tu servicio</h2>
 				<p class="section-subtitle section-subtitle--dark">
-					Nuestro equipo está disponible para cotizar, resolver dudas y organizar
-					el transporte de tu personal. Escríbenos cuando quieras.
+					Cotizaciones, servicios programados y consultas entran por este formulario. Cada solicitud
+					recibe un radicado y la revisa nuestro equipo de operaciones antes de responder.
 				</p>
 			</header>
 
 			<div class="contact-grid">
-				<div class="contact-cta-col">
-					<a
-						href="https://wa.me/573232340117?text=Hola%20Transmeralda%2C%20estoy%20interesado%20en%20cotizar%20un%20servicio%20de%20transporte%20especial.%20%C2%BFPodr%C3%ADan%20brindarme%20informaci%C3%B3n%3F"
-						target="_blank"
-						rel="noopener noreferrer"
-						class="contact-cta contact-cta--wa"
-					>
-						<span class="contact-cta__num">A</span>
-						<span class="contact-cta__text">
-							<span class="contact-cta__label">WhatsApp</span>
-							<span class="contact-cta__value">+57 323 234 0117</span>
-						</span>
-						<svg class="contact-cta__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-							<path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M17 7H8M17 7v9" />
-						</svg>
-					</a>
-
-					<a href="mailto:operaciones.transmeraldasas@gmail.com" class="contact-cta contact-cta--outline">
-						<span class="contact-cta__num">B</span>
-						<span class="contact-cta__text">
-							<span class="contact-cta__label">Correo</span>
-							<span class="contact-cta__value">operaciones.transmeraldasas@gmail.com</span>
-						</span>
-						<svg class="contact-cta__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-							<path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M17 7H8M17 7v9" />
-						</svg>
-					</a>
-
-					<a href="tel:+573232340117" class="contact-cta contact-cta--outline">
-						<span class="contact-cta__num">C</span>
-						<span class="contact-cta__text">
-							<span class="contact-cta__label">Teléfono</span>
-							<span class="contact-cta__value">+57 323 234 0117</span>
-						</span>
-						<svg class="contact-cta__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-							<path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M17 7H8M17 7v9" />
-						</svg>
-					</a>
+				<div class="contact-form-col">
+					<SolicitudForm />
 				</div>
 
 				<aside class="contact-info">
 					<div>
-						<p class="contact-info__label">Base</p>
-						<p class="contact-info__value">Yopal, Casanare</p>
-						<p class="contact-info__muted">Colombia</p>
+						<p class="contact-info__label">Cómo funciona</p>
+						<ol class="contact-steps">
+							<li><span>01</span> Envías la solicitud y recibes un radicado.</li>
+							<li><span>02</span> Operaciones verifica los datos y la empresa.</li>
+							<li><span>03</span> Te contactamos con disponibilidad y propuesta.</li>
+						</ol>
 					</div>
 					<div>
-						<p class="contact-info__label">Horario</p>
+						<p class="contact-info__label">Horario de atención</p>
 						<p class="contact-info__value">Lun — Sáb</p>
 						<p class="contact-info__muted">06:00 — 18:00</p>
 					</div>
@@ -934,6 +900,14 @@
 						<p class="contact-info__value">Yopal</p>
 						<p class="contact-info__value">Tauramena</p>
 						<p class="contact-info__value">Villanueva</p>
+						<p class="contact-info__muted">Casanare, Colombia</p>
+					</div>
+					<div>
+						<p class="contact-info__label">Seguridad</p>
+						<p class="contact-info__muted">
+							No programamos servicios por llamadas ni mensajes sin verificar. Si ya eres cliente, usa el
+							canal acordado con tu ejecutivo.
+						</p>
 					</div>
 				</aside>
 			</div>
@@ -977,8 +951,9 @@
 
 		<div class="footer__col">
 			<p class="footer__label">Contacto</p>
-			<a class="footer__link" href="https://wa.me/573232340117" target="_blank" rel="noopener noreferrer">+57 323 234 0117</a>
-			<a class="footer__link" href="mailto:operaciones.transmeraldasas@gmail.com">operaciones.transmeraldasas@gmail.com</a>
+			<a class="footer__link" href="#contacto">Solicitar cotización</a>
+			<a class="footer__link" href="/formularios-sarlaft">Formularios SARLAFT</a>
+			<p class="footer__muted">Lun — Sáb · 06:00 — 18:00</p>
 			<p class="footer__muted">Yopal · Casanare · Colombia</p>
 		</div>
 	</div>
@@ -989,19 +964,18 @@
 	</div>
 </footer>
 
-<!-- WhatsApp FAB -->
-<a
-	href="https://wa.me/573232340117"
-	target="_blank"
-	rel="noopener noreferrer"
+<!-- Botón flotante: lleva al formulario de solicitud -->
+<button
+	type="button"
 	class="fab"
-	class:fab--visible={showWhatsappFab}
-	aria-label="WhatsApp"
+	class:fab--visible={showFab}
+	onclick={() => scrollToSection('contacto')}
+	aria-label="Solicitar cotización"
 >
-	<svg viewBox="0 0 24 24" fill="currentColor">
-		<path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+	<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+		<path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6M7 4h7l5 5v11a1 1 0 01-1 1H7a1 1 0 01-1-1V5a1 1 0 011-1z" />
 	</svg>
-</a>
+</button>
 
 <style>
 	/* ═══════════════ NAV ═══════════════ */
@@ -1286,8 +1260,8 @@
 		white-space: nowrap;
 		text-decoration: none;
 	}
-	.hero-cta--primary { background: #25d366; box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4); }
-	.hero-cta--primary:hover { background: #20bd5a; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(37, 211, 102, 0.5); }
+	.hero-cta--primary { background: var(--emerald-500); box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4); }
+	.hero-cta--primary:hover { background: var(--emerald-600); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(16, 185, 129, 0.5); }
 	.hero-cta--secondary { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
 	.hero-cta--secondary:hover { background: rgba(255, 255, 255, 0.25); transform: translateY(-2px); }
 	.hero-buttons { display: flex; flex-direction: column; gap: 0.75rem; align-items: center; }
@@ -2171,57 +2145,10 @@
 	@media (min-width: 1024px) {
 		.contact-grid { grid-template-columns: 1.5fr 1fr; gap: 5rem; }
 	}
-	.contact-cta-col { display: flex; flex-direction: column; gap: 0; }
-	.contact-cta {
-		display: flex;
-		align-items: center;
-		gap: 1.5rem;
-		padding: 1.5rem 0;
-		text-decoration: none;
-		border-top: 1px solid var(--rule-on-dark);
-		transition: padding 0.3s;
-		color: var(--text-on-dark);
-	}
-	.contact-cta:last-child { border-bottom: 1px solid var(--rule-on-dark); }
-	.contact-cta:hover { padding-left: 0.5rem; }
-	.contact-cta__num {
-		font-family: 'Fraunces', serif;
-		font-size: 1rem;
-		font-weight: 400;
-		color: var(--emerald-500);
-		min-width: 1.5rem;
-	}
-	.contact-cta__text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.15rem; }
-	.contact-cta__label {
-		font-family: 'JetBrains Mono', monospace;
-		font-size: 0.6875rem;
-		text-transform: uppercase;
-		letter-spacing: 0.1em;
-		color: var(--text-on-dark-muted);
-	}
-	.contact-cta__value {
-		font-family: 'Inter Tight', system-ui, sans-serif;
-		font-size: clamp(1rem, 1.8vw, 1.375rem);
-		font-weight: 500;
-		color: var(--text-on-dark);
-		word-break: break-word;
-		overflow-wrap: anywhere;
-		min-width: 0;
-	}
-	@media (min-width: 768px) {
-		.contact-cta__value {
-			word-break: normal;
-			overflow-wrap: normal;
-		}
-	}
-	.contact-cta__arrow {
-		width: 1.25rem;
-		height: 1.25rem;
-		opacity: 0.4;
-		transition: opacity 0.3s, transform 0.3s;
-	}
-	.contact-cta:hover .contact-cta__arrow { opacity: 1; transform: translate(2px, -2px); }
-
+	.contact-form-col { min-width: 0; }
+	.contact-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.6rem; }
+	.contact-steps li { display: flex; gap: 0.75rem; align-items: baseline; font-family: 'Inter Tight', system-ui, sans-serif; font-size: 0.9375rem; line-height: 1.5; color: var(--text-on-dark); }
+	.contact-steps li span { font-family: 'Fraunces', serif; color: var(--emerald-500); min-width: 1.5rem; }
 	.contact-info { display: flex; flex-direction: column; gap: 2rem; padding-top: 1rem; }
 	.contact-info__label {
 		font-family: 'JetBrains Mono', monospace;
@@ -2323,6 +2250,8 @@
 
 	/* ═══════════════ FAB ═══════════════ */
 	.fab {
+		border: 0;
+		cursor: pointer;
 		position: fixed;
 		bottom: 1.5rem;
 		right: 1.5rem;
