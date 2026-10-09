@@ -304,12 +304,11 @@
 			<div>
 				<h2 class="pc-card-title">Soporte</h2>
 				<p class="pc-body">
-					Para reportar fallas, solicitar acceso o resolver dudas sobre el tratamiento de sus datos:
+					Para reportar fallas, solicitar acceso o resolver dudas sobre el tratamiento de sus datos,
+					escríbanos por el formulario de solicitudes del sitio e indique «Otro» como tipo de solicitud.
+					El equipo de operaciones le responde por el canal que registre.
 				</p>
-				<ul class="contacto">
-					<li><strong>Correo:</strong> operaciones.transmeraldasas@gmail.com</li>
-					<li><strong>Teléfono:</strong> +57 323 234 0117</li>
-				</ul>
+				<a class="pc-button" href="/#contacto">Ir al formulario de solicitudes</a>
 			</div>
 		</section>
 	</div>
@@ -626,21 +625,6 @@
 		display: none;
 	}
 
-	.contacto {
-		list-style: none;
-		padding-left: 0;
-		margin: 0.5rem 0 0;
-	}
-
-	.contacto li {
-		font-size: 0.9rem;
-		color: var(--pc-muted);
-		line-height: 1.7;
-	}
-
-	.contacto strong {
-		color: var(--pc-text);
-	}
 
 	@media (min-width: 560px) {
 		.hero-mascot,
